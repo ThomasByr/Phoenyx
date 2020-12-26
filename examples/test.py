@@ -1,4 +1,4 @@
-from ..phenyx.engine import Engine
+from ..phoenyx.engine import Engine
 
 renderer = Engine(600, 600)  # 600x600 window
 
