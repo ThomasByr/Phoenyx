@@ -15,7 +15,7 @@ This library allows you to create graphical components in ``pygame`` in a very f
 Please go and check [pygame](https://github.com/pygame/pygame.git) for their amazing work !
 
 ## How to ?
-Please refer to [test.py](test.py) on GitHub for a very simple but effective test file.
+Please refer to [test.py](examples/test.py) on GitHub for a very simple but effective test file.
 ```python
 from phenyx import Engine
 
