@@ -37,7 +37,7 @@ def draw():
 if __name__ == "__main__":
     renderer.run(draw, setup=setup)
 ```
-For further help please try ``help(phenyx)`` or read in-code docs.
+For further help please try ``help(phoenyx)`` or read in-code docs.
 
 ## Requirements
 Obviously some distribution of python : ``python 3.8`` and above is needed.
@@ -45,7 +45,7 @@ Obviously some distribution of python : ``python 3.8`` and above is needed.
 You will also need ``pygame`` in order to use the Engine and ``numpy`` to use Vectors.
 
 ## Licenses
-Phenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details. Phenyx also includes the following components from other open source projects (see LICENSES folder for more):
+Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details. Phoenyx also includes the following components from other open source projects (see LICENSES folder for more):
 * [numpy](https://numpy.org/) licensed under the BSD 3-Clause "New" or "Revised" License
 * [pygame](https://www.pygame.org/) licended under the GNU LGPL version 2.1
 
