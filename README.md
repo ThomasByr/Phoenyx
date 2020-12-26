@@ -1,4 +1,4 @@
-# Phenyx - Pygame Engine
+# Phoenyx - Pygame Engine
 
 Some simple classes in ``python`` that could make your life much simplier.
 
@@ -17,7 +17,7 @@ Please go and check [pygame](https://github.com/pygame/pygame.git) for their ama
 ## How to ?
 Please refer to [test.py](examples/test.py) on GitHub for a very simple but effective test file.
 ```python
-from phenyx import Engine
+from phoenyx import Engine
 
 renderer = Engine(600, 600)
 
