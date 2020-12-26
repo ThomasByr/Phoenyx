@@ -7,14 +7,14 @@ with open("requirements.txt", "r", encoding="UTF-8") as f:
     requires = f.read().split("\n")
 
 setuptools.setup(
-    name="phenyx",
+    name="phoenyx",
     version="0.1.0",
     author="Thomas B",
     author_email="tbouyer2000@gmail.com",
     description="An engine for pygame",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Thomas2-bot/pygame_engine.git",
+    url="https://github.com/Thomas2-bot/phoenyx.git",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
