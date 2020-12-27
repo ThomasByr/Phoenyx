@@ -40,7 +40,7 @@ if __name__ == "__main__":
 For further help please try ``help(phoenyx)`` or read in-code docs.
 
 ## Requirements
-Obviously some distribution of python : ``python 3.8`` and above is needed.
+Obviously some distribution of python : ``python 3.9`` and above is needed.
 
 You will also need ``pygame`` in order to use the Engine and ``numpy`` to use Vectors.
 
@@ -55,7 +55,7 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 3. *v0.0.a3* : Wait... [Buttons](pygame_engine/engine.py) ? (type ``help(Button)`` to learn more)
 4. *v0.0.a4* : [Sliders](pygame_engine/engine.py) now ? (type ``help(Slider)`` to learn more)
 5. *v0.1.0* : Buttons and Sliders do not rely anyore on images for greater protability but are now less customizable.
-6. *v0.1.1* : Buttons and Sliders can now be hidden. Slightly better WARNING and ERROR messages.
+6. *v0.1.1* : Buttons and Sliders can now be hidden. Changed python dependency. Slightly better WARNING and ERROR messages.
 
 ## TODOs
 * ~~option to hide Buttons and Sliders or to draw them only when needed~~
