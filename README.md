@@ -50,14 +50,15 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 * [pygame](https://www.pygame.org/) licended under the GNU LGPL version 2.1
 
 ## Changelog
-1. *v0.0.a1* : Initial commit and packaging
-2. *v0.0.a2* : Some refractor
-3. *v0.0.a3* : Wait... [Buttons](pygame_engine/engine.py) ?
-4. *v0.0.a4* : [Sliders](pygame_engine/engine.py) now ?
-5. *v0.1.0* : Buttons and Sliders do not rely anyore on images
+1. *v0.0.a1* : Initial commit and packaging (please not that alpha version are no longer accessible for download)
+2. *v0.0.a2* : Some refractor, name changing and efficiency improvement.
+3. *v0.0.a3* : Wait... [Buttons](pygame_engine/engine.py) ? (type ``help(Button)`` to learn more)
+4. *v0.0.a4* : [Sliders](pygame_engine/engine.py) now ? (type ``help(Slider)`` to learn more)
+5. *v0.1.0* : Buttons and Sliders do not rely anyore on images for greater protability but are now less customizable.
+6. *v0.1.1* : Buttons and Sliders can now be hidden. Slightly better WARNING and ERROR messages.
 
 ## TODOs
-1. option to hide Buttons and Sliders or to draw them only when needed
-2. option of alts drawing methods for Buttons
-3. keyboard integration
-4. scrollbars and side menus
+* ~~option to hide Buttons and Sliders or to draw them only when needed~~
+* option of alts drawing methods for Buttons
+* keyboard integration
+* scrollbars and side menus
