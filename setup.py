@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="UTF-8") as f:
 
 setuptools.setup(
     name="phoenyx",
-    version="0.1.0",
+    version="0.1.1",
     author="Thomas B",
     author_email="tbouyer2000@gmail.com",
     description="An engine for pygame",
@@ -21,6 +21,6 @@ setuptools.setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=requires,
 )
