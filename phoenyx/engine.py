@@ -81,6 +81,7 @@ class Button:
         self._click = 0
         self._action = action
         self._height = height
+        self._is_hidden = False
         self._width = width
         self._color = (color, 70)[color is None]
 
@@ -102,9 +103,9 @@ class Button:
             click_count : int
                 new click_count
         """
-        print("WARNING : [button] attempting to modify click behaviour")
+        print(f"WARNING [button '{self._name}'] : attempting to modify click behaviour")
         if click_count < 0:
-            print("WARNING : [button] bad click_count, nothing changed")
+            print(f"WARNING [button '{self._name}'] : bad click_count, nothing changed")
             return
         self._click_count = click_count
 
@@ -132,6 +133,42 @@ class Button:
         """
         trigger = self._action()
         return trigger
+
+    @property
+    def is_hidden(self) -> bool:
+        """
+        gets current display state of the button
+        """
+        return self._is_hidden
+
+    @is_hidden.setter
+    def is_hidden(self, value: bool) -> None:
+        """
+        forces the display state of the button
+        """
+        self._is_hidden = value
+
+    def hide(self) -> None:
+        """
+        hides the button (does not display it automatically on the screen)\\
+        button action becomes unaccessible\\
+        opposite function is ``reveal``
+        """
+        if self._is_hidden:
+            print(f"WARNING [button '{self._name}'] : button is already hidden, nothing changed")
+            return
+        self._is_hidden = True
+
+    def reveal(self) -> None:
+        """
+        reveals the button back (displays it on the screen)\\
+        button action becomes accessible again\\
+        opposite function is ``hide``
+        """
+        if not self._is_hidden:
+            print(f"WARNING [button '{self._name}'] : button is not hidden, nothing changed")
+            return
+        self._is_hidden = False
 
     def move_to(self, x: int = None, y: int = None) -> None:
         """
@@ -183,7 +220,7 @@ class Button:
             name : str
                 new name
         """
-        print(f"WARNING : [button] name changing from {self._name} to {name}")
+        print(f"WARNING [button '{self._name}'] : name changing to '{name}'")
         self._name = name
 
     @property
@@ -204,7 +241,7 @@ class Button:
             action : python function
                 new action
         """
-        print("WARNING : [button] action changed")
+        print(f"WARNING [button '{self._name}'] : action changed")
         self._action = action
 
     def collide(self, pos) -> bool:
@@ -301,16 +338,16 @@ class Slider:
         # tests
         self.has_error = False
         if not (min_val <= value < max_val or min_val < value <= max_val):
-            print("ERROR : [slider] wrong values initialisation, slider was not created")
+            print(f"ERROR [slider '{self._name}'] : wrong values initialisation, slider was not created")
             self.has_error = True
         if thickness <= 0:
-            print("ERROR : [slider] bad thickness value, slider was not created")
+            print(f"ERROR [slider '{self._name}'] : bad thickness value, slider was not created")
             self.has_error = True
         if radius < thickness:
-            print("ERROR : [slider] bad radius value, slider was not created")
+            print(f"ERROR [slider '{self._name}'] : bad radius value, slider was not created")
             self.has_error = True
         if length < 6 * radius:
-            print("ERROR : [slider] bad length value, slider was not created")
+            print(f"ERROR [slider '{self._name}'] : bad length value, slider was not created")
             self.has_error = True
 
         # slider initialisation
@@ -324,6 +361,7 @@ class Slider:
         self._incr = incr
         self._radius = radius
         self._thickness = thickness
+        self._is_hidden = False
         if isinstance(color, tuple):
             self._color = color
         elif isinstance(color, int):
@@ -332,7 +370,7 @@ class Slider:
             try:
                 self._color = COLORS[color]
             except KeyError:
-                print("ERROR : [slider] wrong color parameter, slider was not created")
+                print(f"ERROR [slider '{self._name}'] : wrong color parameter, slider was not created")
                 self.has_error = True
         if isinstance(fullcolor, tuple):
             self._fullcolor = fullcolor
@@ -342,7 +380,7 @@ class Slider:
             try:
                 self._fullcolor = COLORS[fullcolor]
             except KeyError:
-                print("ERROR : [slider] wrong full color parameter, slider was not created")
+                print(f"ERROR [slider '{self._name}'] : wrong full color parameter, slider was not created")
                 self.has_error = True
         self._length = length
         self._pad = self.length / (self.max_val - self.min_val)
@@ -381,7 +419,7 @@ class Slider:
                 new value
         """
         if not (self._min_val <= value < self._max_val or self._min_val < value <= self._max_val):
-            print("WARNING : [slider] wrong value affectation, nothing happened")
+            print(f"WARNING [slider '{self._name}'] : wrong value affectation, nothing happened")
             return
         self._value = value
         self._debug_image_rect()
@@ -405,9 +443,9 @@ class Slider:
             min_val : float
                 new minimum value
         """
-        print(f"WARNING : [slider] minimum value changing from {self._min_val} to {min_val}")
+        print(f"WARNING [slider '{self._name}'] : minimum value changing from {self._min_val} to {min_val}")
         if not (min_val <= self._value < self._max_val or min_val < self._value <= self._max_val):
-            print("WARNING : [slider] wrong minimum value affectation, nothing happened")
+            print(f"WARNING [slider '{self._name}'] : wrong minimum value affectation, nothing happened")
             return
         self._min_val = min_val
         self._redo_pad()
@@ -432,13 +470,49 @@ class Slider:
             max_val : float
                 new maximum value
         """
-        print(f"WARNING [slider] maximum value changing from {self._max_val} to {max_val}")
+        print(f"WARNING [slider '{self._name}'] : maximum value changing from {self._max_val} to {max_val}")
         if not (self._min_val <= self._value < max_val or self._min_val < self._value <= max_val):
-            print("WARNING : [slider] wrong maximum value affectation, nothing happened")
+            print(f"WARNING [slider '{self._name}'] : wrong maximum value affectation, nothing happened")
             return
         self._max_val = max_val
         self._redo_pad()
         self._debug_image_rect()
+
+    @property
+    def is_hidden(self) -> bool:
+        """
+        gets current display state of the slider
+        """
+        return self._is_hidden
+
+    @is_hidden.setter
+    def is_hidden(self, value: bool) -> None:
+        """
+        forces display state of the slider
+        """
+        self._is_hidden = value
+
+    def hide(self) -> None:
+        """
+        hides the slider (does not display it automatically on the screen)\\
+        slider value setting becomes unaccessible\\
+        opposite function is ``reveal``
+        """
+        if self._is_hidden:
+            print(f"WARNING [slider '{self._name}'] : slider is already hidden, nothing changed")
+            return
+        self._is_hidden = True
+
+    def reveal(self) -> None:
+        """
+        reveals the slider back (displays it on the screen)\\
+        slider value setting becomes accessible again\\
+        opposite function is ``hide``
+        """
+        if not self._is_hidden:
+            print(f"WARNING [slider '{self._name}'] : slider is not hidden, nothing changed")
+            return
+        self._is_hidden = False
 
     def move_to(self, x: int = None, y: int = None) -> None:
         """
@@ -492,7 +566,7 @@ class Slider:
             name : str
                 new name
         """
-        print(f"WARNING : [slider] name changing from {self._name} to {name}")
+        print(f"WARNING [slider '{self._name}'] : name changing from {self._name} to {name}")
         self._name = name
 
     @property
@@ -514,9 +588,9 @@ class Slider:
             thickness : int
                 new thickness
         """
-        print(f"WARNING : [slider] thickness changing from {self._thickness} to {thickness}")
+        print(f"WARNING [slider '{self._name}'] : thickness changing from {self._thickness} to {thickness}")
         if thickness <= 0:
-            print("WARNING : [slider] bad thickness value, nothing changed")
+            print(f"WARNING [slider '{self._name}'] : bad thickness value, nothing changed")
             return
         self._thickness = thickness
 
@@ -539,7 +613,7 @@ class Slider:
             color : tuple | int | str
                 the new color
         """
-        print(f"WARnING : [slider] color changing from {self._color} to {color}")
+        print(f"WARnING [slider '{self._name}'] : color changing from {self._color} to {color}")
         if isinstance(color, tuple):
             self._color = color
         elif isinstance(color, int):
@@ -548,7 +622,7 @@ class Slider:
             try:
                 self._color = COLORS[color]
             except KeyError:
-                print("WARNING : [slider] wrong color parameter, nothing changed")
+                print(f"WARNING [slider '{self._name}'] : wrong color parameter, nothing changed")
 
     @property
     def fullcolor(self) -> tuple:
@@ -569,7 +643,7 @@ class Slider:
             color : tuple | int | str
                 the new color
         """
-        print(f"WARnING : [slider] color changing from {self._fullcolor} to {color}")
+        print(f"WARnING : [slider '{self._name}'] color changing from {self._fullcolor} to {color}")
         if isinstance(color, tuple):
             self._fullcolor = color
         elif isinstance(color, int):
@@ -578,7 +652,7 @@ class Slider:
             try:
                 self._fullcolor = COLORS[color]
             except KeyError:
-                print("WARNING : [slider] wrong color parameter, nothing changed")
+                print(f"WARNING [slider '{self._name}'] : wrong color parameter, nothing changed")
 
     @property
     def radius(self) -> int:
@@ -599,9 +673,9 @@ class Slider:
             radius : int
                 new radius
         """
-        print(f"WARNING : [slider] radius changing from {self._radius} to {radius}")
+        print(f"WARNING [slider '{self._name}'] : radius changing from {self._radius} to {radius}")
         if radius < self._thickness:
-            print("WARNING : [slider] bad radius value, nothing changed")
+            print(f"WARNING [slider '{self._name}'] : bad radius value, nothing changed")
             return
         self._radius = radius
         self._debug_image_rect()
@@ -625,9 +699,9 @@ class Slider:
             length : int
                 new length
         """
-        print(f"WARNING : [slider] length changing from {self._length} to {length}")
+        print(f"WARNING [slider '{self._name}'] : length changing from {self._length} to {length}")
         if length < 6 * self._radius:
-            print("WARNING : [slider] bad length value")
+            print(f"WARNING [slider '{self._name}'] : bad length value")
             return
         self._length = length
         self._redo_pad()
@@ -798,11 +872,11 @@ class Engine:
 
         # buttons management
         self._has_buttons = False
-        self._all_buttons = set()
+        self._all_buttons: set({Button}) = set()
 
         # sliders management
         self._has_sliders = False
-        self._all_sliders = set()
+        self._all_sliders: set({Slider}) = set()
 
         # fps
         self._fps = 60
@@ -1400,7 +1474,7 @@ class Engine:
             self._all_sliders.remove(slider)
             if len(self._all_sliders) == 0:
                 self._has_sliders = False
-    
+
     def get_slider(self, name: str) -> Slider:
         """
         gets a slider based on its name\\
@@ -1567,25 +1641,26 @@ class Engine:
             # button management
             if self._has_buttons:
                 for button in self._all_buttons:
-                    button.draw()
+                    if not button.is_hidden:
+                        button.draw()
 
             # slider management
             if self._has_sliders:
                 for slider in self._all_sliders:
-                    slider.draw()
+                    if not slider.is_hidden:
+                        slider.draw()
 
             # trigerring buttons and sliders
             pos = pygame.mouse.get_pos()
             if pygame.mouse.get_pressed()[0] != 0:
                 if self._has_buttons:
                     for button in self._all_buttons:
-                        if button.collide(pos):
-                            if button.check_clic():
-                                button.on_press()
-                                button.reinit_click()
+                        if button.collide(pos) and button.check_clic() and not button.is_hidden:
+                            button.on_press()
+                            button.reinit_click()
                 if self._has_sliders:
                     for slider in self._all_sliders:
-                        if slider.collide(pos):
+                        if slider.collide(pos) and not slider.is_hidden:
                             slider.set_value(pos)
             else:
                 if self._has_buttons:
