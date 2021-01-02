@@ -65,7 +65,7 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 2. *v0.0.a2* 
    * some refractor
    * name changing from pygame_engine to phoenyx (because the bird...)
-   * efficiency improvement because frames are part of success
+   * efficiency improvement because frames are parts of success
 3. *v0.0.a3*
    * wait... [Buttons](phonyx/renderer.py) ? (type ``help(Button)`` to learn more)
    * buttons have better click response (hold or choose the number of frames to pass while uncliked to be able to trigger the button again)
@@ -85,10 +85,15 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
    * file test.py now features more drawing basics
    * button and slider have alternative drawing methods
    * better overall validation tests objects
-   * name changing from Engine to Renderer
+   * class name changing from Engine to Renderer
+8. *v0.1.3*
+   * keyboard integration (you can now use ``Renderer.keys.`` to find keys)
+   * keys stored in a new unaccessible class so autocompletion works
+   * added option for keys to perform actions only when released, pressed or hold
 
 ## TODOs
 * ~~option to hide buttons and sliders or to draw them only when needed~~
 * ~~option of alts drawing methods for buttons~~
-* keyboard integration
+* ~~keyboard integration~~
 * scrollbars and side menus
+* physics Sandbox
