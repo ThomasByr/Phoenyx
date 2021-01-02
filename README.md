@@ -17,9 +17,9 @@ Please go and check [pygame](https://github.com/pygame/pygame.git) for their ama
 ## How to ?
 Please refer to [test.py](examples/test.py) on GitHub for a very simple but effective test file.
 ```python
-from phoenyx import Engine
+from phoenyx import Renderer
 
-renderer = Engine(600, 600)
+renderer = Renderer(600, 600)
 
 
 def setup():
