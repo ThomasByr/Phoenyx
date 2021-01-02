@@ -12,11 +12,11 @@ Provides
 
 Initialisation
 --------------
->>> # from now on we will assume Engine and Vector are imported as followed
-... from pygame_engine import Engine
-... from pygame_engine import Vector
->>> # new pygame Engine
-... renderer = Engine(600, 600)
+>>> # from now on we will assume Renderer and Vector are imported as followed
+... from phoenyx import Renderer
+... from phoenyx import Vector
+>>> # new pygame Renderer
+... renderer = Renderer(600, 600)
 
 Drawing basics
 --------------
@@ -52,7 +52,7 @@ You can also create sliders with
 All sliders can returns their value based on their name (which should be unique)
 and the update of their value is done automatically. You must however take their
 value and then use it manually (it is not bound to an external variable). Note
-that each slider greatly decreases the frames of the ``Engine``.
+that each slider greatly decreases the frames of the ``Renderer``.
 
 Vectors
 -------
@@ -77,11 +77,11 @@ Please note
 Please note that this library is not fully tested and thus may be very buggy.
 So pay attention especially when creating buttons / sliders and attempting to
 remove or trigger them.
-Also both buttons and sliders currently have unsupported methods for the Engine
+Also both buttons and sliders currently have unsupported methods for the Renderer
 such as moving them on the screen, resizing them, changing their attributes...
 Finally, ERROR and WARNING do not cause a 'real' ``python error`` but throw some
 pieces of information in the console. May turn into spam.
 """
 
 from .vector import *
-from .engine import *
+from .renderer import *
