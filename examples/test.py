@@ -1,11 +1,11 @@
-from phoenyx import Engine
+from phoenyx import Renderer
 
-renderer = Engine(600, 600)  # 600x600 window
+renderer = Renderer(600, 600)  # 600x600 window
 
 
 def setup():
     """
-    setup function for the Engine\\
+    setup function for the Renderer\\
     this function is called once
     """
     # new Slider at 100, 100 named "slider"
@@ -27,13 +27,13 @@ def setup():
     renderer.no_fill()  # disable filling
     renderer.stroke = "red"  # enable stroking with red color
     renderer.stroke_weight = 5  # stroke weight of 5
-    renderer.rect_mode = "CENTER"  # rect base point of now center instead of top left corner
+    renderer.rect_mode = "CENTER"  # rect base point is now center instead of top left corner
     renderer.translation_behaviour = "KEEP"  # keep rect mode each time trough draw
 
 
 def draw():
     """
-    draw function for the Engine\\
+    draw function for the Renderer\\
     this function is repeated over and over
     """
     renderer.background(51)  # background color
