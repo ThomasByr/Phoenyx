@@ -1,4 +1,4 @@
-from phoenyx.engine import Engine
+from phoenyx import Engine
 
 renderer = Engine(600, 600)  # 600x600 window
 
@@ -8,7 +8,7 @@ def setup():
     setup function for the Engine\\
     this function is called once
     """
-    # new Slider at 100,100 named "slider"
+    # new Slider at 100, 100 named "slider"
     # minimum value : 0
     # maximum value : 10
     # initial value : 1
@@ -23,6 +23,13 @@ def setup():
     # makes text appear bigger
     renderer.text_size = 15
 
+    # global drawing settings
+    renderer.no_fill()  # disable filling
+    renderer.stroke = "red"  # enable stroking with red color
+    renderer.stroke_weight = 5  # stroke weight of 5
+    renderer.rect_mode = "CENTER"  # rect base point of now center instead of top left corner
+    renderer.translation_behaviour = "KEEP"  # keep rect mode each time trough draw
+
 
 def draw():
     """
@@ -32,6 +39,8 @@ def draw():
     renderer.background(51)  # background color
     # getting slider value by name
     renderer.text(100, 500, f"value of slider : {renderer.get_slider_value('slider')}")
+
+    renderer.rect((325, 325), 60, 60)  # draw rect around button
 
 
 if __name__ == "__main__":
