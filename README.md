@@ -28,21 +28,30 @@ def setup():
 
     renderer.text_size = 15
 
+    renderer.no_fill()
+    renderer.stroke = "red"
+    renderer.stroke_weight = 5
+    renderer.rect_mode = "CENTER"
+    renderer.translation_behaviour = "KEEP"
+
 
 def draw():
     renderer.background(51)
+
     renderer.text(100, 500, f"value of slider : {renderer.get_slider_value('slider')}")
+    renderer.rect((325, 325), 60, 60)
 
 
 if __name__ == "__main__":
     renderer.run(draw, setup=setup)
+
 ```
 For further help please try ``help(phoenyx)`` or read in-code docs.
 
 ## Requirements
 Obviously some distribution of python : ``python 3.9`` and above is needed.
 
-You will also need ``pygame`` in order to use the Engine and ``numpy`` to use Vectors.
+You will also need ``pygame`` in order to use the Engine and ``numpy`` to use Vectors. Also if you are on Windows and numpy 1.19.4 happens not to work with the last Microsoft update, make sure to uninstall the current distribution of numpy and then do ``pip install numpy==1.19.3``.
 
 ## Licenses
 Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details. Phoenyx also includes the following components from other open source projects (see LICENSES folder for more):
@@ -50,15 +59,35 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 * [pygame](https://www.pygame.org/) licended under the GNU LGPL version 2.1
 
 ## Changelog
-1. *v0.0.a1* : Initial commit and packaging (please not that alpha version are no longer accessible for download)
-2. *v0.0.a2* : Some refractor, name changing and efficiency improvement.
-3. *v0.0.a3* : Wait... [Buttons](pygame_engine/engine.py) ? (type ``help(Button)`` to learn more)
-4. *v0.0.a4* : [Sliders](pygame_engine/engine.py) now ? (type ``help(Slider)`` to learn more)
-5. *v0.1.0* : Buttons and Sliders do not rely anyore on images for greater protability but are now less customizable.
-6. *v0.1.1* : Buttons and Sliders can now be hidden. Changed python dependency. Slightly better WARNING and ERROR messages.
+1. *v0.0.a1*
+   * initial commit and packaging 
+   * please note that alpha version are no longer accessible for download
+2. *v0.0.a2* 
+   * some refractor
+   * name changing from pygame_engine to phoenyx (because the bird...)
+   * efficiency improvement because frames are part of success
+3. *v0.0.a3*
+   * wait... [Buttons](pygame_engine/engine.py) ? (type ``help(Button)`` to learn more)
+   * buttons have better click response (hold or choose the number of frames to pass while uncliked to be able to trigger the button again)
+4. *v0.0.a4*
+   * [Sliders](pygame_engine/engine.py) now ? (type ``help(Slider)`` to learn more)
+   * sliders have their name on the left, minimum and maximum value on respective sides
+   * added the current value on top of the cursor
+5. *v0.1.0*
+   * buttons and sliders do not rely anyore on images for greater portability but are now less customizable
+   * initial release on PyPI !
+6. *v0.1.1*
+   * buttons and sliders can now be hidden
+   * changed python dependency from 3.8 to 3.9 to improve reliability trough better type checks
+   * slightly better WARNING and ERROR messages (button and slider name is displayed)
+7. *v0.1.2*
+   * saving the state of the Engine works properly and also saves rect_mode
+   * file test.py now features more drawing basics
+   * button and slider have alternative drawing methods
+   * better overall validation tests objects
 
 ## TODOs
-* ~~option to hide Buttons and Sliders or to draw them only when needed~~
-* option of alts drawing methods for Buttons
+* ~~option to hide buttons and sliders or to draw them only when needed~~
+* ~~option of alts drawing methods for buttons~~
 * keyboard integration
 * scrollbars and side menus
