@@ -6,10 +6,24 @@ __all__ = ["Engine", "Button", "Slider"]
 #%% globals - not wildcart accessible
 P2D = "P2D"
 P3D = "P3D"
+
+# rect mode
 CENTER = "CENTER"
 CORNER = "CORNER"
+
+# translation behaviour
 RESET = "RESET"
 KEEP = "KEEP"
+
+# shapes
+RECTANGLE = "RECTANGLE"
+ELLIPSE = "ELLIPSE"
+CROSS = "CROSS"
+PLUS = "PLUS"
+CIRCLE = "CIRCLE"
+SQUARE = "SQUARE"
+
+# colors
 COLORS = {
     "black": (0, 0, 0),
     "white": (255, 255, 255),
@@ -43,7 +57,10 @@ class Button:
                  action=lambda: None,
                  height: int = 50,
                  width: int = 50,
-                 color: str = None) -> None:
+                 shape: str = RECTANGLE,
+                 color: tuple = None,
+                 stroke: tuple = None,
+                 weight: int = 1) -> None:
         """
         new Button instance
 
@@ -54,7 +71,7 @@ class Button:
             x : int
                 the x-coordinate (TOP LEFT of the button)
             y : int
-                the y-coordinate on the screen (TOP LEFT of the button)
+                the y-coordinate (TOP LEFT of the button)
             name : str
                 the name of the button (must be unique !)
             count : (int, optional)
@@ -69,10 +86,22 @@ class Button:
             width : (int, optional)
                 the width of the button
                 Defaults to 50
-            color : (str, optional)
-                color to draw box
+            shape : (str, optional)
+                the shape of the button
+                RECTANGLE | ELLIPSE
+                Defaults to RECTANGLE
+            color : (tuple, optional)
+                color to fill button and enables filling
+                if both color and stroke are None, the button will be filled by default
                 Defaults to None
+            stroke : (tuple, optional)
+                color to draw the outside box and enables stroking
+                Defaults to None
+            weight : (int, optional)
+                stroke weight if stroke is not None
+                Default to 1
         """
+        self.has_error = False
         self._engine: Engine = engine
         self._x = x
         self._y = y
@@ -81,9 +110,47 @@ class Button:
         self._click = 0
         self._action = action
         self._height = height
-        self._is_hidden = False
         self._width = width
-        self._color = (color, 70)[color is None]
+        self._is_hidden = False
+
+        color = (color, 0)[color is None and stroke is None]
+        if isinstance(color, tuple):
+            self._color = color
+        elif isinstance(color, int):
+            self._color = color, color, color
+        elif color is None:
+            self._color = None
+        else:
+            try:
+                self._color = COLORS[color]
+            except KeyError:
+                print(f"ERROR [button {self._name}] : wrong color parameter, button was not created")
+                self.has_error = True
+
+        if isinstance(stroke, tuple):
+            self._stroke = stroke
+        elif isinstance(stroke, int):
+            self._stroke = stroke, stroke, stroke
+        elif stroke is None:
+            self._stroke = None
+        else:
+            try:
+                self._stroke = COLORS[stroke]
+            except KeyError:
+                print(f"ERROR [button {self._name}] : wrong stroke parameter, button was not created")
+                self.has_error = True
+
+        if shape not in (RECTANGLE, ELLIPSE):
+            print(f"ERROR [button {self._name}] : wrong shape parameter, button was not created")
+            self.has_error = True
+        self._shape = shape
+
+        if weight <= 0 and self._stroke is not None:
+            print(
+                f"ERROR [button {self._name}] : weight can't be {weight} if stroking is not disabled, button was not created"
+            )
+            self.has_error = True
+        self._weight = weight
 
     @property
     def click_count(self) -> int:
@@ -103,9 +170,9 @@ class Button:
             click_count : int
                 new click_count
         """
-        print(f"WARNING [button '{self._name}'] : attempting to modify click behaviour")
+        print(f"INFO [button {self._name}] : attempting to modify click behaviour")
         if click_count < 0:
-            print(f"WARNING [button '{self._name}'] : bad click_count, nothing changed")
+            print(f"ERROR [button {self._name}] : bad click_count, nothing changed")
             return
         self._click_count = click_count
 
@@ -148,6 +215,132 @@ class Button:
         """
         self._is_hidden = value
 
+    @property
+    def shape(self) -> str:
+        """
+        gets current shape to draw the button
+        """
+        return self._shape
+
+    @shape.setter
+    def shape(self, shape: str) -> None:
+        """
+        sets the shape to draw the button\\
+        deprecated : do not use
+
+        Parameters
+        ----------
+            shape : str
+                the shape of the button
+                RECTANGLE | ELLIPSE
+        """
+        print(f"INFO [button {self._name}] : attempting shape change")
+        if shape not in (RECTANGLE, ELLIPSE):
+            print(f"ERROR [button {self._name}] : {shape} is not a valid shape, nothing changed")
+            return
+        self._shape = shape
+
+    @property
+    def color(self) -> tuple:
+        """
+        gets button filling color\\
+        might be None if filling is disabled for this button
+        """
+        return self._color
+
+    @color.setter
+    def color(self, color: tuple) -> None:
+        """
+        sets button filling color\\
+        color can be None to disable filling\\
+        deprecated : do not use
+
+        Parameters
+        ----------
+            color : tuple | int | str
+                the new color
+        """
+        print(f"INFO [button {self._name}] : attempting filling change")
+        if isinstance(color, tuple):
+            self._color = color
+        elif isinstance(color, int):
+            self._color = color, color, color
+        elif color is None:
+            if self._stroke is None:
+                print(
+                    f"ERROR [button {self._name}] : filling can't be disabled if stroking also is, nothing changed"
+                )
+                return
+            self._color = None
+        else:
+            try:
+                self._color = COLORS[color]
+            except KeyError:
+                print(f"ERROR [button {self._name}] : {color} is not a valid color, nothing changed")
+
+    @property
+    def stroke(self) -> tuple:
+        """
+        gets button stroking color\\
+        might be None if stroking is disabled for this button
+        """
+        return self._stroke
+
+    @stroke.setter
+    def stroke(self, stroke: tuple) -> None:
+        """
+        sets button stroking color\\
+        color can be None to disable stroking\\
+        deprecated : do not use
+
+        Parameters
+        ----------
+            stroke : tuple | int | str
+                the new color
+        """
+        if isinstance(stroke, tuple):
+            self._stroke = stroke
+        elif isinstance(stroke, int):
+            self._stroke = stroke, stroke, stroke
+        elif stroke is None:
+            if self._color is None:
+                print(
+                    f"ERROR [button {self._name}] : stroking can't be disabled if filling also is, nothing changed"
+                )
+                return
+            self._stroke = None
+        else:
+            try:
+                self._stroke = COLORS[stroke]
+            except KeyError:
+                print(f"ERROR [button {self._name}] : wrong stroke parameter, button was not created")
+                self.has_error = True
+
+    @property
+    def weight(self) -> int:
+        """
+        gets stroke weight for this button
+        """
+        return self._weight
+
+    @weight.setter
+    def weight(self, weight: int) -> None:
+        """
+        sets stroke weight for this button\\
+        can be any integer if stroking is disabled
+
+        Parameters
+        ----------
+            weight : int
+                the new weight
+        """
+        if weight <= 0 and self._stroke is not None:
+            print(
+                f"ERROR [button {self._name}] : weight can't be {weight} if stroking is not disabled, nothing changed"
+            )
+            return
+        self._weight = weight
+
     def hide(self) -> None:
         """
         hides the button (does not display it automatically on the screen)\\
@@ -155,7 +348,7 @@ class Button:
         opposite function is ``reveal``
         """
         if self._is_hidden:
-            print(f"WARNING [button '{self._name}'] : button is already hidden, nothing changed")
+            print(f"WARNING [button {self._name}] : button is already hidden, nothing changed")
             return
         self._is_hidden = True
 
@@ -166,7 +359,7 @@ class Button:
         opposite function is ``hide``
         """
         if not self._is_hidden:
-            print(f"WARNING [button '{self._name}'] : button is not hidden, nothing changed")
+            print(f"WARNING [button {self._name}] : button is not hidden, nothing changed")
             return
         self._is_hidden = False
 
@@ -188,17 +381,20 @@ class Button:
         if y is not None:
             self._y = y
 
-    def resize(self, height: int, width: int) -> None:
+    def resize(self, width: int, height: int) -> None:
         """
-        resize the sprite image
+        resize the button box
 
         Parameters
         ----------
-            height : int
-                new height
             width : int
                 new width
+            height : int
+                new height
         """
+        if height <= 2 and width <= 2:
+            print(f"ERROR [button {self._name}] : ({width}, {height}) is not a valid size, nothing changed")
+            return
         self._height = height
         self._width = width
 
@@ -220,7 +416,7 @@ class Button:
             name : str
                 new name
         """
-        print(f"WARNING [button '{self._name}'] : name changing to '{name}'")
+        print(f"INFO [button {self._name}] : name changing to '{name}'")
         self._name = name
 
     @property
@@ -241,7 +437,7 @@ class Button:
             action : python function
                 new action
         """
-        print(f"WARNING [button '{self._name}'] : action changed")
+        print(f"INFO [button {self._name}] : action changed")
         self._action = action
 
     def collide(self, pos) -> bool:
@@ -262,12 +458,23 @@ class Button:
 
         name_label = engine.FONT.render(self.name, True, (0, 0, 0))
 
-        engine.no_stroke()
-        engine.fill = self._color
-        engine.rect_mode = CORNER
-        engine.rect((self._x, self._y), self._width, self._width)
-        x = self._x + (self._width // 2) - (name_label.get_width() // 2)
-        y = self._y + (self._height // 2) - (name_label.get_height() // 2)
+        x = self._x + (self._width // 2)
+        y = self._y + (self._height // 2)
+        engine.rect_mode = CENTER
+
+        if self.color is not None:
+            engine.fill = self.color
+        if self.stroke is not None:
+            engine.stroke = self.stroke
+            engine.stroke_weight = self.weight
+
+        if self.shape == RECTANGLE:
+            engine.rect((x, y), self._width, self._height)
+        elif self.shape == ELLIPSE:
+            engine.ellipse((x, y), self._width, self._height)
+
+        x -= name_label.get_width() // 2
+        y -= name_label.get_height() // 2
         engine.text(x, y, self.name)
 
         engine.pop()
@@ -290,6 +497,7 @@ class Slider:
             value: float,
             incr: int,
             radius: int = 7,
+            shape: str = CIRCLE,
             thickness: int = 3,
             color: tuple = (155, 155, 155),
             fullcolor: tuple = (155, 70, 70),
@@ -318,7 +526,11 @@ class Slider:
                 number of digits
             radius : (int, optional)
                 radius of the slider cursor
-                Defaults to 11
+                Defaults to 7
+            shape : (str, optional)
+                shape of the slider cursor
+                SQUARE | CIRCLE | CROSS | PLUS
+                Defaults to CIRCLE
             thickness : (int, optional)
                 thickness of the slider bar
                 Defaults to 3
@@ -338,16 +550,16 @@ class Slider:
         # tests
         self.has_error = False
         if not (min_val <= value < max_val or min_val < value <= max_val):
-            print(f"ERROR [slider '{self._name}'] : wrong values initialisation, slider was not created")
+            print(f"ERROR [slider {self._name}] : wrong values initialisation, slider was not created")
             self.has_error = True
         if thickness <= 0:
-            print(f"ERROR [slider '{self._name}'] : bad thickness value, slider was not created")
+            print(f"ERROR [slider {self._name}] : bad thickness value, slider was not created")
             self.has_error = True
         if radius < thickness:
-            print(f"ERROR [slider '{self._name}'] : bad radius value, slider was not created")
+            print(f"ERROR [slider {self._name}] : bad radius value, slider was not created")
             self.has_error = True
         if length < 6 * radius:
-            print(f"ERROR [slider '{self._name}'] : bad length value, slider was not created")
+            print(f"ERROR [slider {self._name}] : bad length value, slider was not created")
             self.has_error = True
 
         # slider initialisation
@@ -362,6 +574,7 @@ class Slider:
         self._radius = radius
         self._thickness = thickness
         self._is_hidden = False
+
         if isinstance(color, tuple):
             self._color = color
         elif isinstance(color, int):
@@ -370,8 +583,9 @@ class Slider:
             try:
                 self._color = COLORS[color]
             except KeyError:
-                print(f"ERROR [slider '{self._name}'] : wrong color parameter, slider was not created")
+                print(f"ERROR [slider {self._name}] : wrong color parameter, slider was not created")
                 self.has_error = True
+
         if isinstance(fullcolor, tuple):
             self._fullcolor = fullcolor
         elif isinstance(fullcolor, int):
@@ -380,14 +594,20 @@ class Slider:
             try:
                 self._fullcolor = COLORS[fullcolor]
             except KeyError:
-                print(f"ERROR [slider '{self._name}'] : wrong full color parameter, slider was not created")
+                print(f"ERROR [slider {self._name}] : wrong full color parameter, slider was not created")
                 self.has_error = True
+
+        if shape not in (SQUARE, CIRCLE, CROSS, PLUS):
+            print(f"ERROR [slider {self._name}] : wrong shape parameter, slider was not created")
+            self.has_error = True
+        self._shape = shape
+
         self._length = length
         self._pad = self.length / (self.max_val - self.min_val)
         x = self._x + int(self._pad * (self.value - self._min_val)) - self._radius
         self.rect = x + self._radius, self._y
 
-    def _debug_image_rect(self) -> None:
+    def _redo_rect(self) -> None:
         """
         sets correct corrdinates to cursor
         """
@@ -419,10 +639,10 @@ class Slider:
                 new value
         """
         if not (self._min_val <= value < self._max_val or self._min_val < value <= self._max_val):
-            print(f"WARNING [slider '{self._name}'] : wrong value affectation, nothing happened")
+            print(f"WARNING [slider {self._name}] : wrong value affectation, nothing happened")
             return
         self._value = value
-        self._debug_image_rect()
+        self._redo_rect()
 
     @property
     def min_val(self) -> float:
@@ -443,13 +663,13 @@ class Slider:
             min_val : float
                 new minimum value
         """
-        print(f"WARNING [slider '{self._name}'] : minimum value changing from {self._min_val} to {min_val}")
+        print(f"WARNING [slider {self._name}] : minimum value changing from {self._min_val} to {min_val}")
         if not (min_val <= self._value < self._max_val or min_val < self._value <= self._max_val):
-            print(f"WARNING [slider '{self._name}'] : wrong minimum value affectation, nothing happened")
+            print(f"WARNING [slider {self._name}] : wrong minimum value affectation, nothing happened")
             return
         self._min_val = min_val
         self._redo_pad()
-        self._debug_image_rect()
+        self._redo_rect()
 
     @property
     def max_val(self) -> float:
@@ -470,13 +690,13 @@ class Slider:
             max_val : float
                 new maximum value
         """
-        print(f"WARNING [slider '{self._name}'] : maximum value changing from {self._max_val} to {max_val}")
+        print(f"WARNING [slider {self._name}] : maximum value changing from {self._max_val} to {max_val}")
         if not (self._min_val <= self._value < max_val or self._min_val < self._value <= max_val):
-            print(f"WARNING [slider '{self._name}'] : wrong maximum value affectation, nothing happened")
+            print(f"WARNING [slider {self._name}] : wrong maximum value affectation, nothing happened")
             return
         self._max_val = max_val
         self._redo_pad()
-        self._debug_image_rect()
+        self._redo_rect()
 
     @property
     def is_hidden(self) -> bool:
@@ -499,7 +719,7 @@ class Slider:
         opposite function is ``reveal``
         """
         if self._is_hidden:
-            print(f"WARNING [slider '{self._name}'] : slider is already hidden, nothing changed")
+            print(f"WARNING [slider {self._name}] : slider is already hidden, nothing changed")
             return
         self._is_hidden = True
 
@@ -510,7 +730,7 @@ class Slider:
         opposite function is ``hide``
         """
         if not self._is_hidden:
-            print(f"WARNING [slider '{self._name}'] : slider is not hidden, nothing changed")
+            print(f"WARNING [slider {self._name}] : slider is not hidden, nothing changed")
             return
         self._is_hidden = False
 
@@ -531,7 +751,7 @@ class Slider:
             self._x = x
         if y is not None:
             self._y = y
-        self._debug_image_rect()
+        self._redo_rect()
 
     def resize(self, radius: int) -> None:
         """
@@ -546,7 +766,7 @@ class Slider:
         self.image = pygame.transform.scale(self.image, (self._radius * 2, self._radius * 2))
         self.rect = self.image.get_rect()
         self._redo_pad()
-        self._debug_image_rect()
+        self._redo_rect()
 
     @property
     def name(self) -> str:
@@ -566,7 +786,7 @@ class Slider:
             name : str
                 new name
         """
-        print(f"WARNING [slider '{self._name}'] : name changing from {self._name} to {name}")
+        print(f"INFO [slider {self._name}] : name changing from {self._name} to {name}")
         self._name = name
 
     @property
@@ -588,9 +808,9 @@ class Slider:
             thickness : int
                 new thickness
         """
-        print(f"WARNING [slider '{self._name}'] : thickness changing from {self._thickness} to {thickness}")
+        print(f"INFO [slider {self._name}] : thickness changing from {self._thickness} to {thickness}")
         if thickness <= 0:
-            print(f"WARNING [slider '{self._name}'] : bad thickness value, nothing changed")
+            print(f"ERROR [slider {self._name}] : bad thickness value, nothing changed")
             return
         self._thickness = thickness
 
@@ -613,7 +833,7 @@ class Slider:
             color : tuple | int | str
                 the new color
         """
-        print(f"WARnING [slider '{self._name}'] : color changing from {self._color} to {color}")
+        print(f"INFO [slider {self._name}] : color changing from {self._color} to {color}")
         if isinstance(color, tuple):
             self._color = color
         elif isinstance(color, int):
@@ -622,7 +842,7 @@ class Slider:
             try:
                 self._color = COLORS[color]
             except KeyError:
-                print(f"WARNING [slider '{self._name}'] : wrong color parameter, nothing changed")
+                print(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
 
     @property
     def fullcolor(self) -> tuple:
@@ -643,7 +863,7 @@ class Slider:
             color : tuple | int | str
                 the new color
         """
-        print(f"WARnING : [slider '{self._name}'] color changing from {self._fullcolor} to {color}")
+        print(f"INFO : [slider {self._name}] color changing from {self._fullcolor} to {color}")
         if isinstance(color, tuple):
             self._fullcolor = color
         elif isinstance(color, int):
@@ -652,7 +872,7 @@ class Slider:
             try:
                 self._fullcolor = COLORS[color]
             except KeyError:
-                print(f"WARNING [slider '{self._name}'] : wrong color parameter, nothing changed")
+                print(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
 
     @property
     def radius(self) -> int:
@@ -673,12 +893,37 @@ class Slider:
             radius : int
                 new radius
         """
-        print(f"WARNING [slider '{self._name}'] : radius changing from {self._radius} to {radius}")
+        print(f"INFO [slider {self._name}] : radius changing from {self._radius} to {radius}")
         if radius < self._thickness:
-            print(f"WARNING [slider '{self._name}'] : bad radius value, nothing changed")
+            print(f"ERROR [slider {self._name}] : bad radius value, nothing changed")
             return
         self._radius = radius
-        self._debug_image_rect()
+        self._redo_rect()
+
+    @property
+    def shape(self) -> str:
+        """
+        gets current shape of the slider cursor
+        """
+        return self._shape
+
+    @shape.setter
+    def shape(self, shape: str) -> None:
+        """
+        sets current shape of the slider\\
+        deprecated : do not use
+
+        Parameters
+        ----------
+            shape : str
+                new shape
+                SQUARE | CIRCLE | CROSS | PLUS
+        """
+        print(f"INFO [slider {self._name}] : attempting shape change")
+        if shape not in (SQUARE, CIRCLE, CROSS, PLUS):
+            print(f"ERROR [slider {self._name}] : {shape} is not a valid shape, nothing changed")
+            return
+        self._shape = shape
 
     @property
     def length(self) -> int:
@@ -699,13 +944,13 @@ class Slider:
             length : int
                 new length
         """
-        print(f"WARNING [slider '{self._name}'] : length changing from {self._length} to {length}")
+        print(f"INFO [slider {self._name}] : length changing from {self._length} to {length}")
         if length < 6 * self._radius:
-            print(f"WARNING [slider '{self._name}'] : bad length value")
+            print(f"ERROR [slider {self._name}] : bad length value")
             return
         self._length = length
         self._redo_pad()
-        self._debug_image_rect()
+        self._redo_rect()
 
     def set_value(self, pos: tuple) -> None:
         """
@@ -749,13 +994,39 @@ class Slider:
         engine.stroke_weight = self.thickness
         engine.stroke = self.color
         engine.line((self._x, self._y), (self._x + self.length, self._y))
+
         engine.stroke = self.fullcolor
         pad = self.length / (self.max_val - self.min_val)
         x = self._x + int(pad * (self.value - self._min_val))
         engine.line((self._x, self._y), (x, self._y))
-        engine.fill = self.fullcolor
-        engine.no_stroke()
-        engine.circle(self.rect, self._radius)
+
+        if self.shape == SQUARE:
+            engine.fill = self.fullcolor
+            engine.no_stroke()
+            engine.rect_mode = CENTER
+            engine.rect(self.rect, 2 * self.radius, 2 * self.radius)
+        elif self.shape == CIRCLE:
+            engine.fill = self.fullcolor
+            engine.no_stroke()
+            engine.rect_mode = CENTER
+            engine.circle(self.rect, self.radius)
+        elif self.shape == CROSS:
+            engine.no_fill()
+            engine.stroke = self.fullcolor
+            engine.stroke_weight = self.thickness
+            engine.line((self.rect[0] - self.radius, self.rect[1] - self.radius),
+                        (self.rect[0] + self.radius, self.rect[1] + self.radius))
+            engine.line((self.rect[0] - self.radius, self.rect[1] + self.radius),
+                        (self.rect[0] + self.radius, self.rect[1] - self.radius))
+        elif self.shape == PLUS:
+            engine.no_fill()
+            engine.stroke = self.fullcolor
+            engine.stroke_weight = self.thickness
+            engine.line((self.rect[0], self.rect[1] + self.radius),
+                        (self.rect[0], self.rect[1] - self.radius))
+            engine.line((self.rect[0] - self.radius, self.rect[1]),
+                        (self.rect[0] + self.radius, self.rect[1]))
+
         engine.text(self._x - name_label.get_width() - 10, self._y - name_label.get_height() // 2, self.name)
         engine.text(self._x - min_label.get_width() // 2, self._y + self.thickness, str(self.min_val))
         engine.text(self._x + self.length - max_label.get_width() // 2, self._y + self.thickness,
@@ -772,7 +1043,7 @@ class Engine:
     Pygame Engine
     =============
     Provides:
-    1. 2D visual renderer using ``pygame`` on ``python 3.8`` and above
+    1. 2D visual renderer using ``pygame`` on ``python 3.9`` and above
     2. fast drawing features and global settings
     3. full ``Vector`` compatibility (accessed as tuples)
 
@@ -891,7 +1162,7 @@ class Engine:
 
     def set_title(self, title: str) -> None:
         """
-        give a new title to the main window
+        gives a new title to the main window
 
         Parameters
         ----------
@@ -921,7 +1192,7 @@ class Engine:
     @fill.setter
     def fill(self, color: tuple) -> None:
         """
-        change the fill color globally
+        changes the fill color globally
 
         Parameters
         ----------
@@ -956,7 +1227,7 @@ class Engine:
     @stroke.setter
     def stroke(self, color: tuple) -> None:
         """
-        change the stroke color globally
+        changes the stroke color globally
 
         Parameters
         ----------
@@ -985,7 +1256,7 @@ class Engine:
     @stroke_weight.setter
     def stroke_weight(self, weight: int) -> None:
         """
-        change the stroke weight globally
+        changes the stroke weight globally
 
         Parameters
         ----------
@@ -1005,7 +1276,7 @@ class Engine:
     @rect_mode.setter
     def rect_mode(self, mode: str = CENTER) -> None:
         """
-        change rect mode globally\\
+        changes rect mode globally\\
         does not enables stroking neither filling back
 
         Parameters
@@ -1014,6 +1285,9 @@ class Engine:
                 CENTER or CORNER
                 Defaults to CENTER
         """
+        if mode not in (CENTER, CORNER):
+            print(f"ERROR [engine] : {mode} is not a valid mode for tect_mode, nothing happened")
+            return
         self._rect_mode = mode
 
     @property
@@ -1026,7 +1300,7 @@ class Engine:
     @text_size.setter
     def text_size(self, size: int) -> None:
         """
-        change text size globally
+        changes text size globally
 
         Parameters
         ----------
@@ -1046,7 +1320,7 @@ class Engine:
     @text_color.setter
     def text_color(self, color: tuple) -> None:
         """
-        change the text color globally
+        changes the text color globally
 
         Parameters
         ----------
@@ -1070,7 +1344,7 @@ class Engine:
             if self.stroke_weight == 0:
                 self.stroke_weight = 1
 
-    def _offset_point(self, point: tuple) -> tuple:
+    def _offset_point(self, point: tuple) -> list:
         """
         Offsets a point based on _x_offset and _y_offset
 
@@ -1131,6 +1405,34 @@ class Engine:
         # stroke
         if self._stroke:
             pygame.draw.rect(self._window, self.stroke, (point[:2], (width, height)), self.stroke_weight)
+
+    def ellipse(self, point: tuple, width: int, height: int) -> None:
+        """
+        draws an ellipse on the screen\\
+        calls debug_enabled_drawing_methods first
+
+        Parameters
+        ----------
+            point : tuple | list | Vector
+                base point of the rectangle for the ellipse
+            width : int
+                the widdth of the rectangle for the ellipse
+            height : int
+                the height of the rectangle for the ellipse
+        """
+        self._debug_enabled_drawing_methods()
+        point = self._offset_point(point)
+        point = list(point)
+        if self.rect_mode == CENTER:
+            point[0] -= width // 2
+            point[1] -= height // 2
+
+        # fill
+        if self._fill:
+            pygame.draw.ellipse(self._window, self.fill, (point[:2], (width, height)), 0)
+        # stroke
+        if self._stroke:
+            pygame.draw.ellipse(self._window, self.stroke, (point[:2], (width, height)), self.stroke_weight)
 
     def circle(self, center: tuple, radius: int) -> None:
         """
@@ -1253,7 +1555,7 @@ class Engine:
                 KEEP | RESET
         """
         if behaviour not in ("RESET", "KEEP"):
-            print("WARNING : [engine] bad behaviour, nothing happened")
+            print(f"WARNING [engine] : {behaviour} is not a valid translation behaviour, nothing happened")
             return
         self._translation_behaviour = behaviour
 
@@ -1290,12 +1592,21 @@ class Engine:
                 the height of the sprite
             width : int
                 the width of the sprite
-            image : str
-                path to image
+            shape : str
+                the shape of the button
+                RECTANGLE | ELLIPSE
+            color : str
+                color to fill button and enables filling
+                if both color and stroke are None, the button will be filled by default
+            stroke : str
+                color to draw the outside box and enables stroking
+            weight : int
+                stroke weight if stroke is not None
         """
         button = Button(self, x, y, name, **kwargs)
-        self._add_button(button)
-        self._has_buttons = True
+        if not button.has_error:
+            self._add_button(button)
+            self._has_buttons = True
 
     def _remove_button(self, button: Button) -> None:
         """
@@ -1329,9 +1640,9 @@ class Engine:
                 sprite = button
                 found += 1
         if found == 0:
-            print("WARGNIN : [engine] no matching button")
+            print("WARNING [engine] : no matching button")
         elif found >= 2:
-            print("WARNING : [engine] to many matches - considering last found")
+            print("WARNING [engine] : to many matches - considering last found")
         return sprite
 
     def kill_button(self, name: str) -> None:
@@ -1352,9 +1663,9 @@ class Engine:
                 sprite = button
                 found += 1
         if found == 0:
-            print("WARGNIN : [engine] no matching button")
+            print("WARNING [engine] : no matching button")
         elif found >= 2:
-            print("WARNING : [engine] to many matches - considering last found")
+            print("WARNING [engine] : to many matches - considering last found")
         self._remove_button(sprite)
 
     def pop_button(self, name: str) -> Button:
@@ -1378,35 +1689,11 @@ class Engine:
                 sprite = button
                 found += 1
         if found == 0:
-            print("WARGNIN : [engine] no matching button")
+            print("WARNING [engine] : no matching button")
         elif found >= 2:
-            print("WARNING : [engine] to many matches - considering last found")
+            print("WARNING [engine] : to many matches - considering last found")
         self._remove_button(sprite)
         return sprite
-
-    @staticmethod
-    def _events() -> list:
-        """
-        gets all events
-        """
-        return pygame.event.get()
-
-    @staticmethod
-    def _quit() -> None:
-        """
-        close current window
-        """
-        pygame.quit()
-
-    def _quit_check(self) -> None:
-        """
-        loop trougth events and look for the QUIT event\\
-        does nothing if found\\
-        must not be called if Engine._events() is called before
-        """
-        for event in self._events():
-            if event.type == pygame.QUIT:
-                self._is_running = False
 
     def _add_slider(self, slider: Slider) -> None:
         """
@@ -1444,6 +1731,9 @@ class Engine:
         -------
             radius : int
                 the radius of the slider cursor
+            shape : str
+                shape of the slider cursor
+                SQUARE | CIRCLE | CROSS | PLUS
             thickness : int
                 the thickness of the slider bar
             color : tuple | int | str
@@ -1452,8 +1742,6 @@ class Engine:
                 color of the bar when its full
             length : int
                 the length of the slider bar
-            image : str
-                image used for the cursor
         """
         slider = Slider(self, x, y, name, min, max, value, incr, **kwargs)
         if not slider.has_error:
@@ -1492,9 +1780,9 @@ class Engine:
                 sprite = slider
                 found += 1
         if found == 0:
-            print("WARGNIN : [engine] no matching slider")
+            print("WARNING [engine] : no matching slider")
         elif found >= 2:
-            print("WARNING : [engine] to many matches - considering last found")
+            print("WARNING [engine] : to many matches - considering last found")
         return sprite
 
     def kill_slider(self, name: str) -> None:
@@ -1515,9 +1803,9 @@ class Engine:
                 sprite = slider
                 found += 1
         if found == 0:
-            print("WARGNIN : [engine] no matching slider")
+            print("WARNING [engine] : no matching slider")
         elif found >= 2:
-            print("WARNING : [engine] to many matches - considering last found")
+            print("WARNING [engine] : to many matches - considering last found")
         self._remove_slider(sprite)
 
     def pop_slider(self, name: str) -> Button:
@@ -1541,9 +1829,9 @@ class Engine:
                 sprite = slider
                 found += 1
         if found == 0:
-            print("WARGNIN : [engine] no matching slider")
+            print("WARNING [engine] : no matching slider")
         elif found >= 2:
-            print("WARNING : [engine] to many matches - considering last found")
+            print("WARNING [engine] : to many matches - considering last found")
         self._remove_slider(sprite)
         return sprite
 
@@ -1567,11 +1855,35 @@ class Engine:
                 sprite = slider
                 found += 1
         if found == 0:
-            print("WARNING [engine] no matching slider")
+            print("WARNING [engine] : no matching slider")
             return
         if found >= 2:
-            print("WARNING : [engine] to many matches - considering last found")
+            print("WARNING [engine] : to many matches - considering last found")
         return sprite.value
+
+    @staticmethod
+    def _events() -> list:
+        """
+        gets all events
+        """
+        return pygame.event.get()
+
+    @staticmethod
+    def _quit() -> None:
+        """
+        close current window
+        """
+        pygame.quit()
+
+    def _quit_check(self) -> None:
+        """
+        loop trougth events and look for the QUIT event\\
+        does nothing if found\\
+        must not be called if Engine._events() is called before
+        """
+        for event in self._events():
+            if event.type == pygame.QUIT:
+                self._is_running = False
 
     @property
     def fps(self) -> float:
@@ -1591,7 +1903,7 @@ class Engine:
                 frames per second
         """
         if frames <= 0:
-            print("WARNING : [engine] desired fps too low, setting to 1")
+            print("WARNING [engine] : desired fps too low, setting to 1")
             frames = 1
         self._fps = frames
 
@@ -1603,7 +1915,7 @@ class Engine:
         """
         self._save = [
             self._title, self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset,
-            self._y_offset, self.translation_behaviour, self.text_color, self.text_size
+            self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size
         ]
         self._has_save = True
 
@@ -1613,9 +1925,9 @@ class Engine:
         does nothing if save is not found
         """
         if not self._has_save:
-            print("WARNING : [engine] no save was found, nothing changed")
+            print("WARNING [engine] : no save was found, nothing changed")
             return
-        self._title, self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset, self._y_offset, self.translation_behaviour, self.text_color, self.text_size = self._save
+        self._title, self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset, self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size = self._save
         self._save = []
         self._has_save = False
 

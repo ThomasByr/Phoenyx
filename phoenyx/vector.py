@@ -16,7 +16,7 @@ class Vector(np.ndarray):
     Vector
     ======
     provides :
-    1. Vector support for ``python 3.8`` and upper in two or three dimensional space
+    1. Vector support for ``python 3.9`` and upper in two or three dimensional space
     2. Fast standards operations using numpy
     3. Full random support plus ndarray and p5 compatibility
 
