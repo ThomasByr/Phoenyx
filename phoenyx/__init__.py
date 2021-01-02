@@ -83,5 +83,5 @@ Finally, ERROR and WARNING do not cause a 'real' ``python error`` but throw some
 pieces of information in the console. May turn into spam.
 """
 
-from .vector import Vector
-from .engine import Engine, Button, Slider
+from .vector import *
+from .engine import *
