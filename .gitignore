@@ -64,5 +64,8 @@ target/
 .pytest_cache
 .pypirc
 
+# scripting
+script/
+
 # VS
 .vs/
