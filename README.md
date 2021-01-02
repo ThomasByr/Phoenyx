@@ -67,10 +67,10 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
    * name changing from pygame_engine to phoenyx (because the bird...)
    * efficiency improvement because frames are part of success
 3. *v0.0.a3*
-   * wait... [Buttons](pygame_engine/engine.py) ? (type ``help(Button)`` to learn more)
+   * wait... [Buttons](phonyx/renderer.py) ? (type ``help(Button)`` to learn more)
    * buttons have better click response (hold or choose the number of frames to pass while uncliked to be able to trigger the button again)
 4. *v0.0.a4*
-   * [Sliders](pygame_engine/engine.py) now ? (type ``help(Slider)`` to learn more)
+   * [Sliders](phonyx/renderer.py) now ? (type ``help(Slider)`` to learn more)
    * sliders have their name on the left, minimum and maximum value on respective sides
    * added the current value on top of the cursor
 5. *v0.1.0*
@@ -85,6 +85,7 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
    * file test.py now features more drawing basics
    * button and slider have alternative drawing methods
    * better overall validation tests objects
+   * name changing from Engine to Renderer
 
 ## TODOs
 * ~~option to hide buttons and sliders or to draw them only when needed~~
