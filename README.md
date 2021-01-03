@@ -94,7 +94,9 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
    * excluded some unnecessary files from build
    * some typo fix
    * added new colors, a lot of them
+10. *v0.1.5*
    * split renderer lib into many files for readability
+   * lib fix, bug from circular imports
 
 ## TODOs
 * ~~option to hide buttons and sliders or to draw them only when needed~~
