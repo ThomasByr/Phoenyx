@@ -3,12 +3,12 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
-with open("requirements.txt", "r", encoding="UTF-8") as f:
+with open("requirements.txt", "r", encoding="utf-8") as f:
     requires = f.read().split("\n")
 
 setuptools.setup(
     name="phoenyx",
-    version="0.1.3",
+    version="0.1.4",
     author="Thomas B",
     author_email="tbouyer2000@gmail.com",
     description="An engine for pygame",
