@@ -90,6 +90,11 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
    * keyboard integration (you can now use ``Renderer.keys.`` to find keys)
    * keys stored in a new unaccessible class so autocompletion works
    * added option for keys to perform actions only when released, pressed or hold
+9. *v0.1.4*
+   * excluded some unnecessary files from build
+   * some typo fix
+   * added new colors, a lot of them
+   * split renderer lib into many files for readability
 
 ## TODOs
 * ~~option to hide buttons and sliders or to draw them only when needed~~
