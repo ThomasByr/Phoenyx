@@ -1,5 +1,4 @@
 from phoenyx.constants import *
-from phoenyx.renderer import Renderer
 
 
 def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:
@@ -92,7 +91,7 @@ class Slider:
             self.has_error = True
 
         # slider initialisation
-        self._renderer: Renderer = renderer
+        self._renderer = renderer
         self._x = x
         self._y = y
         self._name = name

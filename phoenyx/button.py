@@ -1,5 +1,4 @@
 from phoenyx.constants import *
-from phoenyx.renderer import Renderer
 
 
 class Button:
@@ -62,7 +61,7 @@ class Button:
                 Default to 1
         """
         self.has_error = False
-        self._renderer: Renderer = renderer
+        self._renderer = renderer
         self._x = x
         self._y = y
         self._name = name
