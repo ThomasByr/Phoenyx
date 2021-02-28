@@ -121,6 +121,11 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
     * Noises library are now imported correctly
     * displaying menus name when drawing them
     * removed python sys import when unnecessary
+13. *v0.1.8* are performances a real thing in python ?
+    * added additionnal type import when importing phoenyx
+    * messed with generator type in Perlin Noise
+    * Noise library now work in all said dimensions
+    * adding callable was not a good idea and now it's gone
 
 ## TODOs
 
