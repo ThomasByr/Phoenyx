@@ -126,7 +126,11 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
     * messed with generator type in Perlin Noise
     * Noise library now work in all said dimensions
     * adding callable was not a good idea and now it's gone
+14. *v0.1.9* all tests almost performed, few bugs
     * OpenSimplex call now does not raise stupid value errors
+    * fatal error in renderer in last version, removed it
+    * added a new example file to generate Perlin noise, go check that out !
+    * menu now have a proper background (might be off when background is animated though)
 
 ## TODOs
 
