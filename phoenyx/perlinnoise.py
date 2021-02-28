@@ -99,7 +99,7 @@ class PerlinNoise(object):
         random_point = [random.gauss(0, 1) for _ in range(self.dimension)]
         # Then scale the result to a unit vector
         scale = sum(n * n for n in random_point)**-0.5
-        return (coord * scale for coord in random_point)
+        return tuple(coord * scale for coord in random_point)
 
     def get_plain_noise(self, *point) -> float:
         """

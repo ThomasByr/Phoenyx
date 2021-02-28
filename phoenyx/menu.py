@@ -403,7 +403,7 @@ class Menu:
                     break
                 max_width = width
         label = font.render(self.name, True, (0, 0, 0))
-        self._namew = label.get_width() + 10
+        self._namew = label.get_width() + 30
         self._renderer.pop()
         self.width = max_width
 
@@ -544,7 +544,7 @@ class Menu:
             k = renderer.win_width - 20 - self.width
             x = _map(self.tick_count, 0, self.max_ticks, renderer.win_width - 20, k)
             x0 = x
-            xw = x0 + 10
+            xw = x0 + 30
         elif self.side == LEFT:
             k = 5 + self.width
             x = _map(self.tick_count, 0, self.max_ticks, 5, k)
@@ -552,7 +552,7 @@ class Menu:
             xw = x0 - self._namew
 
         renderer.push()
-        renderer.fill = renderer.bg
+        renderer.fill = renderer.win_bg
         renderer.no_stroke()
         l = len(self._all_items)
         renderer.rect((x, y), self.width, 15 + l*30)

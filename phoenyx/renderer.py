@@ -239,17 +239,6 @@ class Renderer:
         else:
             print(f"ERROR [engine] : {color} not a valid color parameter, nothing changed")
 
-    def fill(self, color) -> None:
-        """
-        callable alias for ``fill`` property if you are allergic to properties
-
-        Parameters
-        ----------
-            color : tuple | int | str
-                the new color
-        """
-        self.fill = color
-
     def no_stroke(self) -> None:
         """
         disables stroking globally
@@ -294,17 +283,6 @@ class Renderer:
         else:
             print(f"ERROR [engine] : {color} not a valid color parameter, nothing changed")
 
-    def stroke(self, color) -> None:
-        """
-        callable alias for ``stroke`` property if you are allergic to properties
-
-        Parameters
-        ----------
-            color : tuple | int | str
-                the new color
-        """
-        self.stroke = color
-
     @property
     def stroke_weight(self) -> int:
         """
@@ -328,17 +306,6 @@ class Renderer:
         """
         self._stroke = True
         self._stroke_weight = weight
-
-    def stroke_weight(self, weight: int) -> None:
-        """
-        callable alias for ``stroke_weight`` property if you are allergic to properties
-
-        Parameters
-        ----------
-            weight : int
-                new stroke weight
-        """
-        self.stroke_weight = weight
 
     @property
     def rect_mode(self) -> str:
