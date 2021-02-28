@@ -134,7 +134,7 @@ class OpenSimplexNoise(object):
         Result float is between -1. and 1.
         """
         points = list(args) + list(kwargs.values())
-        if 1 <= (n := len(points)) <= 4:
+        if not (1 <= (n := len(points)) <= 4):
             raise ValueError(f"Expected 1 to 4 values, got {len(points)}")
 
         if n == 1:
