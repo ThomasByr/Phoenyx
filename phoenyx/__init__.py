@@ -131,7 +131,13 @@ Finally, ERROR and WARNING do not cause a 'real' ``python error`` but throw some
 pieces of information in the console. May turn into spam.
 """
 
+# main classes
 from .perlinnoise import *
 from .opensimplexnoise import *
 from .vector import *
 from .renderer import *
+
+# additionnal types
+from .slider import Slider
+from .button import Button
+from .menu import Menu

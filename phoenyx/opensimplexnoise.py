@@ -1,8 +1,7 @@
-import sys
 from ctypes import c_int64
 from math import floor
 
-__all__ = ["OpenSimplex"]
+__all__ = ["OpenSimplexNoise"]
 
 STRETCH_CONSTANT_2D = (
     -0.21132486540518711774542560974902127217619912436493656199  # (1/Math.sqrt(2+1)-1)/2
