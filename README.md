@@ -116,6 +116,11 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
     * menus appear before buttons and sliders
     * menus somewhat protected holding mouse button
     * added aliases for some properties as callable (is it really a good idea ?)
+12. *v0.1.7* fixing fixes
+    * a lot of bugs from previous update have been fixed
+    * Noises library are now imported correctly
+    * displaying menus name when drawing them
+    * removed python sys import when unnecessary
 
 ## TODOs
 
