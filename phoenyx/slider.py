@@ -1,11 +1,12 @@
 from phoenyx.constants import *
+import difflib
 
 
 def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:
     """
     linear interpolation
     """
-    return (y0 * (x1 - x) + y1 * (x - x0)) / (x1 - x0)
+    return (y0 * (x1-x) + y1 * (x-x0)) / (x1-x0)
 
 
 class Slider:
@@ -37,7 +38,7 @@ class Slider:
         Parameters
         ----------
             renderer : Renderer
-                renderer
+                the Renderer instance the Slider is linked to
             x : int
                 x-coordinate
             y : int
@@ -75,7 +76,6 @@ class Slider:
                 cursor image
                 Defaults to None
         """
-        # tests
         self.has_error = False
         if not (min_val <= value < max_val or min_val < value <= max_val):
             print(f"ERROR [slider {self._name}] : wrong values initialisation, slider was not created")
@@ -90,7 +90,6 @@ class Slider:
             print(f"ERROR [slider {self._name}] : bad length value, slider was not created")
             self.has_error = True
 
-        # slider initialisation
         self._renderer = renderer
         self._x = x
         self._y = y
@@ -103,27 +102,39 @@ class Slider:
         self._thickness = thickness
         self._is_hidden = False
 
-        if isinstance(color, tuple):
+        if isinstance(color, tuple) and len(color) == 3:
             self._color = color
         elif isinstance(color, int):
             self._color = color, color, color
-        else:
+        elif isinstance(color, str):
             try:
-                self._color = COLORS[color]
+                self._color = COLORS[color.lower()]
             except KeyError:
-                print(f"ERROR [slider {self._name}] : wrong color parameter, slider was not created")
-                self.has_error = True
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [slider {self._name}] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                self._color = COLORS[close]
+        else:
+            print(f"ERROR [slider {self._name}] : wrong color parameter, slider was not created")
+            self.has_error = True
 
-        if isinstance(fullcolor, tuple):
+        if isinstance(fullcolor, tuple) and len(fullcolor) == 3:
             self._fullcolor = fullcolor
         elif isinstance(fullcolor, int):
             self._fullcolor = fullcolor, fullcolor, fullcolor
-        else:
+        elif isinstance(fullcolor, str):
             try:
-                self._fullcolor = COLORS[fullcolor]
+                self._fullcolor = COLORS[fullcolor.lower()]
             except KeyError:
-                print(f"ERROR [slider {self._name}] : wrong full color parameter, slider was not created")
-                self.has_error = True
+                close = difflib.get_close_matches(fullcolor, COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [slider {self._name}] : {fullcolor} is not a valid color name, using closest match {close} instead"
+                )
+                self._fullcolor = COLORS[close]
+        else:
+            print(f"ERROR [slider {self._name}] : wrong full color parameter, slider was not created")
+            self.has_error = True
 
         if shape not in (SQUARE, CIRCLE, CROSS, PLUS):
             print(f"ERROR [slider {self._name}] : wrong shape parameter, slider was not created")
@@ -244,7 +255,7 @@ class Slider:
         """
         hides the slider (does not display it automatically on the screen)\\
         slider value setting becomes unaccessible\\
-        opposite function is ``reveal``
+        opposite method is ``reveal``
         """
         if self._is_hidden:
             print(f"WARNING [slider {self._name}] : slider is already hidden, nothing changed")
@@ -255,7 +266,7 @@ class Slider:
         """
         reveals the slider back (displays it on the screen)\\
         slider value setting becomes accessible again\\
-        opposite function is ``hide``
+        opposite method is ``hide``
         """
         if not self._is_hidden:
             print(f"WARNING [slider {self._name}] : slider is not hidden, nothing changed")
@@ -312,7 +323,7 @@ class Slider:
             name : str
                 new name
         """
-        print(f"INFO [slider {self._name}] : name changing from {self._name} to {name}")
+        print(f"INFO [slider {self._name}] : name changing to {name}")
         self._name = name
 
     @property
@@ -360,15 +371,21 @@ class Slider:
                 the new color
         """
         print(f"INFO [slider {self._name}] : color changing from {self._color} to {color}")
-        if isinstance(color, tuple):
+        if isinstance(color, tuple) and len(color) == 3:
             self._color = color
         elif isinstance(color, int):
             self._color = color, color, color
-        else:
+        elif isinstance(color, str):
             try:
-                self._color = COLORS[color]
+                self._color = COLORS[color.lower()]
             except KeyError:
-                print(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [slider {self._name}] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                self._color = COLORS[close]
+        else:
+            print(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
 
     @property
     def fullcolor(self) -> tuple:
@@ -378,7 +395,7 @@ class Slider:
         return self._fullcolor
 
     @fullcolor.setter
-    def fullcolor(self, color: tuple) -> None:
+    def fullcolor(self, fullcolor: tuple) -> None:
         """
         sets the slider full line color\\
         does not throw error if color is not matched\\
@@ -386,19 +403,25 @@ class Slider:
 
         Parameters
         ----------
-            color : tuple | int | str
+            fullcolor : tuple | int | str
                 the new color
         """
-        print(f"INFO : [slider {self._name}] color changing from {self._fullcolor} to {color}")
-        if isinstance(color, tuple):
-            self._fullcolor = color
-        elif isinstance(color, int):
-            self._fullcolor = color, color, color
-        else:
+        print(f"INFO : [slider {self._name}] color changing from {self._fullcolor} to {fullcolor}")
+        if isinstance(fullcolor, tuple) and len(fullcolor) == 3:
+            self._fullcolor = fullcolor
+        elif isinstance(fullcolor, int):
+            self._fullcolor = fullcolor, fullcolor, fullcolor
+        elif isinstance(fullcolor, str):
             try:
-                self._fullcolor = COLORS[color]
+                self._fullcolor = COLORS[fullcolor.lower()]
             except KeyError:
-                print(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
+                close = difflib.get_close_matches(fullcolor, COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [slider {self._name}] : {fullcolor} is not a valid color name, using closest match {close} instead"
+                )
+                self._fullcolor = COLORS[close]
+        else:
+            print(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
 
     @property
     def radius(self) -> int:

@@ -1,4 +1,5 @@
 import pygame
+import difflib
 pygame.init()
 
 __all__ = ["Renderer"]
@@ -6,10 +7,10 @@ __all__ = ["Renderer"]
 from phoenyx.constants import *
 from phoenyx.button import *
 from phoenyx.slider import *
+from phoenyx.menu import *
 from phoenyx.keys import *
 
 
-#%% Renderer class
 class Renderer:
     """
     Pygame Renderer
@@ -17,7 +18,7 @@ class Renderer:
     Provides:
     1. 2D visual renderer using ``pygame`` on ``python 3.9`` and above
     2. fast drawing features and global settings
-    3. full ``Vector`` compatibility (accessed as tuples)
+    3. plenty other classes to ease drawing and focus on programming
 
     Please go through exemples, in-file docstrings and methods, and tests files.
 
@@ -63,6 +64,21 @@ class Renderer:
     value and then use it manually (it is not bound to an external variable). Note
     that each slider greatly decreases the frames of the ``Renderer``.
 
+    Menus
+    -----
+    You now can create side menus with
+    >>> renderer.create_menu("menu", test1=lambda: print("test1"), test2=lambda: print("test2"))
+    ... # creates a new menu on the right of the screen
+    ... # wich has 2 buttons when expanded
+    ... # the first one printing "test1" in the console
+    ... # and the second printing "test2"
+
+    It is worth noting that you can only create 2 side menus, the first one being
+    on the right of the screen (default side) and the second being on the left. Also
+    note that extensive actions list might not show up properly depending on the
+    size of the window. The menu backgound will show up on the top of all other
+    drawings and will be the same color as the window background.
+
     Please note
     -----------
     Please note that this library is not fully tested and thus may be very buggy.
@@ -86,7 +102,7 @@ class Renderer:
             height : int
                 height of the window
             title : (str, optional)
-                title of the window, changeable
+                title of the window, can be changed
                 Defaults to None
         """
         # window management
@@ -103,6 +119,7 @@ class Renderer:
         self._stroke_weight = 1
         self._stroke = True
         self._rect_mode = CORNER
+        self._bg = (51, 51, 51)
 
         # offsets and rotations
         self._x_offset = 0
@@ -121,13 +138,18 @@ class Renderer:
         self._has_sliders = False
         self._all_sliders: set({Slider}) = set()
 
+        # menus managmement
+        self._has_left_menu = False
+        self._has_right_menu = False
+        self._all_menus: set({Menu}) = set()
+
         # fps
         self._fps = 60
         self._clock = pygame.time.Clock()
 
         # save
         self._has_save = False
-        self._save = []
+        self._save: list[list] = []
 
         # keys
         self._key_binding = {}
@@ -158,6 +180,28 @@ class Renderer:
         self._fill = False
 
     @property
+    def win_width(self) -> int:
+        """
+        gets current window width
+        """
+        return self._width
+
+    @property
+    def win_height(self) -> int:
+        """
+        gets current window height
+        """
+        return self._height
+
+    @property
+    def win_bg(self) -> tuple:
+        """
+        gets current window filling background color\\
+        might be wrong if the ``background`` method was never called
+        """
+        return self._bg
+
+    @property
     def fill(self) -> tuple:
         """
         gets current fill color event if stroking is disabled
@@ -169,7 +213,7 @@ class Renderer:
         return self._fill_color
 
     @fill.setter
-    def fill(self, color: tuple) -> None:
+    def fill(self, color) -> None:
         """
         changes the fill color globally
 
@@ -179,12 +223,32 @@ class Renderer:
                 the new color
         """
         self._fill = True
-        if isinstance(color, tuple):
+        if isinstance(color, tuple) and len(color) == 3:
             self._fill_color = color
         elif isinstance(color, int):
             self._fill_color = color, color, color
+        elif isinstance(color, str):
+            try:
+                self._fill_color = COLORS[color.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [engine] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                self._fill_color = COLORS[close]
         else:
-            self._fill_color = COLORS[color]
+            print(f"ERROR [engine] : {color} not a valid color parameter, nothing changed")
+
+    def fill(self, color) -> None:
+        """
+        callable alias for ``fill`` property if you are allergic to properties
+
+        Parameters
+        ----------
+            color : tuple | int | str
+                the new color
+        """
+        self.fill = color
 
     def no_stroke(self) -> None:
         """
@@ -204,7 +268,7 @@ class Renderer:
         return self._stroke_color
 
     @stroke.setter
-    def stroke(self, color: tuple) -> None:
+    def stroke(self, color) -> None:
         """
         changes the stroke color globally
 
@@ -214,12 +278,32 @@ class Renderer:
                 the new color
         """
         self._stroke = True
-        if isinstance(color, tuple):
+        if isinstance(color, tuple) and len(color) == 3:
             self._stroke_color = color
         elif isinstance(color, int):
             self._stroke_color = color, color, color
+        elif isinstance(color, str):
+            try:
+                self._stroke_color = COLORS[color.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [engine] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                self._stroke_color = COLORS[close]
         else:
-            self._stroke_color = COLORS[color]
+            print(f"ERROR [engine] : {color} not a valid color parameter, nothing changed")
+
+    def stroke(self, color) -> None:
+        """
+        callable alias for ``stroke`` property if you are allergic to properties
+
+        Parameters
+        ----------
+            color : tuple | int | str
+                the new color
+        """
+        self.stroke = color
 
     @property
     def stroke_weight(self) -> int:
@@ -244,6 +328,17 @@ class Renderer:
         """
         self._stroke = True
         self._stroke_weight = weight
+
+    def stroke_weight(self, weight: int) -> None:
+        """
+        callable alias for ``stroke_weight`` property if you are allergic to properties
+
+        Parameters
+        ----------
+            weight : int
+                new stroke weight
+        """
+        self.stroke_weight = weight
 
     @property
     def rect_mode(self) -> str:
@@ -297,7 +392,7 @@ class Renderer:
         return self._text_color
 
     @text_color.setter
-    def text_color(self, color: tuple) -> None:
+    def text_color(self, color) -> None:
         """
         changes the text color globally
 
@@ -306,12 +401,21 @@ class Renderer:
             color : tuple | int | str
                 the new color
         """
-        if isinstance(color, tuple):
+        if isinstance(color, tuple) and len(color) == 3:
             self._text_color = color
         elif isinstance(color, int):
             self._text_color = color, color, color
+        elif isinstance(color, str):
+            try:
+                self._text_color = COLORS[color.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [engine] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                self._text_color = COLORS[close]
         else:
-            self._text_color = COLORS[color]
+            print(f"ERROR [engine] : {color} not a valid color parameter, nothing changed")
 
     def _debug_enabled_drawing_methods(self) -> None:
         """
@@ -331,6 +435,7 @@ class Renderer:
         ----------
             point : tuple
                 the point to apply the transformation
+
         Returns
         -------
             tuple : transformed point
@@ -384,6 +489,32 @@ class Renderer:
         # stroke
         if self._stroke:
             pygame.draw.rect(self._window, self.stroke, (point[:2], (width, height)), self.stroke_weight)
+
+    def square(self, point: tuple, size: int) -> None:
+        """
+        draws a square on the screen\\
+        calls debug_enabled_drawing_methods first
+
+        Parameters
+        ----------
+            point : tuple | list | Vector
+                base point of the rectangle
+            size : int
+                the size of the square
+        """
+        self._debug_enabled_drawing_methods()
+        point = self._offset_point(point)
+        point = list(point)
+        if self.rect_mode == CENTER:
+            point[0] -= size // 2
+            point[1] -= size // 2
+
+        # fill
+        if self._fill:
+            pygame.draw.rect(self._window, self.fill, (point[:2], (size, size)), 0)
+        # stroke
+        if self._stroke:
+            pygame.draw.rect(self._window, self.stroke, (point[:2], (size, size)), self.stroke_weight)
 
     def ellipse(self, point: tuple, width: int, height: int) -> None:
         """
@@ -478,7 +609,7 @@ class Renderer:
         text_label = self.FONT.render(text, True, color)
         self._window.blit(text_label, (x, y))
 
-    def background(self, color: tuple) -> None:
+    def background(self, color) -> None:
         """
         fills the screen with a unique color
 
@@ -489,15 +620,26 @@ class Renderer:
         """
         if isinstance(color, int):
             color = color, color, color
-        elif isinstance(color, tuple):
+        elif isinstance(color, tuple) and len(color) == 3:
             pass
+        elif isinstance(color, str):
+            try:
+                color = COLORS[color.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [engine] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                color = COLORS[close]
         else:
-            color = COLORS[color]
+            print(f"ERROR [engine] : {color} not a valid color parameter, applaying default dark background")
+            color = 51, 51, 51
+        self._bg = color
         self._window.fill(color)
 
     def translate(self, x: int = 0, y: int = 0) -> None:
         """
-        translates the axes origins
+        translates the axes origins, additive
 
         Parameters
         ----------
@@ -545,11 +687,11 @@ class Renderer:
         Parameters
         ----------
             button : Button
-                new Button
+                new button
         """
         self._all_buttons.add(button)
 
-    def create_button(self, x: int, y: int, name: str, **kwargs) -> None:
+    def create_button(self, x: int, y: int, name: str, **kwargs) -> Button:
         """
         creates a new button and adds it to the sprite Group
 
@@ -561,6 +703,7 @@ class Renderer:
                 the y-coordinate of the button
             name : str
                 the name of the button
+
         Options
         -------
             count : int
@@ -581,11 +724,17 @@ class Renderer:
                 color to draw the outside box and enables stroking
             weight : int
                 stroke weight if stroke is not None
+
+        Returns
+        -------
+            Button : gets the new button if successfull
         """
         button = Button(self, x, y, name, **kwargs)
-        if not button.has_error:
-            self._add_button(button)
-            self._has_buttons = True
+        if button.has_error:
+            return
+        self._add_button(button)
+        self._has_buttons = True
+        return button
 
     def _remove_button(self, button: Button) -> None:
         """
@@ -611,6 +760,10 @@ class Renderer:
         ----------
             name : str
                 name of the button to get
+
+        Returns
+        -------
+            Button : matching button
         """
         sprite = None
         found = 0
@@ -657,6 +810,7 @@ class Renderer:
         ----------
             name : str
                 name of the button to remove
+
         Returns
         -------
             Button | None : matched button if found
@@ -681,12 +835,12 @@ class Renderer:
         Parameters
         ----------
             slider : Slider
-                new Slider
+                new slider
         """
         self._all_sliders.add(slider)
 
     def create_slider(self, x: int, y: int, name: str, min: float, max: float, value: float, incr: int,
-                      **kwargs) -> None:
+                      **kwargs) -> Slider:
         """
         creates a new slider and adds it to the sprite group
 
@@ -706,6 +860,7 @@ class Renderer:
                 current value
             incr : int
                 rounding (may not be effective depending on the lenght of the slider)
+
         Options
         -------
             radius : int
@@ -721,11 +876,17 @@ class Renderer:
                 color of the bar when its full
             length : int
                 the length of the slider bar
+
+        Returns
+        -------
+            Slider : gets the new slider if successfull
         """
         slider = Slider(self, x, y, name, min, max, value, incr, **kwargs)
-        if not slider.has_error:
-            self._add_slider(slider)
-            self._has_sliders = True
+        if slider.has_error:
+            return
+        self._add_slider(slider)
+        self._has_sliders = True
+        return slider
 
     def _remove_slider(self, slider: Slider) -> None:
         """
@@ -751,6 +912,10 @@ class Renderer:
         ----------
             name : str
                 name of the slider to get
+
+        Returns
+        -------
+            Slider : matching slider
         """
         sprite = None
         found = 0
@@ -797,6 +962,7 @@ class Renderer:
         ----------
             name : str
                 name of the slider to remove
+
         Returns
         -------
             Slider | None : matched slider if found
@@ -823,6 +989,7 @@ class Renderer:
         ----------
             name : str
                 the name of the slider
+
         Returns
         -------
             float | None : the current value of the slider
@@ -839,6 +1006,157 @@ class Renderer:
         if found >= 2:
             print("WARNING [renderer] : to many matches - considering last found")
         return sprite.value
+
+    def _add_menu(self, menu: Menu) -> None:
+        """
+        adds a new menu to the sprite Group
+
+        Parameters
+        ----------
+            menu : Menu
+                new menu
+        """
+        self._all_menus.add(menu)
+
+    def create_menu(self, name: str, **kwargs) -> Menu:
+        """
+        creates a new menu and adds it to the sprite group
+
+        Parameters
+        ----------
+            name : str
+                name of the menu
+
+        Options
+        -------
+            side : str
+                side of the window to display the menu
+                LEFT | RIGHT
+            length : int
+                lenght of the menu (its height)
+                by default the menu height will be the height of the window
+            color : tuple | int | str
+                lines color used for drawing when menu is visible
+            text_color : tuple | int | str
+                text color used for display text inside the menu
+
+        Keywords Arguments
+        ------------------
+            * : str
+                name of the buttons on the menu, in order
+                must be linked to a python function
+
+        Returns
+        -------
+            Menu : gets the new menu if successfull
+        """
+        menu = Menu(self, name, **kwargs)
+        if menu.has_error:
+            return
+        if (menu.side == LEFT and self._has_left_menu) or (menu.side == RIGHT and self._has_right_menu):
+            print(f"ERROR [renderer] : already have a {menu.side} menu, try again by changing side")
+            return
+        self._add_menu(menu)
+        if menu.side == LEFT:
+            self._has_left_menu = True
+        elif menu.side == RIGHT:
+            self._has_right_menu = True
+        return menu
+
+    def _remove_menu(self, menu: Menu) -> None:
+        """
+        kills the living sprite (deals with type None)\\
+        removes it from sprite Group but still can be accessed
+
+        Parameters
+        ----------
+            menu : Menu
+                the menu to remove
+        """
+        if menu is not None:
+            self._all_sliders.remove(menu)
+            if len(self._all_sliders) == 0:
+                if menu.side == LEFT:
+                    self._has_left_menu = False
+                elif menu.side == RIGHT:
+                    self._has_right_menu = False
+
+    def get_menu(self, name: str) -> Menu:
+        """
+        gets a menu based on its name\\
+        does nothing if not matched
+
+        Parameters
+        ----------
+            name : str
+                name of the menu to get
+
+        Returns
+        -------
+            Menu : matching menu
+        """
+        sprite = None
+        found = 0
+        for menu in self._all_menus:
+            if menu.name == name:
+                sprite = menu
+                found += 1
+        if found == 0:
+            print(f"WARNING [renderer] : no matching menu")
+        elif found >= 2:
+            print(f"WARNING [renderer] : to many matches - considering last found")
+        return sprite
+
+    def kill_menu(self, name: str) -> None:
+        """
+        kills a menu based on its name\\
+        does nothing if not matched\\
+        does not return anything
+
+        Parameters
+        ----------
+            name : str
+                name of the menu to remove
+        """
+        sprite = None
+        found = 0
+        for menu in self._all_menus:
+            if menu.name == name:
+                sprite = menu
+                found += 1
+        if found == 0:
+            print(f"WARNING [renderer] : no matching menu")
+        elif found >= 2:
+            print(f"WARNING [renderer] : to many matches - considering last found")
+        self._remove_menu(sprite)
+
+    def pop_menu(self, name: str) -> Menu:
+        """
+        kills a menu based on its name\\
+        returns None if not matched\\
+        else returns the matching menu
+        
+        Parameters
+        ----------
+            name : str
+                name of the menu to remove
+
+        Returns
+        -------
+            Menu | None : matching menu if found
+        """
+        sprite = None
+        found = 0
+        for menu in self._all_menus:
+            if menu.name == name:
+                sprite = menu
+                found += 1
+        if found == 0:
+            print(f"WARNING [renderer] : no matching menu")
+        elif found >= 2:
+            print(f"WARNING [renderer] : to many matches - considering last found")
+        self._remove_menu(sprite)
+        return sprite
 
     @staticmethod
     def _events() -> list:
@@ -874,41 +1192,40 @@ class Renderer:
     @fps.setter
     def fps(self, frames: int) -> None:
         """
-        sets the frame rate of the screen
+        sets the frame rate of the screen\\
+        setting this to a negative value will unlock the frame rate
 
         Parameters
         ----------
             frames : int
                 frames per second
         """
-        if frames <= 0:
-            print("WARNING [renderer] : desired fps too low, setting to 1")
-            frames = 1
         self._fps = frames
 
     def push(self) -> None:
         """
-        saves the state of the renderer\\
-        overrides previous save if necessary\\
-        does not affect sliders nor buttons
+        adds the state of the renderer to the stack\\
+        does not affect outer objects\\
+        use ``pop`` to reset the state
         """
-        self._save = [
+        self._save.append([
             self._title, self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset,
             self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size
-        ]
+        ])
         self._has_save = True
 
     def pop(self) -> None:
         """
-        resets the state of the renderer based on the previous save and destroys it\\
-        does nothing if save is not found
+        resets the state of the renderer based on the previous save\\
+        does nothing if save is not found\\
+        to generate save, use ``push``
         """
         if not self._has_save:
             print("WARNING [renderer] : no save was found, nothing changed")
             return
-        self._title, self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset, self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size = self._save
-        self._save = []
-        self._has_save = False
+        self._title, self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset, self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size = self._save.pop(
+        )
+        self._has_save = len(self._save) >= 0
 
     @property
     def key_binding(self) -> dict:
@@ -996,6 +1313,13 @@ class Renderer:
         except KeyError:
             pass
 
+    def refresh(self) -> None:
+        """
+        updates window\\
+        used for interractive drawing
+        """
+        pygame.display.flip()
+
     def run(self, draw, setup=lambda: None) -> None:
         """
         the main loop of the programm\\
@@ -1027,22 +1351,42 @@ class Renderer:
                     if not slider.is_hidden:
                         slider.draw()
 
-            # trigerring buttons and sliders
+            # menu management
+            if self._has_left_menu or self._has_right_menu:
+                for menu in self._all_menus:
+                    menu.draw()
+
+            # trigerring buttons, sliders and menus
             pos = pygame.mouse.get_pos()
             if pygame.mouse.get_pressed()[0] != 0:
+
                 if self._has_buttons:
                     for button in self._all_buttons:
-                        if button.collide(pos) and button.check_clic() and not button.is_hidden:
+                        if button.collide(pos) and button.check_click() and not button.is_hidden:
                             button.on_press()
                             button.reinit_click()
+
                 if self._has_sliders:
                     for slider in self._all_sliders:
                         if slider.collide(pos) and not slider.is_hidden:
                             slider.set_value(pos)
+
+                if self._has_left_menu or self._has_right_menu:
+                    for menu in self._all_menus:
+                        if menu.check_click() and not menu.is_hidden:
+                            menu.update_state(pos)
+                            menu.reinit_click()
+                            if (i := menu.collide(pos)) is not None:
+                                menu.trigger(i)
+                                menu.reinit_click()
+
             else:
                 if self._has_buttons:
                     for button in self._all_buttons:
                         button.click()
+                if self._has_left_menu or self._has_right_menu:
+                    for menu in self._all_menus:
+                        menu.click()
 
             # translation management
             if self.translation_behaviour == RESET:

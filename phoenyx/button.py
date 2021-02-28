@@ -1,4 +1,5 @@
 from phoenyx.constants import *
+import difflib
 
 
 class Button:
@@ -14,8 +15,8 @@ class Button:
                  name: str,
                  count: int = 1,
                  action=lambda: None,
-                 height: int = 50,
                  width: int = 50,
+                 height: int = 50,
                  shape: str = RECTANGLE,
                  color: tuple = None,
                  stroke: tuple = None,
@@ -39,11 +40,11 @@ class Button:
             action : (python function, optional)
                 function to trigger when pressed
                 Defaults to lambda:None
-            height : (int, optional)
-                the height of the button
-                Defaults to 50
             width : (int, optional)
                 the width of the button
+                Defaults to 50
+            height : (int, optional)
+                the height of the button
                 Defaults to 50
             shape : (str, optional)
                 the shape of the button
@@ -68,36 +69,48 @@ class Button:
         self._click_count = count
         self._click = 0
         self._action = action
-        self._height = height
         self._width = width
+        self._height = height
         self._is_hidden = False
 
         color = (color, 0)[color is None and stroke is None]
-        if isinstance(color, tuple):
+        if isinstance(color, tuple) and len(color) == 3:
             self._color = color
         elif isinstance(color, int):
             self._color = color, color, color
+        elif isinstance(color, str):
+            try:
+                self._color = COLORS[color.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [button {self._name}] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                self._color = COLORS[close]
         elif color is None:
             self._color = None
         else:
-            try:
-                self._color = COLORS[color]
-            except KeyError:
-                print(f"ERROR [button {self._name}] : wrong color parameter, button was not created")
-                self.has_error = True
+            print(f"ERROR [button {self._name}] : wrong color parameter, button was not created")
+            self.has_error = True
 
-        if isinstance(stroke, tuple):
+        if isinstance(stroke, tuple) and len(stroke) == 3:
             self._stroke = stroke
         elif isinstance(stroke, int):
             self._stroke = stroke, stroke, stroke
+        elif isinstance(stroke, str):
+            try:
+                self._stroke = COLORS[stroke.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(stroke, COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [button {self._name}] : {stroke} is not a valid color name, using closest match {close} instead"
+                )
+                self._stroke = COLORS[close]
         elif stroke is None:
             self._stroke = None
         else:
-            try:
-                self._stroke = COLORS[stroke]
-            except KeyError:
-                print(f"ERROR [button {self._name}] : wrong stroke parameter, button was not created")
-                self.has_error = True
+            print(f"ERROR [button {self._name}] : wrong stroke parameter, button was not created")
+            self.has_error = True
 
         if shape not in (RECTANGLE, ELLIPSE):
             print(f"ERROR [button {self._name}] : wrong shape parameter, button was not created")
@@ -147,7 +160,7 @@ class Button:
         """
         self._click = 0
 
-    def check_clic(self) -> bool:
+    def check_click(self) -> bool:
         """
         check if click greater that click_count
         """
@@ -208,7 +221,7 @@ class Button:
         return self._color
 
     @color.setter
-    def color(self, color: tuple) -> None:
+    def color(self, color) -> None:
         """
         sets button filling color\\
         color can be None to disable filling\\
@@ -220,10 +233,19 @@ class Button:
                 the new color
         """
         print(f"INFO [button {self._name}] : attempting filling change")
-        if isinstance(color, tuple):
+        if isinstance(color, tuple) and len(color) == 3:
             self._color = color
         elif isinstance(color, int):
             self._color = color, color, color
+        elif isinstance(color, str):
+            try:
+                self._color = COLORS[color.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [button {self._name}] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                self._color = COLORS[close]
         elif color is None:
             if self._stroke is None:
                 print(
@@ -232,10 +254,7 @@ class Button:
                 return
             self._color = None
         else:
-            try:
-                self._color = COLORS[color]
-            except KeyError:
-                print(f"ERROR [button {self._name}] : {color} is not a valid color, nothing changed")
+            print(f"ERROR [button {self._name}] : {color} is not a valid color, nothing changed")
 
     @property
     def stroke(self) -> tuple:
@@ -246,7 +265,7 @@ class Button:
         return self._stroke
 
     @stroke.setter
-    def stroke(self, stroke: tuple) -> None:
+    def stroke(self, stroke) -> None:
         """
         sets button stroking color\\
         color can be None to disable stroking\\
@@ -257,10 +276,19 @@ class Button:
             stroke : tuple | int | str
                 the new color
         """
-        if isinstance(stroke, tuple):
+        if isinstance(stroke, tuple) and len(stroke) == 3:
             self._stroke = stroke
         elif isinstance(stroke, int):
             self._stroke = stroke, stroke, stroke
+        elif isinstance(stroke, str):
+            try:
+                self._stroke = COLORS[stroke.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(stroke, COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [button {self._name}] : {stroke} is not a valid color name, using closest match {close} instead"
+                )
+                self._stroke = COLORS[close]
         elif stroke is None:
             if self._color is None:
                 print(
@@ -269,11 +297,7 @@ class Button:
                 return
             self._stroke = None
         else:
-            try:
-                self._stroke = COLORS[stroke]
-            except KeyError:
-                print(f"ERROR [button {self._name}] : wrong stroke parameter, button was not created")
-                self.has_error = True
+            print(f"ERROR [button {self._name}] : {stroke} is not a valid color, nothing changed")
 
     @property
     def weight(self) -> int:
@@ -304,7 +328,7 @@ class Button:
         """
         hides the button (does not display it automatically on the screen)\\
         button action becomes unaccessible\\
-        opposite function is ``reveal``
+        opposite method is ``reveal``
         """
         if self._is_hidden:
             print(f"WARNING [button {self._name}] : button is already hidden, nothing changed")
@@ -315,7 +339,7 @@ class Button:
         """
         reveals the button back (displays it on the screen)\\
         button action becomes accessible again\\
-        opposite function is ``hide``
+        opposite method is ``hide``
         """
         if not self._is_hidden:
             print(f"WARNING [button {self._name}] : button is not hidden, nothing changed")
@@ -375,7 +399,7 @@ class Button:
             name : str
                 new name
         """
-        print(f"INFO [button {self._name}] : name changing to '{name}'")
+        print(f"INFO [button {self._name}] : name changing to {name}")
         self._name = name
 
     @property

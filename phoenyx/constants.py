@@ -22,8 +22,12 @@ PRESSED = "PRESSED"
 RELEASED = "RELEASED"
 HOLD = "HOLD"
 
+# menus sides
+LEFT = "LEFT"
+RIGHT = "RIGHT"
+
 # colors
-COLORS = {
+COLORS: dict[str, tuple[int, int, int]] = {
     "black": (0, 0, 0),
     "navy blue": (0, 0, 128),
     "dark blue": (0, 0, 200),
@@ -61,7 +65,8 @@ COLORS = {
     "robin's egg blue": (0, 204, 204),
     "green": (0, 255, 0),
     "spring green": (0, 255, 127),
-    "cyan / aqua": (0, 255, 255),
+    "cyan": (0, 255, 255),
+    "aqua": (0, 255, 255),
     "blue charcoal": (1, 13, 26),
     "midnight": (1, 22, 53),
     "holly": (1, 29, 19),
@@ -1461,7 +1466,8 @@ COLORS = {
     "red": (255, 0, 0),
     "rose": (255, 0, 127),
     "purple pizzazz": (255, 0, 204),
-    "magenta / fuchsia": (255, 0, 255),
+    "magenta": (255, 0, 255),
+    "fuchsia": (255, 0, 255),
     "scarlet": (255, 36, 0),
     "wild strawberry": (255, 51, 153),
     "razzle dazzle rose": (255, 51, 204),

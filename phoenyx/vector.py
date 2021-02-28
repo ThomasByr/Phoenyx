@@ -37,6 +37,7 @@ class Vector(np.ndarray):
         >>> vec_3d = Vector(2, 3, 4)
         >>> vec_3d
         Vector(2.00, 3.00, 4.00)
+
     Parameters
     ----------
         x : float or int
@@ -109,6 +110,7 @@ class Vector(np.ndarray):
             get : (str, optional)
                 an ordered string of "x"s, "y"s, "z"s
                 Defaults to "xyz"
+
         Returns
         -------
             np.ndarray : coordinates
@@ -149,12 +151,13 @@ class Vector(np.ndarray):
                 Point to be interpolate to
             amount: float
                 Amount by which to interpolate.
+
         Returns
         -------
             Vector : obtained by linearly interpolating this
                 vector to the other vector by the given amount
         """
-        x, y, z = self + amount * (other - self)
+        x, y, z = self + amount * (other-self)
         return self.__class__(x, y, z)
 
     def rounded(self, ndigits: int = 0):
@@ -165,6 +168,7 @@ class Vector(np.ndarray):
         ----------
             ndigits : int
                 number of digits to keep, may be negative
+
         Returns
         -------
             Vector : new Vector
@@ -182,9 +186,37 @@ class Vector(np.ndarray):
             ndigits : int
                 number of digits to keep, may be negative
         """
-        self.x = round(self.x, ndigits)
-        self.y = round(self.y, ndigits)
-        self.z = round(self.z, ndigits)
+        self.x, self.y, self.z = tuple(map(lambda x: round(x, ndigits), self))
+
+    def inverted(self):
+        """
+        Returns a Vector whom coordinates have been inverted, i.e. raised to power -1\\
+        you might want to call ``catch_inf`` afterwards
+
+        Returns
+        -------
+            Vector : new Vector
+        """
+        return self.__class__(*1 / self)
+
+    def invert(self) -> None:
+        """
+        Modifies the Vector and invert each coordinate\\
+        deal with possible division by 0 warning
+        """
+        def invert(x: float) -> float:
+            return (1 / x, x)[abs(x) < EPSILON]
+
+        self.x, self.y, self.z = tuple(map(invert, self))
+
+    def catch_inf(self) -> None:
+        """
+        Modifies the Vector and change inf corrdinates to 0
+        """
+        def catch(x: float) -> float:
+            return (0, x)[bool(x < np.inf)]
+
+        self.x, self.y, self.z = tuple(map(catch, self))
 
     def cross(self, other):
         """
@@ -196,9 +228,11 @@ class Vector(np.ndarray):
             >>> j = Vector(0, 1, 0)
             >>> i.cross(j)
             Vector(0.00, 0.00, 1.00)
+
         Parameters
         ----------
             other : Vector
+
         Returns
         -------
             Vector : The vector perpendicular to both ``self`` and ``other``
@@ -220,9 +254,11 @@ class Vector(np.ndarray):
             48
             >>> p @ q
             48
+
         Parameters
         ----------
             other : Vector
+
         Returns
         -------
             float : the dot product of the two vectors
@@ -242,6 +278,7 @@ class Vector(np.ndarray):
             >>> print(v1, v2, sep="\\n")
             ... # Vector(9.00, 7.00, 0.00)
             ... # Vector(7.88, 8.91, 0.00)
+
         Parameters
         ----------
             vMin : float or int
@@ -254,6 +291,7 @@ class Vector(np.ndarray):
             dtype : type, (optional)
                 the type of data : float or int
                 Defaults to float.
+
         Returns
         -------
             Vector : a new Vector
@@ -446,9 +484,11 @@ class Vector(np.ndarray):
             >>> j = Vector(1, 0)
             >>> degrees(k.angle_between(j))
             90.0
+
         Parameters
         ----------
             other : Vector
+
         Returns
         -------
             float : The angle between two given vectors (in radians)
