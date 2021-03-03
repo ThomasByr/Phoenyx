@@ -20,29 +20,70 @@ Please go and check [pygame](https://github.com/pygame/pygame.git) for their ama
 Please refer to [test.py](examples/test.py) on GitHub for a very simple but effective test file. You can now also read the [helpme](helpme.md) file for all available methods and obects.
 
 ```py
-from phoenyx import Renderer
+from phoenyx import *
+import numpy
 
-renderer = Renderer(600, 600)
+renderer = Renderer(600, 600, "Perlin Noise Loop")
+
+SHOWINFO = True
+w = 10
+noise = PerlinNoise(3, unbias=True)
+noise_map = numpy.zeros((600 // w, 600 // w), dtype=float)
+t_offset = 0
+spacing = 0.05
+slider: Slider
 
 
-def setup():
-    renderer.create_slider(100, 100, "slider", 0, 10, 1, 1, length=300)
-    renderer.create_button(300, 300, "button", action=lambda: print("button pressed"))
+def switch() -> None:
+    global SHOWINFO
+    SHOWINFO = not SHOWINFO
 
+
+def hide() -> None:
+    global slider
+    if slider.is_hidden:
+        slider.reveal()
+    else:
+        slider.hide()
+
+
+def setup() -> None:
+    global slider
+    renderer.create_menu("debug panel",
+                         background=False,
+                         text_color=0,
+                         color=0,
+                         show_info=switch,
+                         hide_slider=hide)
+    slider = renderer.create_slider(450, 550, "speed", 0, 0.1, 0.02, 3)
+
+    renderer.no_stroke()
     renderer.text_size = 15
-
-    renderer.no_fill()
-    renderer.stroke = "red"
-    renderer.stroke_weight = 5
-    renderer.rect_mode = "CENTER"
-    renderer.translation_behaviour = "KEEP"
+    renderer.text_color = "black"
 
 
-def draw():
-    renderer.background(51)
+def draw() -> None:
+    global slider, t_offset
 
-    renderer.text(100, 500, f"value of slider : {renderer.get_slider_value('slider')}")
-    renderer.rect((325, 325), 60, 60)
+    y_offset = 0
+    for i in range(600 // w):
+        x_offset = 0
+        for j in range(600 // w):
+            noise_map[i, j] = noise(x_offset, y_offset, t_offset)
+            x_offset += spacing
+        y_offset += spacing
+
+    for i in range(600 // w):
+        for j in range(600 // w):
+            d = noise_map[i, j]
+            d = int((d+1) * 255 / 2)
+            renderer.fill = d
+            renderer.rect((i * w, j * w), w, w)
+
+    t_offset += slider.value
+
+    if SHOWINFO:
+        renderer.text(10, 10, f"fps : {round(renderer.fps)}")
 
 
 if __name__ == "__main__":
@@ -65,72 +106,9 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 ## Changelog
 
-1.  *v0.0.a1* lets see PyPI...
-    * initial commit and packaging
-    * please note that alpha version are no longer accessible for download
-2.  *v0.0.a2* wow such a mess
-    * some refractor
-    * name changing from pygame_engine to phoenyx (because the bird...)
-    * efficiency improvement because frames are parts of success
-3.  *v0.0.a3* now comes the bif stuff
-    * wait... [Buttons](phonyx/button.py) ? (type ``help(phoenyx.button.Button)`` to learn more)
-    * buttons have better click response (hold or choose the number of frames to pass while uncliked to be able to trigger the button again)
-4.  *v0.0.a4* I need to port html5
-    * [Sliders](phonyx/slider.py) now ? (type ``help(phoenyx.slider.Slider)`` to learn more)
-    * sliders have their name on the left, minimum and maximum value on respective sides
-    * added the current value on top of the cursor
-5.  *v0.1.0* how do I upload images on PyPI ?
-    * buttons and sliders do not rely anyore on images for greater portability but are now less customizable
-    * initial release on PyPI !
-6.  *v0.1.1* too much errors in console
-    * buttons and sliders can now be hidden
-    * changed python dependency from 3.8 to 3.9 to improve reliability trough better type checks
-    * slightly better WARNING and ERROR messages (button and slider name is displayed)
-7.  *v0.1.2* lets be unique !
-    * saving the state of the Engine works properly and also saves rect_mode
-    * file test.py now features more drawing basics
-    * button and slider have alternative drawing methods
-    * better overall validation tests for objects
-    * class name changing from Engine to Renderer
-8.  *v0.1.3* game basics right ?
-    * keyboard integration (you can now use ``Renderer.keys.`` to find keys)
-    * keys stored in a new unaccessible class so autocompletion works
-    * added option for keys to perform actions only when released, pressed or hold
-9.  *v0.1.4* rainbow 1567
-    * excluded some unnecessary files from build
-    * some typo fix
-    * added new colors, a lot of them
-10. *v0.1.5* visual code messing with import statements
-    * split renderer lib into many files for readability
-    * lib fix, bug from circular imports
-11. *v0.1.6* big update but not really because some stuff doesn't work
-    * better color check especially when passing a string as a parameter
-    * trying to comply with MS VS Code docstring "support"
-    * added new 2D, 3D, and 4D [Open Simplex Noise](phoenyx/opensimplexnoise.py) algorithm
-    * added new very fast n dimensionnal [Perlin Noise](phoenyx/perlinnoise.py) algorith
-    * first step trough interractive drawing
-    * adding exhaustive [Documentation](helpme.md) slowly
-    * first try of [Menu](phoenyx/menu.py) implementation (type ``help(phoenyx.menu.Menu)`` to learn more)
-    * short animation when opening and closing menus
-    * better spacing and drawing, animation ends properly and on the right side
-    * menus appear before buttons and sliders
-    * menus somewhat protected holding mouse button
-    * added aliases for some properties as callable (is it really a good idea ?)
-12. *v0.1.7* fixing fixes
-    * a lot of bugs from previous update have been fixed
-    * Noises library are now imported correctly
-    * displaying menus name when drawing them
-    * removed python sys import when unnecessary
-13. *v0.1.8* are performances a real thing in python ?
-    * added additionnal type import when importing phoenyx
-    * messed with generator type in Perlin Noise
-    * Noise library now work in all said dimensions
-    * adding callable was not a good idea and now it's gone
-14. *v0.1.9* all tests almost performed, few bugs
-    * OpenSimplex call now does not raise stupid value errors
-    * fatal error in renderer in last version, removed it
-    * added a new example file to generate Perlin noise, go check that out !
-    * menu now have a proper background (might be off when background is animated though)
+Please refer to [the Changelog file](changelog.md) for more detail.
+
+This update covers some bug fixes and further testing was performed. Also some additionnal drawing methods for menus have been implemented and some constants are now accessible from a wildcart import.
 
 ## TODOs
 
