@@ -72,9 +72,6 @@ class Slider:
             length : (int, optional)
                 length of the slider bar
                 Defaults to 100
-            image : (str, optional)
-                cursor image
-                Defaults to None
         """
         self.has_error = False
         if not (min_val <= value < max_val or min_val < value <= max_val):

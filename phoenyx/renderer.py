@@ -158,6 +158,9 @@ class Renderer:
         self._pressed = {}
         self.keys = Keys()
 
+        # interactive drawing
+        self._is_lazy = False
+
         # running
         self._is_running = True
 
@@ -1001,7 +1004,7 @@ class Renderer:
                 LEFT | RIGHT
             length : int
                 lenght of the menu (its height)
-                by default the menu height will be the height of the window
+                by default the menu height will be on auto
             color : tuple | int | str
                 lines color used for drawing when menu is visible
             text_color : tuple | int | str
@@ -1009,8 +1012,8 @@ class Renderer:
 
         Keywords Arguments
         ------------------
-            * : str
-                name of the buttons on the menu, in order
+            * : str\\
+                name of the buttons on the menu in order\\
                 must be linked to a python function
 
         Returns
@@ -1283,7 +1286,7 @@ class Renderer:
     def refresh(self) -> None:
         """
         updates window\\
-        used for interractive drawing
+        used for interractive drawing without the run main loop
         """
         pygame.display.flip()
 

@@ -132,6 +132,7 @@ pieces of information in the console. May turn into spam.
 """
 
 # main classes
+from .constants import *
 from .perlinnoise import *
 from .opensimplexnoise import *
 from .vector import *

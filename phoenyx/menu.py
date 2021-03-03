@@ -1,3 +1,4 @@
+from typing import Tuple
 from phoenyx.constants import *
 import difflib
 
@@ -19,6 +20,7 @@ class Menu:
                  renderer,
                  name: str,
                  side: str = RIGHT,
+                 background=True,
                  length: int = None,
                  color: tuple = (155, 155, 155),
                  text_color: tuple = (255, 255, 255),
@@ -36,9 +38,12 @@ class Menu:
                 side of the window to display the menu
                 LEFT | RIGHT
                 Default to RIGHT
+            background : (None | bool | tuple | int | str, optional)
+                draw a background when expanded
+                Default to True
             length : (int, optional)
                 lenght of the menu (its height)
-                by default the menu height will be the height of the window
+                by default the menu height will on auto
                 Default to None
             color : (tuple | int | str, optional)
                 lines color used for drawing when menu is visible
@@ -49,8 +54,8 @@ class Menu:
 
         Keywords Arguments
         ------------------
-            * : str
-                name of the buttons on the menu, in order
+            * : str\\
+                name of the buttons on the menu, in order\\
                 must be linked to a python function
         """
         self.has_error = False
@@ -60,8 +65,33 @@ class Menu:
         self._namew = 100
 
         self._side = side
-        self._length = (self._renderer.win_height, length)[length is not None]
+        self._length = length
         self._width = 0
+
+        self._background = None
+        if background is None:
+            self._has_background = False
+        if isinstance(background, bool):
+            self._has_background = background
+        elif isinstance(background, tuple) and len(background) == 3:
+            self._background = background
+            self._has_background = True
+        elif isinstance(background, int):
+            self._background = background, background, background
+            self._has_background = True
+        elif isinstance(background, str):
+            try:
+                self._background = COLORS[background.lower()]
+            except:
+                close = difflib.get_close_matches(background.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
+                )
+                self._background = COLORS[close]
+                self._has_background = True
+        else:
+            print(f"ERROR [menu {self._name}] : wrong background parameter, menu was not created")
+            self.has_error = True
 
         if isinstance(color, tuple) and len(color) == 3:
             self._color = color
@@ -184,6 +214,70 @@ class Menu:
         self._side = side
 
     @property
+    def has_background(self) -> bool:
+        """
+        gets current menu background drawing
+        """
+        return self._has_background
+
+    @has_background.setter
+    def has_background(self, background: bool) -> None:
+        """
+        sets current menu background drawing
+
+        Parameters
+        ----------
+            background : bool
+                draw a background when expanded
+        """
+        self._has_background = background
+
+    @property
+    def background(self) -> tuple:
+        """
+        gets current menu background color\\
+        might be None if background color is the windows background color
+        or if background is disabled
+        """
+        return self._background
+
+    @background.setter
+    def background(self, background) -> None:
+        """
+        sets current background drawing
+
+        Parameters
+        ----------
+            background : None | bool | tuple | int | str
+                background draw
+        """
+        self._background = None
+        if background is None:
+            self._has_background = False
+        if isinstance(background, bool):
+            self._has_background = background
+        elif isinstance(background, tuple) and len(background) == 3:
+            self._background = background
+            self._has_background = True
+        elif isinstance(background, int):
+            self._background = background, background, background
+            self._has_background = True
+        elif isinstance(background, str):
+            try:
+                self._background = COLORS[background.lower()]
+            except:
+                close = difflib.get_close_matches(background.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                print(
+                    f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
+                )
+                self._background = COLORS[close]
+                self._has_background = True
+        else:
+            print(
+                f"ERROR [menu {self._name}] : {background} is not a valid background parameter, nothing changed"
+            )
+
+    @property
     def color(self) -> tuple:
         """
         gets current menu line color
@@ -283,6 +377,26 @@ class Menu:
         does not try to get the desired width
         """
         self._width = width
+
+    @property
+    def length(self) -> int:
+        """
+        gets current height draw of menu\\
+        might be None
+        """
+        return self._length
+
+    @length.setter
+    def length(self, length) -> None:
+        """
+        sets current height draw of menu
+        
+        Parameters
+        ----------
+            length : None | int
+                new height
+        """
+        self._length = length
 
     @property
     def name(self) -> str:
@@ -403,7 +517,7 @@ class Menu:
                     break
                 max_width = width
         label = font.render(self.name, True, (0, 0, 0))
-        self._namew = label.get_width() + 30
+        self._namew = label.get_width() + 10
         self._renderer.pop()
         self.width = max_width
 
@@ -518,15 +632,44 @@ class Menu:
         renderer = self._renderer
 
         if self.is_fold:
-            x = -1
-            y = 5
+            x, y = -1, 5
+            x0, xw = -1, -1
             if self.side == RIGHT:
                 k = renderer.win_width - 20
                 x = _map(self.tick_count, 0, self.max_ticks, k - self.width, k)
+                x0 = x
+                xw = x0 + 30
             if self.side == LEFT:
                 x = _map(self.tick_count, 0, self.max_ticks, self.width, 5)
+                x0 = x - self.width
+                xw = x - self._namew
 
             renderer.push()
+
+            if self._is_playing:
+                if self.has_background:
+                    if self.background is None:
+                        renderer.fill = renderer.win_bg
+                    else:
+                        renderer.fill = self.background
+                    renderer.no_stroke()
+                    l = len(self._all_items)
+                    h = 15 + l*30
+                    if self.length is not None:
+                        h = self._length
+                    renderer.rect((x0, y), self.width, h)
+
+                renderer.no_fill()
+                renderer.stroke = self.color
+                renderer.stroke_weight = 1
+                renderer.text_size = 15
+                renderer.text_color = self.text_color
+
+                renderer.text(xw, y, self.name)
+                for i, item in enumerate(self._all_items):
+                    renderer.text(x0, y + 30 + (i*30), item)
+                    renderer.line((x0, y + 45 + (i*30)), (x0 + self.width, y + 45 + (i*30)))
+
             renderer.no_fill()
             renderer.stroke = self.color
             renderer.stroke_weight = 2
@@ -549,13 +692,20 @@ class Menu:
             k = 5 + self.width
             x = _map(self.tick_count, 0, self.max_ticks, 5, k)
             x0 = x - self.width
-            xw = x0 - self._namew
+            xw = x - self._namew
 
         renderer.push()
-        renderer.fill = renderer.win_bg
-        renderer.no_stroke()
-        l = len(self._all_items)
-        renderer.rect((x, y), self.width, 15 + l*30)
+        if self.has_background:
+            if self.background is None:
+                renderer.fill = renderer.win_bg
+            else:
+                renderer.fill = self.background
+            renderer.no_stroke()
+            l = len(self._all_items)
+            h = 15 + l*30
+            if self.length is not None:
+                h = self._length
+            renderer.rect((x0, y), self.width, h)
 
         renderer.no_fill()
         renderer.stroke = self.color
@@ -579,7 +729,8 @@ class Menu:
     def animate(self) -> None:
         """
         go trough animation when unfolding or folding\\
-        does one frame of animation based on tick_count
+        does one frame of animation based on tick_count\\
+        ends animation if needed
         """
         self.tick_count += self.is_playing
         if self.tick_count >= self.max_ticks - 1:
