@@ -5,18 +5,19 @@
    2. [drawing attribute manipulation](#drawing-attribute-manipulation)
    3. [other attributes](#other-attributes)
    4. [extern class creation and manipulation](#extern-class-creation-and-manipulation)
-2. [The ``Slider`` class](#the-slider-class)
+2. [The ``Button`` class](#the-button-class)
    1. [creation](#creation)
    2. [manipulation](#manipulation)
-3. [The ``Button`` class](#the-button-class)
+3. [The ``Slider`` class](#the-slider-class)
    1. [creation](#creation-1)
    2. [manipulation](#manipulation-1)
 4. [The ``Menu`` class](#the-menu-class)
    1. [creation](#creation-2)
    2. [manipulation](#manipulation-2)
-5. [``OpenSimplexNoise`` class and algorithm](#opensimplexnoise-class-and-algorithm)
-6. [``PerlinNoise`` class and algorithm](#perlinnoise-class-and-algorithm)
-7. [``SandBox`` physics engine](#sandbox-physics-engine)
+5. [Noise algorithms](#noise-algorithms)
+   1. [``OpenSimplexNoise`` class](#opensimplexnoise-class)
+   2. [``PerlinNoise`` class](#perlinnoise-class)
+6. [``SandBox`` physics engine](#sandbox-physics-engine)
 
 ## The ``Renderer`` class
 
@@ -295,7 +296,7 @@ def text_size(self, size: int) -> None:
 
 ### other attributes
 
-Other attributes, property or setting change the way the app behave.
+Other attributes, property or setting that change the way the app behave.
 
 * ``renderer.fps = 144`` will set the desired frame rate of the app ; note that the property associated with this setting returns the actual frame rate in real time
 
@@ -397,31 +398,623 @@ def set_title(self, title: str) -> None:
     """
 ```
 
+* ``renderer.new_keypress(renderer.keys.K_SPACE, lambda: print("space"))`` will allow the user to press the space bar to print "space" in the terminal, does nothing if the given key already has an action
+
+```py
+def new_keypress(self, key: int, action, behaviour: str = PRESSED) -> None:
+    """
+    adds a new key and its corresponding action
+    please use ``Renderer.keys.`` to find keys
+
+    Parameters
+    ----------
+        key : int
+            keyboard key indentifier
+        action : python function
+            action to perform each time the key is pressed
+        behaviour : (str, optionnal)
+            key behaviour
+            PRESSED | RELEASED | HOLD
+            Defaults to PRESSED
+    """
+```
+
+* ``renderer.update_keypress(renderer.keys.K_SPACE, lambda: print("space !"), behaviour=HOLD)`` will now allow the user to hold the space bar to print "space !"s in the terminal, does nothing if the given key does not exist
+
+```py
+def update_keypress(self, key: int, action, behaviour: str = None) -> None:
+    """
+    updates the action of a given key
+    please use ``Renderer.keys.`` to find keys
+
+    Parameters
+    ----------
+        key : int
+            keyboard key identifier
+        action : python function
+            new action
+        behaviour : (str, optionnal)
+            key behaviour (if not specified, will keep previous)
+            PRESSED | RELEASED | HOLD
+            Defaults to None
+    """
+```
+
+* ``renderer.kill_keypress(renderer.keys.K_SPACE)`` will make the space bar do nothing when pressed
+
+```py
+def kill_keypress(self, key: int) -> None:
+    """
+    removes the action of a given key
+    changes the action to ``lambda: None`` and pops key binding
+    leaves other keys action unchanged
+    no action will be performed when the given key is pressed
+    please use ``Renderer.keys.`` to find keys
+
+    Parameters
+    ----------
+        key : int
+            keyboard key identifier
+    """
+```
+
 ### extern class creation and manipulation
 
 Phoenyx actually have button, slider and menu integration. Some of the following methods might have extensive parameter list and docstrings so fasten your seatbelt.
 
-## The ``Slider`` class
+* ``renderer.create_button(x, y, name, **kwargs)`` will create a button at ``x, y`` named whatever is inside of ``name`` with some additionnal keyword arguments (see Options below)
 
-### creation
+```py
+def create_button(self, x: int, y: int, name: str, **kwargs) -> Button:
+    """
+    creates a new button and adds it to the sprite Group
 
-### manipulation
+    Parameters
+    ----------
+        x : int
+            the x-coordinate of the button
+        y : int
+            the y-coordinate of the button
+        name : str
+            the name of the button
+
+    Options
+    -------
+        count : int
+            number of frames to pass while unclicked to be able to trigger the button again
+        action : python function
+            the action to trigger when pressed
+        height : int
+            the height of the sprite
+        width : int
+            the width of the sprite
+        shape : str
+            the shape of the button
+            RECTANGLE | ELLIPSE
+        color : tuple | int | str
+            color to fill button and enables filling
+            if both color and stroke are None, the button will be filled by default
+        stroke : str
+            color to draw the outside box and enables stroking
+        weight : int
+            stroke weight if stroke is not None
+
+    Returns
+    -------
+        Button : gets the new button if successfull
+    """
+```
+
+* ``renderer.create_slider(x, y, name, min, max, value, incr, **kwargs)`` will create a slider at ``x, y``, named ``name``, having a value range between ``min, max`` (inclusive), an initial value of ``value`` and setting values with ``incr`` decimals, comes with additionnal keyword arguments
+
+```py
+def create_slider(self, x: int, y: int, name: str, min: float, max: float, value: float, incr: int,
+                      **kwargs) -> Slider:
+    """
+    creates a new slider and adds it to the sprite group
+
+    Parameters
+    ----------
+        x : int
+            x-coordinate
+        y : int
+            y-coordinate
+        name : str
+            name of the slider
+        min : float
+            minimum value
+        max : float
+            maximum value
+        value : float
+            current value
+        incr : int
+            rounding (may not be effective depending on the lenght of the slider)
+
+    Options
+    -------
+        radius : int
+            the radius of the slider cursor
+        shape : str
+            shape of the slider cursor
+            SQUARE | CIRCLE | CROSS | PLUS
+        thickness : int
+            the thickness of the slider bar
+        color : tuple | int | str
+            default color of the bar
+        fullcolor : tuple | int | str
+            color of the bar when its full
+        length : int
+            the length of the slider bar
+
+    Returns
+    -------
+        Slider : gets the new slider if successfull
+    """
+```
+
+* ``renderer.create_menu(name, **kwargs)`` will create a menu named ``name`` with additionnal options and keyword arguments
+
+```py
+def create_menu(self, name: str, **kwargs) -> Menu:
+    """
+    creates a new menu and adds it to the sprite group
+
+    Parameters
+    ----------
+        name : str
+            name of the menu
+
+    Options
+    -------
+        side : str
+            side of the window to display the menu
+            LEFT | RIGHT
+        length : int
+            lenght of the menu (its height)
+            by default the menu height will be on auto
+        color : tuple | int | str
+            lines color used for drawing when menu is visible
+        text_color : tuple | int | str
+            text color used for display text inside the menu
+
+    Keywords Arguments
+    ------------------
+        * : str
+            name of the buttons on the menu in order
+            must be linked to a python function
+
+    Returns
+    -------
+        Menu : gets the new menu if successfull
+    """
+```
+
+Please not that following methods are generic and that ``[sprite]`` is methods identifiers can be replaced with ``button``, ``slider`` or ``menu``
+
+* ``renderer.get_[sprite](name)`` will returns the matiching [sprite] based on the name of the [sprite]
+
+```py
+def get_[sprite](self, name: str) -> [Sprite]:
+    """
+    gets a [sprite] based on its name
+    does nothing if not matched
+
+    Parameters
+    ----------
+        name : str
+            name of the [sprite] to get
+
+    Returns
+    -------
+        [Sprite] : matching [sprite]
+    """
+```
+
+* ``renderer.kill_[sprite](name)`` will supress the matching [sprite]
+
+```py
+def kill_[sprite](self, name: str) -> None:
+    """
+    kills a [sprite] based on its name
+    does nothing if not matched
+    does not return anything
+
+    Parameters
+    ----------
+        name : str
+            name of the [sprite] to remove
+    """
+```
+
+* ``renderer.pop_[sprite](name)`` will supress and return the matching [sprite]
+
+```py
+def pop_[sprite](self, name: str) -> [Sprite]:
+    """
+    kills a [sprite] based on its name
+    returns None if not matched
+    else returns the matching [sprite]
+
+    Parameters
+    ----------
+        name : str
+            name of the [sprite] to remove
+
+    Returns
+    -------
+        [Sprite] | None : matched [sprite] if found
+    """
+```
 
 ## The ``Button`` class
 
+This section will focus more on the Button class. It is worth noting that button are automatically drawn on the screen (even if they have a draw method) and automatically checked for collision with mouse. Their action will be automatically performed when clicked.
+
 ### creation
+
+Buttons are created by the renderer (see [extern class creation and manipulation](#extern-class-creation-and-manipulation) subsection). Here we will assume that we are inside of the button class. Here is the ``__init__`` function :
+
+```py
+def __init__(self,
+                 renderer,
+                 x: int,
+                 y: int,
+                 name: str,
+                 count: int = 1,
+                 action=lambda: None,
+                 width: int = 50,
+                 height: int = 50,
+                 shape: str = RECTANGLE,
+                 color: tuple = None,
+                 stroke: tuple = None,
+                 weight: int = 1) -> None:
+    """
+    new Button instance
+
+    Parameters
+    ----------
+        renderer : Renderer
+            the Renderer instance the Button is linked to
+        x : int
+            the x-coordinate (TOP LEFT of the button)
+        y : int
+            the y-coordinate (TOP LEFT of the button)
+        name : str
+            the name of the button (must be unique !)
+        count : (int, optional)
+            number of frames to pass while unclicked to be able to trigger the button again
+            Defaults to 1
+        action : (python function, optional)
+            function to trigger when pressed
+            Defaults to lambda:None
+        width : (int, optional)
+            the width of the button
+            Defaults to 50
+        height : (int, optional)
+            the height of the button
+            Defaults to 50
+        shape : (str, optional)
+            the shape of the button
+            RECTANGLE | ELLIPSE
+            Defaults to RECTANGLE
+        color : (tuple, optional)
+            color to fill button and enables filling
+            if both color and stroke are None, the button will be filled by default
+            Defaults to None
+        stroke : (tuple, optional)
+            color to draw the outside box and enables stroking
+            Defaults to None
+        weight : (int, optional)
+            stroke weight if stroke is not None
+            Default to 1
+    """
+```
+
+### manipulation
+
+## The ``Slider`` class
+
+This section will focus more on the Slider class. It is worth noting that sliders are automatically drawn on the screen (even if they have a draw method) and automatically updated. But you will need to grab their value manually to use it.
+
+### creation
+
+Sliders are created by the renderer (see [extern class creation and manipulation](#extern-class-creation-and-manipulation) subsection). Here we will assume that we are inside of the slider class. Here is the ``__init__`` function :
+
+```py
+def __init__(
+            self,
+            renderer,
+            x: int,
+            y: int,
+            name: str,
+            min_val: float,
+            max_val: float,
+            value: float,
+            incr: int,
+            radius: int = 7,
+            shape: str = CIRCLE,
+            thickness: int = 3,
+            color: tuple = (155, 155, 155),
+            fullcolor: tuple = (155, 70, 70),
+            length: int = 100,
+    ) -> None:
+    """
+    new slider instance
+
+    Parameters
+    ----------
+        renderer : Renderer
+            the Renderer instance the Slider is linked to
+        x : int
+            x-coordinate
+        y : int
+            y-coordinate
+        name : str
+            name of the slider (must be unique !)
+        min_val : float
+            minimum value
+        max_val : float
+            maximum value
+        value : float
+            current value
+        incr : int
+            number of digits
+        radius : (int, optional)
+            radius of the slider cursor
+            Defaults to 7
+        shape : (str, optional)
+            shape of the slider cursor
+            SQUARE | CIRCLE | CROSS | PLUS
+            Defaults to CIRCLE
+        thickness : (int, optional)
+            thickness of the slider bar
+            Defaults to 3
+        color : (tuple, optional)
+            default color of the bar
+            Defaults to (155, 155, 155)
+        fullcolor : (tuple, optional)
+            color of the bar when full
+            Defaults to (155, 70, 70)
+        length : (int, optional)
+            length of the slider bar
+            Defaults to 100
+    """
+```
 
 ### manipulation
 
 ## The ``Menu`` class
 
+This section will focus more on the Menu class. It is worth noting that menus are automatically drawn on the screen (even if they have a draw method) and automatically updated. When closed, menus are only drawn as 3 lines, when expanded, menus will act as buttons and perform a small animation.
+
 ### creation
+
+Menus are created by the renderer (see [extern class creation and manipulation](#extern-class-creation-and-manipulation) subsection). Here we will assume that we are inside of the menu class. Here is the ``__init__`` function :
+
+```py
+def __init__(self,
+                 renderer,
+                 name: str,
+                 side: str = RIGHT,
+                 background=True,
+                 length: int = None,
+                 color: tuple = (155, 155, 155),
+                 text_color: tuple = (255, 255, 255),
+                 **kwargs) -> None:
+    """
+    new Menu instance
+
+    Parameters
+    ----------
+        renderer : Renderer
+            the Renderer instance the Menu is linked to
+        name : str
+            name of the menu
+        side : (str, optional)
+            side of the window to display the menu
+            LEFT | RIGHT
+            Default to RIGHT
+        background : (None | bool | tuple | int | str, optional)
+            draw a background when expanded
+            Default to True
+        length : (int, optional)
+            lenght of the menu (its height)
+            by default the menu height will be on auto
+            Default to None
+        color : (tuple | int | str, optional)
+            lines color used for drawing when menu is visible
+            Defaults to (155, 155, 155)
+        text_color : (tuple | int | str, optional)
+            text color used for display text inside the menu
+            Defaults to (255, 255, 255)
+
+    Keywords Arguments
+    ------------------
+        * : str
+            name of the buttons on the menu, in order
+            must be linked to a python function
+    """
+```
 
 ### manipulation
 
-## ``OpenSimplexNoise`` class and algorithm
+## Noise algorithms
 
-## ``PerlinNoise`` class and algorithm
+Phoenyx implements small data structure usefull to handle noises algorithm. These can be used for mathematical drawings, gif loops, random cave or maps generation. On similar cases you will have slightly different looking results depending on the algorithm you choose, but the OpenSimplex Noise algorithm was found to be slightly more faster than it's Perlin Noise counterpart.
+
+### ``OpenSimplexNoise`` class
+
+Lets actually have a noise object. OpenSimplex is a specific algorithm that aims to beautify the Perlin Noise algorithm but because I implemented OpenSimplex before Perlin Noise, lets look at this one before. This noise object support 1 to 4 dimensionnal evaluation.
+
+```py
+noise = OpenSimplexNoise()
+```
+
+Its signature is :
+
+```py
+def __init__(self, seed: int = DEFAULT_SEED) -> None:
+    """
+    Initiate the class using a permutation array generated from a 64-bit seed number.
+    """
+```
+
+There are 4 methods in this class.
+
+* ``noise.noise2d(xoff, yoff)`` will get the value of the noise space at ``xoff, yoff`` and return a value between -1. and 1.
+
+```py
+def noise2d(self, x: float, y: float) -> float:
+    """
+    2D open simplex noise
+
+    Parameters
+    ----------
+        x : float
+            the x-component of the point to evaluate
+        y : float
+            the y-component of the point to evaluate
+
+    Returns
+    -------
+        float : open simplex 2D between -1 and 1
+    """
+```
+
+* ``noise.noise3d(xoff, yoff, zoff)`` will get the value of the noise space at ``xoff, yoff, zoff`` and return a value between -1. and 1.
+
+```py
+def noise3d(self, x: float, y: float, z: float) -> float:
+    """
+    3D open simplex noise
+
+    Parameters
+    ----------
+        x : float
+            the x-component of the point to evaluate
+        y : float
+            the y-component of the point to evaluate
+        z : float
+            the z-component of the point to evaluate
+
+    Returns
+    -------
+        float : open simplex 3D between -1 and 1
+    """
+```
+
+* ``noise.noise4d(xoff, yoff, zoff, woff)`` will get the value of the noise space at ``xoff, yoff, zoff, dog`` and return a value between -1. and 1.
+
+```py
+def noise4d(self, x: float, y: float, z: float, w: float) -> float:
+    """
+    4D open simplex noise
+
+    Parameters
+    ----------
+        x : float
+            the x-component of the point to evaluate
+        y : float
+            the y-component of the point to evaluate
+        z : float
+            the z-component of the point to evaluate
+        w : float
+            the w-component of the point to evaluate
+
+    Returns
+    -------
+        float : open simplex 4D between -1 and 1
+    """
+```
+
+In addition to these methods, the noise object is callable. This means that you can call it.
+
+* ``noise(*point)`` will get the value of the noise space at ``point`` and return a value between -1. and 1. Also ``point`` should have 1 to 4 coordinates.
+
+```py
+def __call__(self, *args, **kwargs) -> float:
+    """
+    Gets the value of this Open Simplex Noise function at a given point
+    Added support for 1 dimension evaluation.
+
+    Result float is between -1. and 1.
+    """
+```
+
+### ``PerlinNoise`` class
+
+Perlin Noise is the basic noise algorithm. It support n dimensionna evaluation.
+
+```py
+noise = PerlinNoise(dim, unbias=True)
+```
+
+Its signature is :
+
+```py
+def __init__(self, dimension: int, octaves: int = 1, tile: tuple[int] = (), unbias: bool = False) -> None:
+    """
+    Create a new Perlin noise factory in the given number of dimensions,
+    which should be an integer and at least 1.
+
+    More octaves create a foggier and more-detailed noise pattern.  More
+    than 4 octaves is rather excessive.
+
+    ``tile`` can be used to make a seamlessly tiling pattern.  For example:
+
+        noise = PerlinNoise(2, tile=(0, 3))
+
+    This will produce noise that tiles every 3 units vertically, but never
+    tiles horizontally.
+
+    If ``unbias`` is true, the quintic function will be applied to the
+    output before returning it, to counteract some of Perlin noise's
+    significant bias towards the center of its output range.
+    
+    Parameters
+    ----------
+        dimension : int
+            number of dimension, should be at least 1
+        octaves : (int, optionnal)
+            number of octaves, determines the fogginess of the noise pattern
+            should be greater than 1 and less than the recommended 4
+            Defaults to 1
+        tile : (tuple[int], optionnal)
+            tiles the noise pattern along each axis
+            should be same dimension as first parameter
+            Defaults to ()
+        unbias : (bool, optionnal)
+            apply quintic function before output
+            depending on rather or not you rely on frames, you might want to set this to True
+            Defaults to False
+    """
+```
+
+There is only one method in this class.
+
+* ``noise.get_plain_noise(*point)`` will evaluate the noise space at ``point`` without taking into account either octaves or tiling
+
+```py
+def get_plain_noise(self, *point) -> float:
+    """
+    Get plain noise for a single point, without taking into account
+    either octaves or tiling.
+    """
+```
+
+To get better noise (at the cost of some more time), the noise object is callable.
+
+* ``noise(*point)`` will evaluation the noise space at ``point``
+
+```py
+def __call__(self, *point) -> float:
+    """
+    Get the value of this Perlin noise function at the given point.  The
+    number of values given should match the number of dimensions.
+
+    Result float is between -1. and 1.
+    """
+```
 
 ## ``SandBox`` physics engine
 
