@@ -77,3 +77,10 @@
     * menu background can either be transparent, from a specific color, or match the window background color
     * the length of menu finally does something
     * made all constants accessible so that you can choose colors more confidently and deal with some options
+16. *v0.1.11* a frame is a frame
+    * replaced some draw stuff with native pygame to gain little performance
+    * translation does not apply on sliders, buttons and menus anymore
+    * added a option to reset translation state completly when needed
+    * you can now effectively quit the sketch when dynamically drawing on window (using IDLE for eg)
+    * new methods for basic drawing
+    * menu text size is now configurable
