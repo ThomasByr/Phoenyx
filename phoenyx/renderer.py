@@ -132,16 +132,16 @@ class Renderer:
 
         # buttons management
         self._has_buttons = False
-        self._all_buttons: set({Button}) = set()
+        self._all_buttons: set[Button] = set()
 
         # sliders management
         self._has_sliders = False
-        self._all_sliders: set({Slider}) = set()
+        self._all_sliders: set[Slider] = set()
 
         # menus managmement
         self._has_left_menu = False
         self._has_right_menu = False
-        self._all_menus: set({Menu}) = set()
+        self._all_menus: set[Menu] = set()
 
         # fps
         self._fps = 60
@@ -432,6 +432,42 @@ class Renderer:
         weight = self.stroke_weight
         pygame.draw.line(self._window, color, point1[:2], point2[:2], weight)
 
+    def lines(self, closed: bool, *points) -> None:
+        """
+        draws lines on the screen\\
+        uses the stroke color even if stroking is disabled
+
+        Parameters
+        ----------
+            closed : bool
+                last point connected to first
+            points : tuples | lists | Vectors
+                each additionnal arg is a point
+        """
+        points = list(map(self._offset_point, points))
+        color = self.stroke
+        weight = self.stroke_weight
+        pygame.draw.lines(self._window, color, closed, points, weight)
+
+    def polygon(self, *points) -> None:
+        """
+        draws a polygon on the screen\\
+        calls debug_enabled_drawing_methods first
+
+        Parameters
+        ----------
+            points : tuples | lists | Vectors
+                each additionnal arg is a point
+        """
+        points = list(map(self._offset_point, points))
+
+        # fill
+        if self._fill:
+            pygame.draw.polygon(self._window, self.fill, points, 0)
+        # stroke
+        if self._stroke:
+            pygame.draw.polygon(self._window, self.stroke, points, self.stroke_weight)
+
     def rect(self, point: tuple, width: int, height: int) -> None:
         """
         draws a rectangle on the screen\\
@@ -609,7 +645,7 @@ class Renderer:
 
     def translate(self, x: int = 0, y: int = 0) -> None:
         """
-        translates the axes origins, additive
+        translates the axes origins, not additive
 
         Parameters
         ----------
@@ -618,8 +654,18 @@ class Renderer:
             y : int
                 translation for y-axis
         """
-        self._x_offset += x
-        self._y_offset += y
+        self._x_offset = x
+        self._y_offset = y
+
+    def reset_matrix(self) -> None:
+        """
+        reset all translations and drawing modes back to original\\
+        almost as if the renderer could pop to its original state\\
+        does not affect colors not sizes
+        """
+        self._reset_translation()
+        self.rect_mode = CORNER
+        self.translation_behaviour = KEEP
 
     def _reset_translation(self) -> None:
         """
@@ -1135,13 +1181,6 @@ class Renderer:
         """
         return pygame.event.get()
 
-    @staticmethod
-    def _quit() -> None:
-        """
-        close current window
-        """
-        pygame.quit()
-
     def _quit_check(self) -> None:
         """
         loop trougth events and look for the QUIT event\\
@@ -1179,7 +1218,7 @@ class Renderer:
         use ``pop`` to reset the state
         """
         self._save.append([
-            self._title, self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset,
+            self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset,
             self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size
         ])
         self._has_save = True
@@ -1193,7 +1232,7 @@ class Renderer:
         if not self._has_save:
             print("WARNING [renderer] : no save was found, nothing changed")
             return
-        self._title, self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset, self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size = self._save.pop(
+        self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset, self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size = self._save.pop(
         )
         self._has_save = len(self._save) >= 0
 
@@ -1283,12 +1322,26 @@ class Renderer:
         except KeyError:
             pass
 
-    def refresh(self) -> None:
+    def flip(self) -> None:
         """
         updates window\\
         used for interractive drawing without the run main loop
         """
         pygame.display.flip()
+
+    def start(self) -> None:
+        """
+        opens a new window if the sketch is closed\\
+        used for interractive drawing without the run main loop
+        """
+        self._window = pygame.display.set_mode((self._width, self._height))
+        pygame.display.set_caption(self._title)
+
+    def quit(self) -> None:
+        """
+        quits the sketch by closing the window
+        """
+        pygame.quit()
 
     def run(self, draw, setup=lambda: None) -> None:
         """
@@ -1332,18 +1385,18 @@ class Renderer:
 
                 if self._has_buttons:
                     for button in self._all_buttons:
-                        if button.collide(pos) and button.check_click() and not button.is_hidden:
+                        if not button.is_hidden and button.collide(pos) and button.check_click():
                             button.on_press()
                             button.reinit_click()
 
                 if self._has_sliders:
                     for slider in self._all_sliders:
-                        if slider.collide(pos) and not slider.is_hidden:
+                        if not slider.is_hidden and slider.collide(pos):
                             slider.set_value(pos)
 
                 if self._has_left_menu or self._has_right_menu:
                     for menu in self._all_menus:
-                        if menu.check_click() and not menu.is_hidden:
+                        if not menu.is_hidden and menu.check_click():
                             menu.update_state(pos)
                             menu.reinit_click()
                             if (i := menu.collide(pos)) is not None:
@@ -1391,4 +1444,4 @@ class Renderer:
                     if self._pressed[k]:
                         i = self._key_binding[k]
                         self._actions[i]()
-        self._quit()
+        self.quit()

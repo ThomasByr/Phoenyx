@@ -1,5 +1,6 @@
 from phoenyx.constants import *
 import difflib
+import pygame
 
 
 def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:
@@ -527,7 +528,7 @@ class Slider:
     def draw(self) -> None:
         """
         draws the slider on the screen\\
-        draws line and apply text\\
+        draws line and apply text
         """
         renderer = self._renderer
         renderer.push()
@@ -537,41 +538,57 @@ class Slider:
         max_label = renderer.FONT.render(str(self.max_val), True, (0, 0, 0))
         val_label = renderer.FONT.render(str(self.value), True, (0, 0, 0))
 
-        renderer.stroke_weight = self.thickness
-        renderer.stroke = self.color
-        renderer.line((self._x, self._y), (self._x + self.length, self._y))
+        # renderer.stroke_weight = self.thickness
+        # renderer.stroke = self.color
+        pygame.draw.line(renderer._window, self.color, (self._x, self._y), (self._x + self.length, self._y),
+                         self.thickness)
+        # renderer.line((self._x, self._y), (self._x + self.length, self._y))
 
-        renderer.stroke = self.fullcolor
+        # renderer.stroke = self.fullcolor
         pad = self.length / (self.max_val - self.min_val)
         x = self._x + int(pad * (self.value - self._min_val))
-        renderer.line((self._x, self._y), (x, self._y))
+        pygame.draw.line(renderer._window, self.fullcolor, (self._x, self._y), (x, self._y), self.thickness)
+        # renderer.line((self._x, self._y), (x, self._y))
 
         if self.shape == SQUARE:
-            renderer.fill = self.fullcolor
-            renderer.no_stroke()
-            renderer.rect_mode = CENTER
-            renderer.rect(self.rect, 2 * self.radius, 2 * self.radius)
+            # renderer.fill = self.fullcolor
+            # renderer.no_stroke()
+            # renderer.rect_mode = CENTER
+            rect = self.rect[0] - self.radius, self.rect[1] - self.radius, 2 * self.radius, 2 * self.radius
+            pygame.draw.rect(renderer._window, self.fullcolor, rect, 0)
+            # renderer.rect(self.rect, 2 * self.radius, 2 * self.radius)
         elif self.shape == CIRCLE:
-            renderer.fill = self.fullcolor
-            renderer.no_stroke()
-            renderer.rect_mode = CENTER
-            renderer.circle(self.rect, self.radius)
+            # renderer.fill = self.fullcolor
+            # renderer.no_stroke()
+            # renderer.rect_mode = CENTER
+            pygame.draw.circle(renderer._window, self.fullcolor, self.rect, self.radius, 0)
+            # renderer.circle(self.rect, self.radius)
         elif self.shape == CROSS:
-            renderer.no_fill()
-            renderer.stroke = self.fullcolor
-            renderer.stroke_weight = self.thickness
-            renderer.line((self.rect[0] - self.radius, self.rect[1] - self.radius),
-                          (self.rect[0] + self.radius, self.rect[1] + self.radius))
-            renderer.line((self.rect[0] - self.radius, self.rect[1] + self.radius),
-                          (self.rect[0] + self.radius, self.rect[1] - self.radius))
+            # renderer.no_fill()
+            # renderer.stroke = self.fullcolor
+            # renderer.stroke_weight = self.thickness
+            pygame.draw.line(renderer._window, self.fullcolor,
+                             (self.rect[0] - self.radius, self.rect[1] - self.radius),
+                             (self.rect[0] + self.radius, self.rect[1] + self.radius), self.thickness)
+            pygame.draw.line(renderer._window, self.fullcolor,
+                             (self.rect[0] - self.radius, self.rect[1] + self.radius),
+                             (self.rect[0] + self.radius, self.rect[1] - self.radius), self.thickness)
+            # renderer.line((self.rect[0] - self.radius, self.rect[1] - self.radius),
+            #               (self.rect[0] + self.radius, self.rect[1] + self.radius))
+            # renderer.line((self.rect[0] - self.radius, self.rect[1] + self.radius),
+            #               (self.rect[0] + self.radius, self.rect[1] - self.radius))
         elif self.shape == PLUS:
-            renderer.no_fill()
-            renderer.stroke = self.fullcolor
-            renderer.stroke_weight = self.thickness
-            renderer.line((self.rect[0], self.rect[1] + self.radius),
-                          (self.rect[0], self.rect[1] - self.radius))
-            renderer.line((self.rect[0] - self.radius, self.rect[1]),
-                          (self.rect[0] + self.radius, self.rect[1]))
+            # renderer.no_fill()
+            # renderer.stroke = self.fullcolor
+            # renderer.stroke_weight = self.thickness
+            pygame.draw.line(renderer._window, self.fullcolor, (self.rect[0], self.rect[1] + self.radius),
+                             (self.rect[0], self.rect[1] - self.radius), self.thickness)
+            pygame.draw.line(renderer._window, self.fullcolor, (self.rect[0] - self.radius, self.rect[1]),
+                             (self.rect[0] + self.radius, self.rect[1]), self.thickness)
+            # renderer.line((self.rect[0], self.rect[1] + self.radius),
+            #               (self.rect[0], self.rect[1] - self.radius))
+            # renderer.line((self.rect[0] - self.radius, self.rect[1]),
+            #               (self.rect[0] + self.radius, self.rect[1]))
 
         renderer.text(self._x - name_label.get_width() - 10, self._y - name_label.get_height() // 2,
                       self.name)

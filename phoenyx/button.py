@@ -1,5 +1,6 @@
 from phoenyx.constants import *
 import difflib
+import pygame
 
 
 class Button:
@@ -433,28 +434,42 @@ class Button:
     def draw(self) -> None:
         """
         draws the button on the screen\\
-        draws box and apply text\\
+        draws box and apply text
         """
         renderer = self._renderer
 
         renderer.push()
+        renderer.no_fill()
+        renderer.no_stroke()
 
         name_label = renderer.FONT.render(self.name, True, (0, 0, 0))
 
         x = self._x + (self._width // 2)
         y = self._y + (self._height // 2)
-        renderer.rect_mode = CENTER
+        # renderer.rect_mode = CENTER
 
-        if self.color is not None:
-            renderer.fill = self.color
-        if self.stroke is not None:
-            renderer.stroke = self.stroke
-            renderer.stroke_weight = self.weight
+        # if self.color is not None:
+        #     renderer.fill = self.color
+        # if self.stroke is not None:
+        #     renderer.stroke = self.stroke
+        #     renderer.stroke_weight = self.weight
 
         if self.shape == RECTANGLE:
-            renderer.rect((x, y), self._width, self._height)
+            if self.color is not None:
+                pygame.draw.rect(renderer._window, self.color, (self._x, self._y, self._width, self._height),
+                                 0)
+            if self.stroke is not None:
+                pygame.draw.rect(renderer._window, self.stroke, (self._x, self._y, self._width, self._height),
+                                 self.stroke_weight)
+            # renderer.rect((x, y), self._width, self._height)
         elif self.shape == ELLIPSE:
-            renderer.ellipse((x, y), self._width, self._height)
+            if self.color is not None:
+                pygame.draw.ellipse(renderer._window, self.color,
+                                    (self._x, self._y, self._width, self._height), 0)
+            if self.stroke is not None:
+                pygame.draw.ellipse(renderer._window, self.stroke,
+                                    (self._x, self._y, self._width, self._height), self.stroke_weight)
+            # renderer.ellipse((x, y), self._width, self._height)
 
         x -= name_label.get_width() // 2
         y -= name_label.get_height() // 2

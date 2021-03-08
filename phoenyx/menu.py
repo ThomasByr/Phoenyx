@@ -1,6 +1,6 @@
-from typing import Tuple
 from phoenyx.constants import *
 import difflib
+import pygame
 
 
 def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:
@@ -8,6 +8,14 @@ def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:
     linear interpolation
     """
     return (y0 * (x1-x) + y1 * (x-x0)) / (x1-x0)
+
+
+def _constrain(x: float, mn: float, mx: float) -> int:
+    if x < mn:
+        return mn
+    elif x > mx:
+        return mx
+    return x
 
 
 class Menu:
@@ -24,6 +32,7 @@ class Menu:
                  length: int = None,
                  color: tuple = (155, 155, 155),
                  text_color: tuple = (255, 255, 255),
+                 text_size: int = 15,
                  **kwargs) -> None:
         """
         new Menu instance
@@ -51,6 +60,8 @@ class Menu:
             text_color : (tuple | int | str, optional)
                 text color used for display text inside the menu
                 Defaults to (255, 255, 255)
+            text_size : int
+                text size of the menu, must be between 1 and 25
 
         Keywords Arguments
         ------------------
@@ -127,6 +138,7 @@ class Menu:
             print(f"ERROR [slider {self._name}] : wrong text color parameter, menu was not created")
             self.has_error = True
 
+        self._text_size = _constrain(text_size, 1, 25)
         self._all_items = []
         self._all_actions = []
         for k, v in kwargs.items():
@@ -475,9 +487,37 @@ class Menu:
         """
         self._is_playing = state
 
-    def get_max_ticks(self, sec: float = 1.) -> None:
+    @property
+    def text_size(self) -> int:
         """
-        gets maximum ticks of animation depending of the duration of the animation
+        gets current text size
+        """
+        return self._text_size
+
+    @text_size.setter
+    def text_size(self, size: int) -> None:
+        """
+        sets menu text size
+
+        Parameters
+        ----------
+            size : int
+                new text size, must be between 1 and 25, inclusive
+        """
+        if size > 25:
+            print(
+                f"ERROR [menu {self._name}] : text size is too big, max is 25 due to menu layout, nothing changed"
+            )
+            return
+        if size < 1:
+            print(f"ERROR [menu {self._name}] : text size is too small, min is 1")
+            return
+        self._text_size = size
+        self.set_max_width()
+
+    def set_max_ticks(self, sec: float = 1.) -> None:
+        """
+        sets maximum ticks of animation depending of the duration of the animation
 
         Parameters
         ----------
@@ -505,8 +545,9 @@ class Menu:
             return
         max_width = 100
         width = 0
+
         self._renderer.push()
-        self._renderer.text_size = 15
+        self._renderer.text_size = self.text_size
         font = self._renderer.FONT
         for item in self._all_items:
             label = font.render(item, True, (0, 0, 0))
@@ -519,6 +560,7 @@ class Menu:
         label = font.render(self.name, True, (0, 0, 0))
         self._namew = label.get_width() + 10
         self._renderer.pop()
+
         self.width = max_width
 
     def fold(self) -> None:
@@ -533,7 +575,7 @@ class Menu:
             return
         self._is_fold = True
         self._is_playing = True
-        self.get_max_ticks()
+        self.set_max_ticks()
 
     def unfold(self) -> None:
         """
@@ -547,7 +589,7 @@ class Menu:
             return
         self._is_fold = False
         self._is_playing = True
-        self.get_max_ticks()
+        self.set_max_ticks()
 
     def new_items(self, **kwargs) -> None:
         """
@@ -652,29 +694,33 @@ class Menu:
                         renderer.fill = renderer.win_bg
                     else:
                         renderer.fill = self.background
-                    renderer.no_stroke()
+                    # renderer.no_stroke()
                     l = len(self._all_items)
                     h = 15 + l*30
                     if self.length is not None:
                         h = self._length
-                    renderer.rect((x0, y), self.width, h)
+                    pygame.draw.rect(renderer._window, renderer.fill, (x0, y, self.width, h))
+                    # renderer.rect((x0, y), self.width, h)
 
-                renderer.no_fill()
-                renderer.stroke = self.color
-                renderer.stroke_weight = 1
+                # renderer.no_fill()
+                # renderer.stroke = self.color
+                # renderer.stroke_weight = 1
                 renderer.text_size = 15
                 renderer.text_color = self.text_color
 
                 renderer.text(xw, y, self.name)
                 for i, item in enumerate(self._all_items):
                     renderer.text(x0, y + 30 + (i*30), item)
-                    renderer.line((x0, y + 45 + (i*30)), (x0 + self.width, y + 45 + (i*30)))
+                    pygame.draw.line(renderer._window, self.color, (x0, y + 45 + (i*30)),
+                                     (x0 + self.width, y + 45 + (i*30)), 1)
+                    # renderer.line((x0, y + 45 + (i*30)), (x0 + self.width, y + 45 + (i*30)))
 
-            renderer.no_fill()
-            renderer.stroke = self.color
-            renderer.stroke_weight = 2
+            # renderer.no_fill()
+            # renderer.stroke = self.color
+            # renderer.stroke_weight = 2
             for _ in range(3):
-                renderer.line((x, y), (x + 15, y))
+                pygame.draw.line(renderer._window, self.color, (x, y), (x + 15, y), 2)
+                # renderer.line((x, y), (x + 15, y))
                 y += 5
             renderer.pop()
 
@@ -695,33 +741,39 @@ class Menu:
             xw = x - self._namew
 
         renderer.push()
+        renderer.text_size = self.text_size
         if self.has_background:
             if self.background is None:
                 renderer.fill = renderer.win_bg
             else:
                 renderer.fill = self.background
-            renderer.no_stroke()
+            # renderer.no_stroke()
             l = len(self._all_items)
             h = 15 + l*30
             if self.length is not None:
                 h = self._length
-            renderer.rect((x0, y), self.width, h)
+            pygame.draw.rect(renderer._window, renderer.fill, (x0, y, self.width, h))
+            # renderer.rect((x0, y), self.width, h)
 
-        renderer.no_fill()
-        renderer.stroke = self.color
-        renderer.stroke_weight = 2
+        # renderer.no_fill()
+        # renderer.stroke = self.color
+        # renderer.stroke_weight = 2
         renderer.text_size = 15
         renderer.text_color = self.text_color
 
-        renderer.line((x, y), (x + 15, y + 15))
-        renderer.line((x, y + 15), (x + 15, y))
+        pygame.draw.line(renderer._window, self.color, (x, y), (x + 15, y + 15), 2)
+        pygame.draw.line(renderer._window, self.color, (x, y + 15), (x + 15, y), 2)
+        # renderer.line((x, y), (x + 15, y + 15))
+        # renderer.line((x, y + 15), (x + 15, y))
 
-        renderer.stroke_weight = 1
+        # renderer.stroke_weight = 1
 
         renderer.text(xw, y, self.name)
         for i, item in enumerate(self._all_items):
             renderer.text(x0, y + 30 + (i*30), item)
-            renderer.line((x0, y + 45 + (i*30)), (x0 + self.width, y + 45 + (i*30)))
+            pygame.draw.line(renderer._window, self.color, (x0, y + 45 + (i*30)),
+                             (x0 + self.width, y + 45 + (i*30)), 1)
+            # renderer.line((x0, y + 45 + (i*30)), (x0 + self.width, y + 45 + (i*30)))
         renderer.pop()
 
         self.animate()
