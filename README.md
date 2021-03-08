@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
 Obviously some distribution of python : ``python 3.9`` and above is required.
 
-You will also need ``pygame`` in order to use the Engine and ``numpy`` to use Vectors. Also if you are on Windows and numpy 1.19.4 happens not to work with the last Microsoft update, make sure to uninstall the current distribution of numpy and then do ``pip install numpy==1.19.3``.
+You will also need ``pygame`` in order to use the Engine and ``numpy`` to use Vectors. Also if you are on Windows and numpy 1.19.4 happens not to work with the last Microsoft update, make sure to update the current distribution of numpy with ``pip install --upgrade numpy``.
 
 ## Licenses
 
@@ -108,7 +108,7 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 Please refer to [the Changelog file](changelog.md) for more detail.
 
-This update covers some bug fixes and further testing was performed. Also some additionnal drawing methods for menus have been implemented and some constants are now accessible from a wildcart import.
+This updates covers slightly modofied drawing functions for menus, sliders and buttons. Such effort allowed the example file to perform 1% more quickly. Intense.
 
 ## TODOs
 
@@ -116,6 +116,6 @@ This update covers some bug fixes and further testing was performed. Also some a
 * ~~option of alts drawing methods for buttons~~
 * ~~keyboard integration~~
 * scrollbars ~~and side menus~~
-* interractive drawing
+* ~~interractive drawing~~
 * physics Sandbox
 * widgets, canvas
