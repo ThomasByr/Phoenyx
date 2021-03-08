@@ -4,7 +4,8 @@
    1. [drawing basics](#drawing-basics)
    2. [drawing attribute manipulation](#drawing-attribute-manipulation)
    3. [other attributes](#other-attributes)
-   4. [extern class creation and manipulation](#extern-class-creation-and-manipulation)
+   4. [some interractive drawing](#some-interractive-drawing)
+   5. [extern class creation and manipulation](#extern-class-creation-and-manipulation)
 2. [The ``Button`` class](#the-button-class)
    1. [creation](#creation)
    2. [manipulation](#manipulation)
@@ -104,6 +105,38 @@ def line(self, point1: tuple, point2: tuple) -> None:
     """
 ```
 
+* ``renderer.lines(closed=True, point1, point2, point3, point4)`` will draw a line between ``point1`` and ``point2``, between ``point2`` and ``point3``, between ``point3`` and ``point4`` and between ``point4`` and ``point1``
+
+```py
+def lines(self, closed: bool, *points) -> None:
+    """
+    draws lines on the screen
+    uses the stroke color even if stroking is disabled
+
+    Parameters
+    ----------
+        closed : bool
+            last point connected to first
+        points : tuples | lists | Vectors
+            each additionnal arg is a point
+    """
+```
+
+* ``renderer.polygon(point1, point2, point3, point4, point5, ...)`` will draw a polygon described by all the points
+
+```py
+def polygon(self, *points) -> None:
+    """
+    draws a polygon on the screen
+    calls debug_enabled_drawing_methods first
+
+    Parameters
+    ----------
+        points : tuples | lists | Vectors
+            each additionnal arg is a point
+    """
+```
+
 * ``renderer.rect(point, width, height)`` will draw a rectangle which top left corner will be at ``point``, having a width of ``width`` and a height of ``height``
 
 ```py
@@ -176,7 +209,7 @@ def circle(self, center: tuple, radius: int) -> None:
     """
 ```
 
-* ``renderer.text(x, y, text)`` will display the ``text`` on the screen at ``x, y``
+* ``renderer.text(x, y, text)`` will display the ``text`` on the screen at ``(x, y)``
 
 ```py
 def text(self, x: int, y: int, text: str) -> None:
@@ -336,12 +369,12 @@ def pop(self) -> None:
     """
 ```
 
-* ``renderer.translate(x, y)`` will translate the axis origin to ``x, y``
+* ``renderer.translate(x, y)`` will translate the axis origin to ``(x, y)``, translating to (0, 0) will reset the translation
 
 ```py
 def translate(self, x: int = 0, y: int = 0) -> None:
     """
-    translates the axes origins, additive
+    translates the axes origins, not additive
 
     Parameters
     ----------
@@ -349,6 +382,17 @@ def translate(self, x: int = 0, y: int = 0) -> None:
             translation for x-axis
         y : int
             translation for y-axis
+    """
+```
+
+* ``renderer.reset_matrix()`` will reset the translation and drawing modes of the renderer ; reset the translation, the rect mode and the translation behaviour
+
+```py
+def reset_matrix(self) -> None:
+    """
+    reset all translations and drawing modes back to original
+    almost as if the renderer could pop to its original state
+    does not affect colors not sizes
     """
 ```
 
@@ -458,11 +502,51 @@ def kill_keypress(self, key: int) -> None:
     """
 ```
 
+### some interractive drawing
+
+Phoenyx allows you to type instructions in IDLE for eg and see things happening in the window. It is worth noting that since the following instence of Renderer will not run its main loop, only basic drawing stuff will be available. The following snippet should be typed one line at a time.
+
+```py
+from phoenyx import *
+r = Renderer(400, 400, "test")  # new instence of Renderer
+
+r.background(51)
+r.stroke = "forest green"
+r.fill = "violet"
+
+r.circle((200, 200), 100)
+# some more instructions...
+
+r.flip()  # will update the screen
+r.quit()  # will close the window
+```
+
+So as you can see basic drawing instructions work the same way it did when we had ``setup`` and the ``draw`` loop but we have to call manually the ``flip`` method on the Renderer to tell Phoenyx to update the window. Furthermore, as we are no longer checking for events, the window won't close by clicking on the red cross, the method ``quit`` will shut down the window, still, you can create an other one with the method ``start``, which will start a new blank window having all things setup.
+
+```py
+def flip(self) -> None:
+    """
+    updates window
+    used for interractive drawing without the run main loop
+    """
+
+def start(self) -> None:
+    """
+    opens a new window if the sketch is closed
+    used for interractive drawing without the run main loop
+    """
+
+def quit(self) -> None:
+    """
+    quits the sketch by closing the window
+    """
+```
+
 ### extern class creation and manipulation
 
 Phoenyx actually have button, slider and menu integration. Some of the following methods might have extensive parameter list and docstrings so fasten your seatbelt.
 
-* ``renderer.create_button(x, y, name, **kwargs)`` will create a button at ``x, y`` named whatever is inside of ``name`` with some additionnal keyword arguments (see Options below)
+* ``renderer.create_button(x, y, name, **kwargs)`` will create a button at ``(x, y)`` named whatever is inside of ``name`` with some additionnal keyword arguments (see Options below)
 
 ```py
 def create_button(self, x: int, y: int, name: str, **kwargs) -> Button:
@@ -505,7 +589,7 @@ def create_button(self, x: int, y: int, name: str, **kwargs) -> Button:
     """
 ```
 
-* ``renderer.create_slider(x, y, name, min, max, value, incr, **kwargs)`` will create a slider at ``x, y``, named ``name``, having a value range between ``min, max`` (inclusive), an initial value of ``value`` and setting values with ``incr`` decimals, comes with additionnal keyword arguments
+* ``renderer.create_slider(x, y, name, min, max, value, incr, **kwargs)`` will create a slider at ``(x, y)``, named ``name``, having a value range between ``(min, max)`` (inclusive), an initial value of ``value`` and setting values with ``incr`` decimals, comes with additionnal keyword arguments
 
 ```py
 def create_slider(self, x: int, y: int, name: str, min: float, max: float, value: float, incr: int,
@@ -861,7 +945,7 @@ def __init__(self, seed: int = DEFAULT_SEED) -> None:
 
 There are 4 methods in this class.
 
-* ``noise.noise2d(xoff, yoff)`` will get the value of the noise space at ``xoff, yoff`` and return a value between -1. and 1.
+* ``noise.noise2d(xoff, yoff)`` will get the value of the noise space at ``(xoff, yoff)`` and return a value between -1. and 1.
 
 ```py
 def noise2d(self, x: float, y: float) -> float:
@@ -881,7 +965,7 @@ def noise2d(self, x: float, y: float) -> float:
     """
 ```
 
-* ``noise.noise3d(xoff, yoff, zoff)`` will get the value of the noise space at ``xoff, yoff, zoff`` and return a value between -1. and 1.
+* ``noise.noise3d(xoff, yoff, zoff)`` will get the value of the noise space at ``(xoff, yoff, zoff)`` and return a value between -1. and 1.
 
 ```py
 def noise3d(self, x: float, y: float, z: float) -> float:
@@ -903,7 +987,7 @@ def noise3d(self, x: float, y: float, z: float) -> float:
     """
 ```
 
-* ``noise.noise4d(xoff, yoff, zoff, woff)`` will get the value of the noise space at ``xoff, yoff, zoff, dog`` and return a value between -1. and 1.
+* ``noise.noise4d(xoff, yoff, zoff, woff)`` will get the value of the noise space at ``(xoff, yoff, zoff, dog)`` and return a value between -1. and 1.
 
 ```py
 def noise4d(self, x: float, y: float, z: float, w: float) -> float:
