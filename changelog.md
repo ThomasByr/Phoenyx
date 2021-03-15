@@ -9,7 +9,7 @@
     * some refractor
     * name changing from pygame_engine to phoenyx (because the bird...)
     * efficiency improvement because frames are parts of success
-3.  *v0.0.a3* now comes the bif stuff
+3.  *v0.0.a3* now comes the big stuff
     * wait... [Buttons](phonyx/button.py) ? (type ``help(phoenyx.button.Button)`` to learn more)
     * buttons have better click response (hold or choose the number of frames to pass while uncliked to be able to trigger the button again)
 4.  *v0.0.a4* I need to port html5
@@ -84,3 +84,14 @@
     * you can now effectively quit the sketch when dynamically drawing on window (using IDLE for eg)
     * new methods for basic drawing
     * menu text size is now configurable
+17. *v0.1.12* some more drawing
+    * small fix in test file, another test file is available (inverse kinematics) !
+    * updated docstring when creating menu with Renderer to fit init method
+    * first try of rotation, you can rotate the screen, but it is not recommended...
+    * note that rotation unlike Processing only affect what has been drawn and not what will be drawn (this might change in the future)
+    * also rotating is relative to the center, because pygame does not allow for much native customization
+    * first try of scale, you can scale the sceen
+    * scale is relative to the center, should you rotate and scale, scale first and then rotate to eliminate pixels artefacts (costs a lot of computer performances)
+    * drawing method fix for lines
+    * added squared distance calculation (also added casting) for Vectors
+    * new methods for Vectors that does not modify the current object
