@@ -1,6 +1,6 @@
 # Phoenyx - Pygame Engine
 
-Some simple classes in ``python`` that could make your life much simplier.
+Some simple classes in ``python`` that could make your life much simplier. Relies on the pygame draw engine, based on the idea of the Processing language.
 
 1. [What it does](#what-it-does)
 2. [How to ?](#how-to-)
@@ -13,7 +13,7 @@ Some simple classes in ``python`` that could make your life much simplier.
 
 This library allows you to create graphical components in ``pygame`` in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector class suitable for physics engines and mathematical drawings.
 
-Please go and check [pygame](https://github.com/pygame/pygame.git) for their amazing work !
+Please go and check [pygame](https://github.com/pygame/pygame.git) for their amazing work ! Additionnal kudos to Daniel Shiffman.
 
 ## How to ?
 
@@ -21,14 +21,12 @@ Please refer to [test.py](examples/test.py) on GitHub for a very simple but effe
 
 ```py
 from phoenyx import *
-import numpy
 
-renderer = Renderer(600, 600, "Perlin Noise Loop")
+renderer: Renderer = Renderer(600, 600, "Perlin Noise Loop")
 
 SHOWINFO = True
 w = 10
 noise = PerlinNoise(3, unbias=True)
-noise_map = numpy.zeros((600 // w, 600 // w), dtype=float)
 t_offset = 0
 spacing = 0.05
 slider: Slider
@@ -69,16 +67,12 @@ def draw() -> None:
     for i in range(600 // w):
         x_offset = 0
         for j in range(600 // w):
-            noise_map[i, j] = noise(x_offset, y_offset, t_offset)
-            x_offset += spacing
-        y_offset += spacing
-
-    for i in range(600 // w):
-        for j in range(600 // w):
-            d = noise_map[i, j]
+            d = noise(x_offset, y_offset, t_offset)
             d = int((d+1) * 255 / 2)
             renderer.fill = d
             renderer.rect((i * w, j * w), w, w)
+            x_offset += spacing
+        y_offset += spacing
 
     t_offset += slider.value
 
@@ -108,7 +102,7 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 Please refer to [the Changelog file](changelog.md) for more detail.
 
-This updates covers slightly modofied drawing functions for menus, sliders and buttons. Such effort allowed the example file to perform 1% more quickly. Intense.
+This updates covers rotating and scaling of the display. It is worth noting that unlinke Processing, these methods only apply to what has been drawn on the screen rather than what will be drawn. These two methods are relative to the center of the screen (rotation around the center of the window, and scale from the center).
 
 ## TODOs
 
