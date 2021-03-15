@@ -17,7 +17,7 @@ Please go and check [pygame](https://github.com/pygame/pygame.git) for their ama
 
 ## How to ?
 
-Please refer to [test.py](examples/test.py) on GitHub for a very simple but effective test file. You can now also read the [helpme](helpme.md) file for all available methods and obects.
+Please refer to [test.py](examples/test.py) on GitHub for a very simple but effective test file. You can now also read the [helpme](helpme.md) file for all available methods and objects.
 
 ```py
 from phoenyx import *
