@@ -95,3 +95,9 @@
     * drawing method fix for lines
     * added squared distance calculation (also added casting) for Vectors
     * new methods for Vectors that does not modify the current object
+18. *v0.1.13* pretty print
+    * new invisible class called ``ErrorHandler`` to handle errors in a more pretty way
+    * Phoenyx warnings are now less spam and display the number of times they occured (like in the js console log)
+    * note that the terminal is not longer usable for standart inputs and outputs
+    * worked around previous line, somehow... you can now use ``error_handler_set_soft`` in setup or anywhere in the main body of the program to use standard error messaging
+    * you can now know where the mouse is inside of the main window
