@@ -1,3 +1,5 @@
+from phoenyx.errorhandler import *
+
 from phoenyx.constants import *
 import difflib
 import pygame
@@ -84,14 +86,14 @@ class Button:
                 self._color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [button {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         elif color is None:
             self._color = None
         else:
-            print(f"ERROR [button {self._name}] : wrong color parameter, button was not created")
+            warn(f"ERROR [button {self._name}] : wrong color parameter, button was not created")
             self.has_error = True
 
         if isinstance(stroke, tuple) and len(stroke) == 3:
@@ -103,23 +105,23 @@ class Button:
                 self._stroke = COLORS[stroke.lower()]
             except KeyError:
                 close = difflib.get_close_matches(stroke, COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [button {self._name}] : {stroke} is not a valid color name, using closest match {close} instead"
                 )
                 self._stroke = COLORS[close]
         elif stroke is None:
             self._stroke = None
         else:
-            print(f"ERROR [button {self._name}] : wrong stroke parameter, button was not created")
+            warn(f"ERROR [button {self._name}] : wrong stroke parameter, button was not created")
             self.has_error = True
 
         if shape not in (RECTANGLE, ELLIPSE):
-            print(f"ERROR [button {self._name}] : wrong shape parameter, button was not created")
+            warn(f"ERROR [button {self._name}] : wrong shape parameter, button was not created")
             self.has_error = True
         self._shape = shape
 
         if weight <= 0 and self._stroke is not None:
-            print(
+            warn(
                 f"ERROR [button {self._name}] : weight can't be {weight} if stroking is not disabled, button was not created"
             )
             self.has_error = True
@@ -143,9 +145,9 @@ class Button:
             click_count : int
                 new click_count
         """
-        print(f"INFO [button {self._name}] : attempting to modify click behaviour")
+        warn(f"INFO [button {self._name}] : attempting to modify click behaviour")
         if click_count < 0:
-            print(f"ERROR [button {self._name}] : bad click_count, nothing changed")
+            warn(f"ERROR [button {self._name}] : bad click_count, nothing changed")
             return
         self._click_count = click_count
 
@@ -207,9 +209,9 @@ class Button:
                 the shape of the button
                 RECTANGLE | ELLIPSE
         """
-        print(f"INFO [button {self._name}] : attempting shape change")
+        warn(f"INFO [button {self._name}] : attempting shape change")
         if shape not in (RECTANGLE, ELLIPSE):
-            print(f"ERROR [button {self._name}] : {shape} is not a valid shape, nothing changed")
+            warn(f"ERROR [button {self._name}] : {shape} is not a valid shape, nothing changed")
             return
         self._shape = shape
 
@@ -233,7 +235,7 @@ class Button:
             color : tuple | int | str
                 the new color
         """
-        print(f"INFO [button {self._name}] : attempting filling change")
+        warn(f"INFO [button {self._name}] : attempting filling change")
         if isinstance(color, tuple) and len(color) == 3:
             self._color = color
         elif isinstance(color, int):
@@ -243,19 +245,19 @@ class Button:
                 self._color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [button {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         elif color is None:
             if self._stroke is None:
-                print(
+                warn(
                     f"ERROR [button {self._name}] : filling can't be disabled if stroking also is, nothing changed"
                 )
                 return
             self._color = None
         else:
-            print(f"ERROR [button {self._name}] : {color} is not a valid color, nothing changed")
+            warn(f"ERROR [button {self._name}] : {color} is not a valid color, nothing changed")
 
     @property
     def stroke(self) -> tuple:
@@ -286,19 +288,19 @@ class Button:
                 self._stroke = COLORS[stroke.lower()]
             except KeyError:
                 close = difflib.get_close_matches(stroke, COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [button {self._name}] : {stroke} is not a valid color name, using closest match {close} instead"
                 )
                 self._stroke = COLORS[close]
         elif stroke is None:
             if self._color is None:
-                print(
+                warn(
                     f"ERROR [button {self._name}] : stroking can't be disabled if filling also is, nothing changed"
                 )
                 return
             self._stroke = None
         else:
-            print(f"ERROR [button {self._name}] : {stroke} is not a valid color, nothing changed")
+            warn(f"ERROR [button {self._name}] : {stroke} is not a valid color, nothing changed")
 
     @property
     def weight(self) -> int:
@@ -319,7 +321,7 @@ class Button:
                 the new weight
         """
         if weight <= 0 and self._stroke is not None:
-            print(
+            warn(
                 f"ERROR [button {self._name}] : weight can't be {weight} if stroking is not disabled, nothing changed"
             )
             return
@@ -332,7 +334,7 @@ class Button:
         opposite method is ``reveal``
         """
         if self._is_hidden:
-            print(f"WARNING [button {self._name}] : button is already hidden, nothing changed")
+            warn(f"WARNING [button {self._name}] : button is already hidden, nothing changed")
             return
         self._is_hidden = True
 
@@ -343,7 +345,7 @@ class Button:
         opposite method is ``hide``
         """
         if not self._is_hidden:
-            print(f"WARNING [button {self._name}] : button is not hidden, nothing changed")
+            warn(f"WARNING [button {self._name}] : button is not hidden, nothing changed")
             return
         self._is_hidden = False
 
@@ -377,7 +379,7 @@ class Button:
                 new height
         """
         if height <= 2 and width <= 2:
-            print(f"ERROR [button {self._name}] : ({width}, {height}) is not a valid size, nothing changed")
+            warn(f"ERROR [button {self._name}] : ({width}, {height}) is not a valid size, nothing changed")
             return
         self._height = height
         self._width = width
@@ -400,7 +402,7 @@ class Button:
             name : str
                 new name
         """
-        print(f"INFO [button {self._name}] : name changing to {name}")
+        warn(f"INFO [button {self._name}] : name changing to {name}")
         self._name = name
 
     @property
@@ -421,7 +423,7 @@ class Button:
             action : python function
                 new action
         """
-        print(f"INFO [button {self._name}] : action changed")
+        warn(f"INFO [button {self._name}] : action changed")
         self._action = action
 
     def collide(self, pos) -> bool:

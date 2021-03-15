@@ -5,6 +5,8 @@ pygame.init()
 
 __all__ = ["Renderer"]
 
+from phoenyx.errorhandler import *
+
 from phoenyx.constants import *
 from phoenyx.button import *
 from phoenyx.slider import *
@@ -199,6 +201,30 @@ class Renderer:
         """
         return self._bg
 
+    def get_mouse_pos(self) -> tuple[int, int]:
+        """
+        gets current mouse position as a tuple
+
+        Returns
+        -------
+            tuple[int, int] : mouse pos
+        """
+        return pygame.mouse.get_pos()
+
+    @property
+    def mouse_x(self) -> int:
+        """
+        gets current position of the mouse cursor along the x-axis
+        """
+        return self.get_mouse_pos()[0]
+
+    @property
+    def mouse_y(self) -> int:
+        """
+        gets current position of the mouse cursor along the y-axis
+        """
+        return self.get_mouse_pos()[1]
+
     def no_fill(self) -> None:
         """
         disables filling globally
@@ -236,12 +262,12 @@ class Renderer:
                 self._fill_color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._fill_color = COLORS[close]
         else:
-            print(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
+            warn(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
 
     def no_stroke(self) -> None:
         """
@@ -280,12 +306,12 @@ class Renderer:
                 self._stroke_color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._stroke_color = COLORS[close]
         else:
-            print(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
+            warn(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
 
     @property
     def stroke_weight(self) -> int:
@@ -331,7 +357,7 @@ class Renderer:
                 Defaults to CENTER
         """
         if mode not in (CENTER, CORNER):
-            print(f"ERROR [renderer] : {mode} is not a valid mode for tect_mode, nothing happened")
+            warn(f"ERROR [renderer] : {mode} is not a valid mode for tect_mode, nothing happened")
             return
         self._rect_mode = mode
 
@@ -381,12 +407,12 @@ class Renderer:
                 self._text_color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._text_color = COLORS[close]
         else:
-            print(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
+            warn(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
 
     def _debug_enabled_drawing_methods(self) -> None:
         """
@@ -637,13 +663,12 @@ class Renderer:
                 color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 color = COLORS[close]
         else:
-            print(
-                f"ERROR [renderer] : {color} not a valid color parameter, applaying default dark background")
+            warn(f"ERROR [renderer] : {color} not a valid color parameter, applaying default dark background")
             color = 51, 51, 51
         self._bg = color
         self._window.fill(color)
@@ -727,7 +752,7 @@ class Renderer:
                 KEEP | RESET
         """
         if behaviour not in ("RESET", "KEEP"):
-            print(f"WARNING [renderer] : {behaviour} is not a valid translation behaviour, nothing happened")
+            warn(f"WARNING [renderer] : {behaviour} is not a valid translation behaviour, nothing happened")
             return
         self._translation_behaviour = behaviour
 
@@ -823,9 +848,9 @@ class Renderer:
                 sprite = button
                 found += 1
         if found == 0:
-            print("WARNING [renderer] : no matching button")
+            warn("WARNING [renderer] : no matching button")
         elif found >= 2:
-            print("WARNING [renderer] : to many matches - considering last found")
+            warn("WARNING [renderer] : to many matches - considering last found")
         return sprite
 
     def kill_button(self, name: str) -> None:
@@ -846,9 +871,9 @@ class Renderer:
                 sprite = button
                 found += 1
         if found == 0:
-            print("WARNING [renderer] : no matching button")
+            warn("WARNING [renderer] : no matching button")
         elif found >= 2:
-            print("WARNING [renderer] : to many matches - considering last found")
+            warn("WARNING [renderer] : to many matches - considering last found")
         self._remove_button(sprite)
 
     def pop_button(self, name: str) -> Button:
@@ -873,9 +898,9 @@ class Renderer:
                 sprite = button
                 found += 1
         if found == 0:
-            print("WARNING [renderer] : no matching button")
+            warn("WARNING [renderer] : no matching button")
         elif found >= 2:
-            print("WARNING [renderer] : to many matches - considering last found")
+            warn("WARNING [renderer] : to many matches - considering last found")
         self._remove_button(sprite)
         return sprite
 
@@ -975,9 +1000,9 @@ class Renderer:
                 sprite = slider
                 found += 1
         if found == 0:
-            print("WARNING [renderer] : no matching slider")
+            warn("WARNING [renderer] : no matching slider")
         elif found >= 2:
-            print("WARNING [renderer] : to many matches - considering last found")
+            warn("WARNING [renderer] : to many matches - considering last found")
         return sprite
 
     def kill_slider(self, name: str) -> None:
@@ -998,9 +1023,9 @@ class Renderer:
                 sprite = slider
                 found += 1
         if found == 0:
-            print("WARNING [renderer] : no matching slider")
+            warn("WARNING [renderer] : no matching slider")
         elif found >= 2:
-            print("WARNING [renderer] : to many matches - considering last found")
+            warn("WARNING [renderer] : to many matches - considering last found")
         self._remove_slider(sprite)
 
     def pop_slider(self, name: str) -> Button:
@@ -1025,9 +1050,9 @@ class Renderer:
                 sprite = slider
                 found += 1
         if found == 0:
-            print("WARNING [renderer] : no matching slider")
+            warn("WARNING [renderer] : no matching slider")
         elif found >= 2:
-            print("WARNING [renderer] : to many matches - considering last found")
+            warn("WARNING [renderer] : to many matches - considering last found")
         self._remove_slider(sprite)
         return sprite
 
@@ -1052,10 +1077,10 @@ class Renderer:
                 sprite = slider
                 found += 1
         if found == 0:
-            print("WARNING [renderer] : no matching slider")
+            warn("WARNING [renderer] : no matching slider")
             return
         if found >= 2:
-            print("WARNING [renderer] : to many matches - considering last found")
+            warn("WARNING [renderer] : to many matches - considering last found")
         return sprite.value
 
     def _add_menu(self, menu: Menu) -> None:
@@ -1109,7 +1134,7 @@ class Renderer:
         if menu.has_error:
             return
         if (menu.side == LEFT and self._has_left_menu) or (menu.side == RIGHT and self._has_right_menu):
-            print(f"ERROR [renderer] : already have a {menu.side} menu, try again by changing side")
+            warn(f"ERROR [renderer] : already have a {menu.side} menu, try again by changing side")
             return
         self._add_menu(menu)
         if menu.side == LEFT:
@@ -1157,9 +1182,9 @@ class Renderer:
                 sprite = menu
                 found += 1
         if found == 0:
-            print(f"WARNING [renderer] : no matching menu")
+            warn(f"WARNING [renderer] : no matching menu")
         elif found >= 2:
-            print(f"WARNING [renderer] : to many matches - considering last found")
+            warn(f"WARNING [renderer] : to many matches - considering last found")
         return sprite
 
     def kill_menu(self, name: str) -> None:
@@ -1180,9 +1205,9 @@ class Renderer:
                 sprite = menu
                 found += 1
         if found == 0:
-            print(f"WARNING [renderer] : no matching menu")
+            warn(f"WARNING [renderer] : no matching menu")
         elif found >= 2:
-            print(f"WARNING [renderer] : to many matches - considering last found")
+            warn(f"WARNING [renderer] : to many matches - considering last found")
         self._remove_menu(sprite)
 
     def pop_menu(self, name: str) -> Menu:
@@ -1207,9 +1232,9 @@ class Renderer:
                 sprite = menu
                 found += 1
         if found == 0:
-            print(f"WARNING [renderer] : no matching menu")
+            warn(f"WARNING [renderer] : no matching menu")
         elif found >= 2:
-            print(f"WARNING [renderer] : to many matches - considering last found")
+            warn(f"WARNING [renderer] : to many matches - considering last found")
         self._remove_menu(sprite)
         return sprite
 
@@ -1269,7 +1294,7 @@ class Renderer:
         to generate save, use ``push``
         """
         if not self._has_save:
-            print("WARNING [renderer] : no save was found, nothing changed")
+            warn("WARNING [renderer] : no save was found, nothing changed")
             return
         self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset, self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size = self._save.pop(
         )
@@ -1301,10 +1326,10 @@ class Renderer:
                 Defaults to PRESSED
         """
         if key in self.key_binding:
-            print(f"ERROR [renderer] : {key} is already assigned to a function, try update_key instead")
+            warn(f"ERROR [renderer] : {key} is already assigned to a function, try update_key instead")
             return
         if behaviour not in (PRESSED, RELEASED, HOLD):
-            print(f"ERROR [renderer] : {behaviour} is not a valid key behaviour, nothing happened")
+            warn(f"ERROR [renderer] : {behaviour} is not a valid key behaviour, nothing happened")
             return
         self._actions.append(action)
         self._keys_behaviour.append(behaviour)
@@ -1327,10 +1352,10 @@ class Renderer:
                 Defaults to None
         """
         if key not in self.key_binding:
-            print(f"ERROR [renderer] : {key} is not assigned to an existing function, try new_key instead")
+            warn(f"ERROR [renderer] : {key} is not assigned to an existing function, try new_key instead")
             return
         if behaviour is not None and behaviour not in (PRESSED, RELEASED, HOLD):
-            print(f"ERROR [renderer] : {behaviour} is not a valid key behaviour, nothing changed")
+            warn(f"ERROR [renderer] : {behaviour} is not a valid key behaviour, nothing changed")
             return
         i = self._key_binding[key]
         self._actions[i] = action
@@ -1351,7 +1376,7 @@ class Renderer:
                 keyboard key identifier
         """
         if key not in self.key_binding:
-            print(f"ERROR [renderer] : {key} is not assigned to an existing function, can not kill")
+            warn(f"ERROR [renderer] : {key} is not assigned to an existing function, can not kill")
             return
         i = self._key_binding[key]
         self._actions[i] = lambda: None

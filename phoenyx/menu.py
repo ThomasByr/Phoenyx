@@ -1,3 +1,5 @@
+from phoenyx.errorhandler import *
+
 from phoenyx.constants import *
 import difflib
 import pygame
@@ -95,13 +97,13 @@ class Menu:
                 self._background = COLORS[background.lower()]
             except:
                 close = difflib.get_close_matches(background.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
                 )
                 self._background = COLORS[close]
                 self._has_background = True
         else:
-            print(f"ERROR [menu {self._name}] : wrong background parameter, menu was not created")
+            warn(f"ERROR [menu {self._name}] : wrong background parameter, menu was not created")
             self.has_error = True
 
         if isinstance(color, tuple) and len(color) == 3:
@@ -113,12 +115,12 @@ class Menu:
                 self._color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [menu {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         else:
-            print(f"ERROR [menu {self._name}] : wrong color parameter, menu was not created")
+            warn(f"ERROR [menu {self._name}] : wrong color parameter, menu was not created")
             self.has_error = True
 
         if isinstance(text_color, tuple) and len(text_color) == 3:
@@ -130,12 +132,12 @@ class Menu:
                 self._text_color = COLORS[text_color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(text_color, COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [menu {self._name}] : {text_color} is not a valid color name, using closest match {close} instead"
                 )
                 self._text_color = COLORS[close]
         else:
-            print(f"ERROR [slider {self._name}] : wrong text color parameter, menu was not created")
+            warn(f"ERROR [slider {self._name}] : wrong text color parameter, menu was not created")
             self.has_error = True
 
         self._text_size = _constrain(text_size, 1, 25)
@@ -195,7 +197,7 @@ class Menu:
         opposite method is ``reveal``
         """
         if self._is_hidden:
-            print(f"WARNING [menu {self._name}] : menu is already hidden, nothing changed")
+            warn(f"WARNING [menu {self._name}] : menu is already hidden, nothing changed")
             return
         self._is_hidden = True
 
@@ -206,7 +208,7 @@ class Menu:
         opposite method is ``hide``
         """
         if not self._is_hidden:
-            print(f"WARNING [menu {self._name}] : menu is not hidden, nothing changed")
+            warn(f"WARNING [menu {self._name}] : menu is not hidden, nothing changed")
             return
         self._is_hidden = False
 
@@ -221,7 +223,7 @@ class Menu:
                 LEFT | RIGHT
         """
         if side not in (LEFT, RIGHT):
-            print(f"ERROR [menu {self._name}] : {side} is not a valid location, nothing changed")
+            warn(f"ERROR [menu {self._name}] : {side} is not a valid location, nothing changed")
             return
         self._side = side
 
@@ -279,13 +281,13 @@ class Menu:
                 self._background = COLORS[background.lower()]
             except:
                 close = difflib.get_close_matches(background.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
                 )
                 self._background = COLORS[close]
                 self._has_background = True
         else:
-            print(
+            warn(
                 f"ERROR [menu {self._name}] : {background} is not a valid background parameter, nothing changed"
             )
 
@@ -307,7 +309,7 @@ class Menu:
             color : tuple | int | str
                 the new color
         """
-        print(f"INFO  [menu, {self._name}] : attempting color change")
+        warn(f"INFO  [menu, {self._name}] : attempting color change")
         if isinstance(color, tuple) and len(color) == 3:
             self._color = color
         elif isinstance(color, int):
@@ -317,12 +319,12 @@ class Menu:
                 self._color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [menu {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         else:
-            print(f"ERROR [menu {self._name}] : {color} is not a valid color, nothing changed")
+            warn(f"ERROR [menu {self._name}] : {color} is not a valid color, nothing changed")
 
     @property
     def text_color(self) -> tuple:
@@ -342,7 +344,7 @@ class Menu:
             text_color : tuple | int | str
                 the new color
         """
-        print(f"INFO  [menu, {self._name}] : attempting text color change")
+        warn(f"INFO  [menu, {self._name}] : attempting text color change")
         if isinstance(text_color, tuple) and len(text_color) == 3:
             self._text_color = text_color
         elif isinstance(text_color, int):
@@ -352,12 +354,12 @@ class Menu:
                 self._text_color = COLORS[text_color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(text_color, COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [menu {self._name}] : {text_color} is not a valid color name, using closest match {close} instead"
                 )
                 self._text_color = COLORS[close]
         else:
-            print(f"ERROR [menu {self._name}] : {text_color} is not a valid color, nothing changed")
+            warn(f"ERROR [menu {self._name}] : {text_color} is not a valid color, nothing changed")
 
     @property
     def side(self) -> str:
@@ -428,7 +430,7 @@ class Menu:
             name : str
                 new name
         """
-        print(f"INFO [button {self._name}] : name changing to {name}")
+        warn(f"INFO [button {self._name}] : name changing to {name}")
         self._name = name
 
     @property
@@ -505,12 +507,12 @@ class Menu:
                 new text size, must be between 1 and 25, inclusive
         """
         if size > 25:
-            print(
+            warn(
                 f"ERROR [menu {self._name}] : text size is too big, max is 25 due to menu layout, nothing changed"
             )
             return
         if size < 1:
-            print(f"ERROR [menu {self._name}] : text size is too small, min is 1")
+            warn(f"ERROR [menu {self._name}] : text size is too small, min is 1")
             return
         self._text_size = size
         self.set_max_width()
@@ -569,7 +571,7 @@ class Menu:
         opposite method is ``unfold``
         """
         if self.is_fold or self.is_playing:
-            print(
+            warn(
                 f"WARNING [menu {self._name}] : menu is already fold or is currently animated, nothing changed"
             )
             return
@@ -583,7 +585,7 @@ class Menu:
         opposite method is ``fold``
         """
         if (not self.is_fold) or self.is_playing:
-            print(
+            warn(
                 f"WARNING [menu {self._name}] : menu is already unfold or is currently animated, nothing changed"
             )
             return
@@ -603,7 +605,7 @@ class Menu:
         """
         for k, v in kwargs.items():
             if k in self._all_items:
-                print(
+                warn(
                     f"ERROR [menu {self._name}] : {k} is already an item, this item was not added, try update_items for this specific item"
                 )
                 continue
@@ -623,7 +625,7 @@ class Menu:
         """
         for k, v in kwargs.items():
             if k not in self._all_items:
-                print(
+                warn(
                     f"ERROR [menu {self._name}] : {k} is not an existing item so it was not modified, try new_items for this specific item"
                 )
                 continue
@@ -642,7 +644,7 @@ class Menu:
                 index of item
         """
         if index >= len(self._all_items):
-            print(f"ERROR [menu {self._name}] : index {index} does not correspond to a valid item")
+            warn(f"ERROR [menu {self._name}] : index {index} does not correspond to a valid item")
             return
         return self._all_actions[index]()
 

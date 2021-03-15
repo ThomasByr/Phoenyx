@@ -1,3 +1,5 @@
+from phoenyx.errorhandler import *
+
 from phoenyx.constants import *
 import difflib
 import pygame
@@ -74,16 +76,16 @@ class Slider:
         """
         self.has_error = False
         if not (min_val <= value < max_val or min_val < value <= max_val):
-            print(f"ERROR [slider {self._name}] : wrong values initialisation, slider was not created")
+            warn(f"ERROR [slider {self._name}] : wrong values initialisation, slider was not created")
             self.has_error = True
         if thickness <= 0:
-            print(f"ERROR [slider {self._name}] : bad thickness value, slider was not created")
+            warn(f"ERROR [slider {self._name}] : bad thickness value, slider was not created")
             self.has_error = True
         if radius < thickness:
-            print(f"ERROR [slider {self._name}] : bad radius value, slider was not created")
+            warn(f"ERROR [slider {self._name}] : bad radius value, slider was not created")
             self.has_error = True
         if length < 6 * radius:
-            print(f"ERROR [slider {self._name}] : bad length value, slider was not created")
+            warn(f"ERROR [slider {self._name}] : bad length value, slider was not created")
             self.has_error = True
 
         self._renderer = renderer
@@ -107,12 +109,12 @@ class Slider:
                 self._color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [slider {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         else:
-            print(f"ERROR [slider {self._name}] : wrong color parameter, slider was not created")
+            warn(f"ERROR [slider {self._name}] : wrong color parameter, slider was not created")
             self.has_error = True
 
         if isinstance(fullcolor, tuple) and len(fullcolor) == 3:
@@ -124,16 +126,16 @@ class Slider:
                 self._fullcolor = COLORS[fullcolor.lower()]
             except KeyError:
                 close = difflib.get_close_matches(fullcolor, COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [slider {self._name}] : {fullcolor} is not a valid color name, using closest match {close} instead"
                 )
                 self._fullcolor = COLORS[close]
         else:
-            print(f"ERROR [slider {self._name}] : wrong full color parameter, slider was not created")
+            warn(f"ERROR [slider {self._name}] : wrong full color parameter, slider was not created")
             self.has_error = True
 
         if shape not in (SQUARE, CIRCLE, CROSS, PLUS):
-            print(f"ERROR [slider {self._name}] : wrong shape parameter, slider was not created")
+            warn(f"ERROR [slider {self._name}] : wrong shape parameter, slider was not created")
             self.has_error = True
         self._shape = shape
 
@@ -174,7 +176,7 @@ class Slider:
                 new value
         """
         if not (self._min_val <= value < self._max_val or self._min_val < value <= self._max_val):
-            print(f"WARNING [slider {self._name}] : wrong value affectation, nothing happened")
+            warn(f"WARNING [slider {self._name}] : wrong value affectation, nothing happened")
             return
         self._value = value
         self._redo_rect()
@@ -198,9 +200,9 @@ class Slider:
             min_val : float
                 new minimum value
         """
-        print(f"WARNING [slider {self._name}] : minimum value changing from {self._min_val} to {min_val}")
+        warn(f"WARNING [slider {self._name}] : minimum value changing from {self._min_val} to {min_val}")
         if not (min_val <= self._value < self._max_val or min_val < self._value <= self._max_val):
-            print(f"WARNING [slider {self._name}] : wrong minimum value affectation, nothing happened")
+            warn(f"WARNING [slider {self._name}] : wrong minimum value affectation, nothing happened")
             return
         self._min_val = min_val
         self._redo_pad()
@@ -225,9 +227,9 @@ class Slider:
             max_val : float
                 new maximum value
         """
-        print(f"WARNING [slider {self._name}] : maximum value changing from {self._max_val} to {max_val}")
+        warn(f"WARNING [slider {self._name}] : maximum value changing from {self._max_val} to {max_val}")
         if not (self._min_val <= self._value < max_val or self._min_val < self._value <= max_val):
-            print(f"WARNING [slider {self._name}] : wrong maximum value affectation, nothing happened")
+            warn(f"WARNING [slider {self._name}] : wrong maximum value affectation, nothing happened")
             return
         self._max_val = max_val
         self._redo_pad()
@@ -254,7 +256,7 @@ class Slider:
         opposite method is ``reveal``
         """
         if self._is_hidden:
-            print(f"WARNING [slider {self._name}] : slider is already hidden, nothing changed")
+            warn(f"WARNING [slider {self._name}] : slider is already hidden, nothing changed")
             return
         self._is_hidden = True
 
@@ -265,7 +267,7 @@ class Slider:
         opposite method is ``hide``
         """
         if not self._is_hidden:
-            print(f"WARNING [slider {self._name}] : slider is not hidden, nothing changed")
+            warn(f"WARNING [slider {self._name}] : slider is not hidden, nothing changed")
             return
         self._is_hidden = False
 
@@ -319,7 +321,7 @@ class Slider:
             name : str
                 new name
         """
-        print(f"INFO [slider {self._name}] : name changing to {name}")
+        warn(f"INFO [slider {self._name}] : name changing to {name}")
         self._name = name
 
     @property
@@ -341,9 +343,9 @@ class Slider:
             thickness : int
                 new thickness
         """
-        print(f"INFO [slider {self._name}] : thickness changing from {self._thickness} to {thickness}")
+        warn(f"INFO [slider {self._name}] : thickness changing from {self._thickness} to {thickness}")
         if thickness <= 0:
-            print(f"ERROR [slider {self._name}] : bad thickness value, nothing changed")
+            warn(f"ERROR [slider {self._name}] : bad thickness value, nothing changed")
             return
         self._thickness = thickness
 
@@ -366,7 +368,7 @@ class Slider:
             color : tuple | int | str
                 the new color
         """
-        print(f"INFO [slider {self._name}] : color changing from {self._color} to {color}")
+        warn(f"INFO [slider {self._name}] : color changing from {self._color} to {color}")
         if isinstance(color, tuple) and len(color) == 3:
             self._color = color
         elif isinstance(color, int):
@@ -376,12 +378,12 @@ class Slider:
                 self._color = COLORS[color.lower()]
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [slider {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         else:
-            print(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
+            warn(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
 
     @property
     def fullcolor(self) -> tuple:
@@ -402,7 +404,7 @@ class Slider:
             fullcolor : tuple | int | str
                 the new color
         """
-        print(f"INFO : [slider {self._name}] color changing from {self._fullcolor} to {fullcolor}")
+        warn(f"INFO : [slider {self._name}] color changing from {self._fullcolor} to {fullcolor}")
         if isinstance(fullcolor, tuple) and len(fullcolor) == 3:
             self._fullcolor = fullcolor
         elif isinstance(fullcolor, int):
@@ -412,12 +414,12 @@ class Slider:
                 self._fullcolor = COLORS[fullcolor.lower()]
             except KeyError:
                 close = difflib.get_close_matches(fullcolor, COLORS.keys(), n=1, cutoff=.5)[0]
-                print(
+                warn(
                     f"ERROR [slider {self._name}] : {fullcolor} is not a valid color name, using closest match {close} instead"
                 )
                 self._fullcolor = COLORS[close]
         else:
-            print(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
+            warn(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
 
     @property
     def radius(self) -> int:
@@ -438,9 +440,9 @@ class Slider:
             radius : int
                 new radius
         """
-        print(f"INFO [slider {self._name}] : radius changing from {self._radius} to {radius}")
+        warn(f"INFO [slider {self._name}] : radius changing from {self._radius} to {radius}")
         if radius < self._thickness:
-            print(f"ERROR [slider {self._name}] : bad radius value, nothing changed")
+            warn(f"ERROR [slider {self._name}] : bad radius value, nothing changed")
             return
         self._radius = radius
         self._redo_rect()
@@ -464,9 +466,9 @@ class Slider:
                 new shape
                 SQUARE | CIRCLE | CROSS | PLUS
         """
-        print(f"INFO [slider {self._name}] : attempting shape change")
+        warn(f"INFO [slider {self._name}] : attempting shape change")
         if shape not in (SQUARE, CIRCLE, CROSS, PLUS):
-            print(f"ERROR [slider {self._name}] : {shape} is not a valid shape, nothing changed")
+            warn(f"ERROR [slider {self._name}] : {shape} is not a valid shape, nothing changed")
             return
         self._shape = shape
 
@@ -489,9 +491,9 @@ class Slider:
             length : int
                 new length
         """
-        print(f"INFO [slider {self._name}] : length changing from {self._length} to {length}")
+        warn(f"INFO [slider {self._name}] : length changing from {self._length} to {length}")
         if length < 6 * self._radius:
-            print(f"ERROR [slider {self._name}] : bad length value")
+            warn(f"ERROR [slider {self._name}] : bad length value")
             return
         self._length = length
         self._redo_pad()

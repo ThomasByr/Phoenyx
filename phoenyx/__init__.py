@@ -142,3 +142,6 @@ from .renderer import *
 from .slider import Slider
 from .button import Button
 from .menu import Menu
+
+# error handler
+from .errorhandler import set_soft as error_handler_set_soft
