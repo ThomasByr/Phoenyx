@@ -1,5 +1,6 @@
 from collections import namedtuple
 import random
+import math as ma
 import numpy as np
 
 __all__ = ["Vector", "Point"]
@@ -65,8 +66,26 @@ class Vector(np.ndarray):
 
     def __repr__(self) -> str:
         class_name = self.__class__.__name__
-        fvalues = (class_name, self.x, self.y, self.z)
+        fvalues = (class_name, self[0], self[1], self[2])
         return "{}({:.2f}, {:.2f}, {:.2f})".format(*fvalues)
+
+    def __add__(self, other):
+        return super().__add__(other)
+
+    def __sub__(self, other):
+        return super().__sub__(other)
+
+    def __mul__(self, other):
+        return super().__mul__(other)
+
+    def __matmul__(self, other):
+        return super().__matmul__(other)
+
+    def __truediv__(self, other):
+        return super().__truediv__(other)
+
+    def __floordiv__(self, other):
+        return super().__floordiv__(other)
 
     @property
     def x(self) -> float:
@@ -411,15 +430,51 @@ class Vector(np.ndarray):
         if m > upper:
             self.magnitude = upper
 
+    def limited(self, upper: float = None, lower: float = None):
+        """
+        Returns a new vector whom magnitude has been keeped under or above a given limit
+        """
+        other = self.copy()
+        m = other.magnitude
+        if lower is None:
+            lower = m
+        if upper is None:
+            upper = m
+        if m < lower:
+            other.magnitude = lower
+        if m > upper:
+            other.magnitude = upper
+        return other
+
     def distance(self, other) -> float:
         """
         Return the distance between two points
+
+        Parameters
+        ----------
+            other : Vector
+                other vector
 
         Returns
         -------
             float : The distance between the current point and the given point
         """
-        return np.sqrt(np.sum((self - other)**2))
+        return ma.sqrt(sum((v := (self - other)) * v))
+
+    def distance_sq(self, other) -> float:
+        """
+        Return the squared distance between two points
+
+        Parameters
+        ----------
+            other : Vector
+                other vector
+
+        Returns
+        -------
+            float : The squared distance between the current point and the given point
+        """
+        return sum((v := (self - other)) * v)
 
     @property
     def angle(self) -> float:
@@ -473,6 +528,23 @@ class Vector(np.ndarray):
         self.x = x
         self.y = y
 
+    def rotated(self, theta: float):
+        """
+        Returns a new vector which has been rotated by an angle
+
+        Parameters
+        ----------
+            theta : float or int
+                angle in radians
+
+        Returns
+        -------
+            Vector : new vector
+        """
+        x = self.x * np.cos(theta) - self.y * np.sin(theta)
+        y = self.x * np.sin(theta) + self.y * np.cos(theta)
+        return self.__class__(x, y)
+
     def angle_between(self, other) -> float:
         """
         Calculate the angle between two vectors
@@ -514,6 +586,7 @@ class Vector(np.ndarray):
     mag = norm = magnitude
     mag2 = magnitude_sq
     dist = distance
+    dist_sq = distance_sq
     heading = angle
     u = phi = p = x
     v = theta = q = y

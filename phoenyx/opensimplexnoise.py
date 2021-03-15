@@ -62,7 +62,7 @@ def overflow(x: int):
     return c_int64(x).value
 
 
-class OpenSimplexNoise(object):
+class OpenSimplexNoise:
     """
     Open Simplex Noise
     ==================

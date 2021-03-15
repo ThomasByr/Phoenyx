@@ -1,5 +1,6 @@
 import pygame
 import difflib
+import math
 pygame.init()
 
 __all__ = ["Renderer"]
@@ -114,7 +115,7 @@ class Renderer:
 
         # drawing attributes management
         self._fill_color = (255, 255, 255)
-        self._fill = False
+        self._fill = True
         self._stroke_color = (255, 255, 255)
         self._stroke_weight = 1
         self._stroke = True
@@ -176,12 +177,6 @@ class Renderer:
         self._title = title
         pygame.display.set_caption(self._title)
 
-    def no_fill(self) -> None:
-        """
-        disables filling globally
-        """
-        self._fill = False
-
     @property
     def win_width(self) -> int:
         """
@@ -203,6 +198,12 @@ class Renderer:
         might be wrong if the ``background`` method was never called
         """
         return self._bg
+
+    def no_fill(self) -> None:
+        """
+        disables filling globally
+        """
+        self._fill = False
 
     @property
     def fill(self) -> tuple:
@@ -236,11 +237,11 @@ class Renderer:
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
                 print(
-                    f"ERROR [engine] : {color} is not a valid color name, using closest match {close} instead"
+                    f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._fill_color = COLORS[close]
         else:
-            print(f"ERROR [engine] : {color} not a valid color parameter, nothing changed")
+            print(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
 
     def no_stroke(self) -> None:
         """
@@ -280,11 +281,11 @@ class Renderer:
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
                 print(
-                    f"ERROR [engine] : {color} is not a valid color name, using closest match {close} instead"
+                    f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._stroke_color = COLORS[close]
         else:
-            print(f"ERROR [engine] : {color} not a valid color parameter, nothing changed")
+            print(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
 
     @property
     def stroke_weight(self) -> int:
@@ -381,11 +382,11 @@ class Renderer:
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
                 print(
-                    f"ERROR [engine] : {color} is not a valid color name, using closest match {close} instead"
+                    f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._text_color = COLORS[close]
         else:
-            print(f"ERROR [engine] : {color} not a valid color parameter, nothing changed")
+            print(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
 
     def _debug_enabled_drawing_methods(self) -> None:
         """
@@ -432,17 +433,18 @@ class Renderer:
         weight = self.stroke_weight
         pygame.draw.line(self._window, color, point1[:2], point2[:2], weight)
 
-    def lines(self, closed: bool, *points) -> None:
+    def lines(self, *points, closed: bool = True) -> None:
         """
         draws lines on the screen\\
         uses the stroke color even if stroking is disabled
 
         Parameters
         ----------
-            closed : bool
-                last point connected to first
             points : tuples | lists | Vectors
                 each additionnal arg is a point
+            closed : (bool, optionnal)
+                last point connected to first
+                Defaults to True
         """
         points = list(map(self._offset_point, points))
         color = self.stroke
@@ -615,7 +617,7 @@ class Renderer:
         text_label = self.FONT.render(text, True, color)
         self._window.blit(text_label, (x, y))
 
-    def background(self, color) -> None:
+    def background(self, *color) -> None:
         """
         fills the screen with a unique color
 
@@ -624,6 +626,8 @@ class Renderer:
             color : tuple | int | str
                 color to fill the screen with
         """
+        if len(color) == 1:
+            color = color[0]
         if isinstance(color, int):
             color = color, color, color
         elif isinstance(color, tuple) and len(color) == 3:
@@ -634,11 +638,12 @@ class Renderer:
             except KeyError:
                 close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
                 print(
-                    f"ERROR [engine] : {color} is not a valid color name, using closest match {close} instead"
+                    f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 color = COLORS[close]
         else:
-            print(f"ERROR [engine] : {color} not a valid color parameter, applaying default dark background")
+            print(
+                f"ERROR [renderer] : {color} not a valid color parameter, applaying default dark background")
             color = 51, 51, 51
         self._bg = color
         self._window.fill(color)
@@ -656,6 +661,36 @@ class Renderer:
         """
         self._x_offset = x
         self._y_offset = y
+
+    def rotate_display(self, angle: float) -> None:
+        """
+        rotates the entire window by some angle, relative to the center of the screen\\
+        affects what has already been drawn only
+
+        Parameters
+        ----------
+            angle : float
+                angle in radians
+        """
+        surface = pygame.transform.rotate(self._window, math.degrees(angle))
+        x = (self.win_width - surface.get_width()) / 2
+        y = (self.win_height - surface.get_height()) / 2
+        self._window.blit(surface, (x, y))
+
+    def scale_display(self, scale: float) -> None:
+        """
+        scales the entire window by some amount, relative to the center of the screen\\
+        affects what has already been drawn only
+
+        Parameters
+        ----------
+            scale : float
+                scale (zoom factor, must be positive)
+        """
+        surface = pygame.transform.rotozoom(self._window, 0, scale)
+        x = (self.win_width - surface.get_width()) / 2
+        y = (self.win_height - surface.get_height()) / 2
+        self._window.blit(surface, (x, y))
 
     def reset_matrix(self) -> None:
         """
@@ -1051,10 +1086,14 @@ class Renderer:
             length : int
                 lenght of the menu (its height)
                 by default the menu height will be on auto
+            background : None | bool | tuple | int | str
+                draw a background when expanded
             color : tuple | int | str
                 lines color used for drawing when menu is visible
             text_color : tuple | int | str
                 text color used for display text inside the menu
+            text_size : int
+                text size of the menu
 
         Keywords Arguments
         ------------------
@@ -1262,10 +1301,10 @@ class Renderer:
                 Defaults to PRESSED
         """
         if key in self.key_binding:
-            print(f"ERROR [engine] : {key} is already assigned to a function, try update_key instead")
+            print(f"ERROR [renderer] : {key} is already assigned to a function, try update_key instead")
             return
         if behaviour not in (PRESSED, RELEASED, HOLD):
-            print(f"ERROR [engine] : {behaviour} is not a valid key behaviour, nothing happened")
+            print(f"ERROR [renderer] : {behaviour} is not a valid key behaviour, nothing happened")
             return
         self._actions.append(action)
         self._keys_behaviour.append(behaviour)
@@ -1288,10 +1327,10 @@ class Renderer:
                 Defaults to None
         """
         if key not in self.key_binding:
-            print(f"ERROR [engine] : {key} is not assigned to an existing function, try new_key instead")
+            print(f"ERROR [renderer] : {key} is not assigned to an existing function, try new_key instead")
             return
         if behaviour is not None and behaviour not in (PRESSED, RELEASED, HOLD):
-            print(f"ERROR [engine] : {behaviour} is not a valid key behaviour, nothing changed")
+            print(f"ERROR [renderer] : {behaviour} is not a valid key behaviour, nothing changed")
             return
         i = self._key_binding[key]
         self._actions[i] = action
@@ -1312,7 +1351,7 @@ class Renderer:
                 keyboard key identifier
         """
         if key not in self.key_binding:
-            print(f"ERROR [engine] : {key} is not assigned to an existing function, can not kill")
+            print(f"ERROR [renderer] : {key} is not assigned to an existing function, can not kill")
             return
         i = self._key_binding[key]
         self._actions[i] = lambda: None

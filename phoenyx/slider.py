@@ -16,23 +16,21 @@ class Slider:
     =============
     created by ``Renderer``
     """
-    def __init__(
-            self,
-            renderer,
-            x: int,
-            y: int,
-            name: str,
-            min_val: float,
-            max_val: float,
-            value: float,
-            incr: int,
-            radius: int = 7,
-            shape: str = CIRCLE,
-            thickness: int = 3,
-            color: tuple = (155, 155, 155),
-            fullcolor: tuple = (155, 70, 70),
-            length: int = 100,
-    ) -> None:
+    def __init__(self,
+                 renderer,
+                 x: int,
+                 y: int,
+                 name: str,
+                 min_val: float,
+                 max_val: float,
+                 value: float,
+                 incr: int,
+                 radius: int = 7,
+                 shape: str = CIRCLE,
+                 thickness: int = 3,
+                 color: tuple = (155, 155, 155),
+                 fullcolor: tuple = (155, 70, 70),
+                 length: int = 100) -> None:
         """
         new slider instance
 
@@ -534,8 +532,8 @@ class Slider:
         renderer.push()
 
         name_label = renderer.FONT.render(self.name, True, (0, 0, 0))
-        min_label = renderer.FONT.render(str(self.min_val), True, (0, 0, 0))
-        max_label = renderer.FONT.render(str(self.max_val), True, (0, 0, 0))
+        min_label = renderer.FONT.render(str(round(self.min_val, self._incr)), True, (0, 0, 0))
+        max_label = renderer.FONT.render(str(round(self.max_val, self._incr)), True, (0, 0, 0))
         val_label = renderer.FONT.render(str(self.value), True, (0, 0, 0))
 
         # renderer.stroke_weight = self.thickness
@@ -592,9 +590,10 @@ class Slider:
 
         renderer.text(self._x - name_label.get_width() - 10, self._y - name_label.get_height() // 2,
                       self.name)
-        renderer.text(self._x - min_label.get_width() // 2, self._y + self.thickness, str(self.min_val))
+        renderer.text(self._x - min_label.get_width() // 2, self._y + self.thickness,
+                      str(round(self.min_val, self._incr)))
         renderer.text(self._x + self.length - max_label.get_width() // 2, self._y + self.thickness,
-                      str(self.max_val))
+                      str(round(self.max_val, self._incr)))
         renderer.text(self.rect[0] - val_label.get_width() // 2,
                       self.rect[1] - self.radius - val_label.get_height(), str(self.value))
 

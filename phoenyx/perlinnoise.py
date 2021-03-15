@@ -20,7 +20,7 @@ def lerp(t: float, a: float, b: float) -> float:
     return a + t * (b-a)
 
 
-class PerlinNoise(object):
+class PerlinNoise:
     """
     Perlin Noise
     ============
@@ -41,10 +41,10 @@ class PerlinNoise(object):
         Create a new Perlin noise factory in the given number of dimensions,
         which should be an integer and at least 1.
 
-        More octaves create a foggier and more-detailed noise pattern.  More
+        More octaves create a foggier and more-detailed noise pattern. More
         than 4 octaves is rather excessive.
 
-        ``tile`` can be used to make a seamlessly tiling pattern.  For example:
+        ``tile`` can be used to make a seamlessly tiling pattern. For example:
 
             noise = PerlinNoise(2, tile=(0, 3))
 
@@ -117,7 +117,7 @@ class PerlinNoise(object):
             grid_coords.append((min_coord, max_coord))
 
         # Compute the dot product of each gradient vector and the point's
-        # distance from the corresponding grid point.  This gives you each
+        # distance from the corresponding grid point. This gives you each
         # gradient's "influence" on the chosen point.
         dots = []
         for grid_point in product(*grid_coords):
@@ -130,7 +130,7 @@ class PerlinNoise(object):
                 dot += gradient[i] * (point[i] - grid_point[i])
             dots.append(dot)
 
-        # Interpolate all those dot products together.  The interpolation is
+        # Interpolate all those dot products together. The interpolation is
         # done with quintic to smooth out the slope as you pass from one
         # grid cell into the next.
         # Due to the way product() works, dot products are ordered such that
