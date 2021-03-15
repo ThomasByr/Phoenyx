@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
 ## Requirements
 
-Obviously some distribution of python : ``python 3.9`` and above is required.
+Obviously some distribution of python : ``python 3.9`` or above is required.
 
 You will also need ``pygame`` in order to use the Engine and ``numpy`` to use Vectors. Also if you are on Windows and numpy 1.19.4 happens not to work with the last Microsoft update, make sure to update the current distribution of numpy with ``pip install --upgrade numpy``.
 
