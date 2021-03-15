@@ -102,7 +102,7 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 Please refer to [the Changelog file](changelog.md) for more detail.
 
-This updates covers rotating and scaling of the display. It is worth noting that unlinke Processing, these methods only apply to what has been drawn on the screen rather than what will be drawn. These two methods are relative to the center of the screen (rotation around the center of the window, and scale from the center).
+This updates covers a better alternative to display errors and warnings. You can set the method to display warnings with ``error_handler_set_soft``.
 
 ## TODOs
 
