@@ -533,6 +533,37 @@ def kill_keypress(self, key: int) -> None:
     """
 ```
 
+* ``renderer.get_mouse_pos()`` will return a tuple representing the ``(x, y)`` position of the mouse on the main window
+
+```py
+def get_mouse_pos(self) -> tuple[int, int]:
+    """
+    gets current mouse position as a tuple
+
+    Returns
+    -------
+        tuple[int, int] : mouse pos
+    """
+```
+
+* ``renderer.mouse_x`` will return the ``x`` component of the mouse position
+
+```py
+def mouse_x(self) -> int:
+    """
+    gets current position of the mouse cursor along the x-axis
+    """
+```
+
+* ``renderer.mouse_y`` will return the ``y`` component of the mouse position
+
+```py
+def mouse_y(self) -> int:
+    """
+    gets current position of the mouse cursor along the y-axis
+    """
+```
+
 ### some interractive drawing
 
 Phoenyx allows you to type instructions in IDLE for eg and see things happening in the window. It is worth noting that since the following instence of Renderer will not run its main loop, only basic drawing stuff will be available. The following snippet should be typed one line at a time.
