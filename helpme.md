@@ -59,10 +59,10 @@ if __name__ == "__main__":
 
 Now lets focus on some methods you can call in the ``draw`` loop. The signature and docstring of the methods will follow their quick meaning. Filling and strocking will be discussed in more detail in the next subsection but for now all you need to know is that is tells the ``Renderer`` what color to use to draw shapes and / or fill them. For methods that will draw fillable shapes, we first make sure that either stroking or filling is enabled, and if not, we arbitrary activate one of them. Note that code below is part of a class and thus what you will see are methods that are part of the ``Renderer`` class.
 
-* ``renderer.background(color)`` will fill the background with the given ``color`` (color range of possibilies as a parameter is discussed in the next subsection, but notice it can be an integer, a tuple or a string)
+* ``renderer.background(color)`` will fill the background with the given ``color`` (color range of possibilies as a parameter is discussed in the next subsection, but notice it can be an integer, 3 integers or a string)
 
 ```py
-def background(self, color) -> None:
+def background(self, *color) -> None:
     """
     fills the screen with a unique color
 
@@ -105,20 +105,21 @@ def line(self, point1: tuple, point2: tuple) -> None:
     """
 ```
 
-* ``renderer.lines(closed=True, point1, point2, point3, point4)`` will draw a line between ``point1`` and ``point2``, between ``point2`` and ``point3``, between ``point3`` and ``point4`` and between ``point4`` and ``point1``
+* ``renderer.lines(point1, point2, point3, point4, closed=True)`` will draw a line between ``point1`` and ``point2``, between ``point2`` and ``point3``, between ``point3`` and ``point4`` and between ``point4`` and ``point1``
 
 ```py
-def lines(self, closed: bool, *points) -> None:
+def lines(self, *points, closed: bool = True) -> None:
     """
     draws lines on the screen
     uses the stroke color even if stroking is disabled
 
     Parameters
     ----------
-        closed : bool
-            last point connected to first
         points : tuples | lists | Vectors
             each additionnal arg is a point
+        closed : (bool, optionnal)
+            last point connected to first
+            Defaults to True
     """
 ```
 
@@ -234,7 +235,7 @@ You might have noticed that above methods do not let the user much freedom to dr
 
 * ``renderer.fill = 51`` will enable filling and make the ``renderer`` fill shapes with the given color (here a beautiful tint of grey)
 
-The color parameter can be either an integer, in which case the integer will be transformed trough the magic of coding into an rgb tuple, a tuple or a string. Should it be a string, it should describe the color you want, for eg. "red", "apple", or even "mountain meadow". You might want to take a look inside of [this file](phoenyx/constants.py) to know a little bit more about all the 1567 available string-described colors. If the given color does not match an existing one in the case of a string parameter, the engine will find the closest color based on its name and use it instead ; but don't worry : the engine will tell you. Please note that this applies to every color-changing method inside of the ``Renderer`` class but not only !
+The color parameter can be either an integer, in which case the integer will be transformed trough the magic of coding into an rgb tuple, a tuple or a string. Should it be a string, it should describe the color you want, for eg. "red", "apple", or even "mountain meadow". You might want to take a look inside of [this file](phoenyx/constants.py) to know a little bit more about all the 1567 available string-described colors. If the given color does not match an existing one in the case of a string parameter, the renderer will find the closest color based on its name and use it instead ; but don't worry : the renderer will tell you. Please note that this applies to every color-changing method inside of the ``Renderer`` class but not only !
 
 ```py
 @fill.setter
@@ -408,6 +409,36 @@ def translation_behaviour(self, behaviour: str) -> None:
     ----------
         behaviour : str
             KEEP | RESET
+    """
+```
+
+* ``renderer.scale_display(2)`` will scale what has been drawn (relative to the center) and apply the transformation (here a zoom of factor 2), you might want to scale before rotating if needed
+
+```py
+def scale_display(self, scale: float) -> None:
+    """
+    scales the entire window by some amount, relative to the center of the screen
+    affects what has already been drawn only
+
+    Parameters
+    ----------
+        scale : float
+            scale (zoom factor, must be positive)
+    """
+```
+
+* ``renderer.rotate_display(pi)`` will rotate the display (what has been drawn) counter-clockwise by some angle in radians (here 90°)
+
+```py
+def rotate_display(self, angle: float) -> None:
+    """
+    rotates the entire window by some angle, relative to the center of the screen
+    affects what has already been drawn only
+
+    Parameters
+    ----------
+        angle : float
+            angle in radians
     """
 ```
 
@@ -656,15 +687,19 @@ def create_menu(self, name: str, **kwargs) -> Menu:
         length : int
             lenght of the menu (its height)
             by default the menu height will be on auto
+        background : None | bool | tuple | int | str
+            draw a background when expanded
         color : tuple | int | str
             lines color used for drawing when menu is visible
         text_color : tuple | int | str
             text color used for display text inside the menu
+        text_size : int
+            text size of the menu
 
     Keywords Arguments
     ------------------
-        * : str
-            name of the buttons on the menu in order
+        * : str\\
+            name of the buttons on the menu in order\\
             must be linked to a python function
 
     Returns
@@ -740,18 +775,18 @@ Buttons are created by the renderer (see [extern class creation and manipulation
 
 ```py
 def __init__(self,
-                 renderer,
-                 x: int,
-                 y: int,
-                 name: str,
-                 count: int = 1,
-                 action=lambda: None,
-                 width: int = 50,
-                 height: int = 50,
-                 shape: str = RECTANGLE,
-                 color: tuple = None,
-                 stroke: tuple = None,
-                 weight: int = 1) -> None:
+             renderer,
+             x: int,
+             y: int,
+             name: str,
+             count: int = 1,
+             action=lambda: None,
+             width: int = 50,
+             height: int = 50,
+             shape: str = RECTANGLE,
+             color: tuple = None,
+             stroke: tuple = None,
+             weight: int = 1) -> None:
     """
     new Button instance
 
@@ -805,23 +840,21 @@ This section will focus more on the Slider class. It is worth noting that slider
 Sliders are created by the renderer (see [extern class creation and manipulation](#extern-class-creation-and-manipulation) subsection). Here we will assume that we are inside of the slider class. Here is the ``__init__`` function :
 
 ```py
-def __init__(
-            self,
-            renderer,
-            x: int,
-            y: int,
-            name: str,
-            min_val: float,
-            max_val: float,
-            value: float,
-            incr: int,
-            radius: int = 7,
-            shape: str = CIRCLE,
-            thickness: int = 3,
-            color: tuple = (155, 155, 155),
-            fullcolor: tuple = (155, 70, 70),
-            length: int = 100,
-    ) -> None:
+def __init__(self,
+             renderer,
+             x: int,
+             y: int,
+             name: str,
+             min_val: float,
+             max_val: float,
+             value: float,
+             incr: int,
+             radius: int = 7,
+             shape: str = CIRCLE,
+             thickness: int = 3,
+             color: tuple = (155, 155, 155),
+             fullcolor: tuple = (155, 70, 70),
+             length: int = 100) -> None:
     """
     new slider instance
 
@@ -877,14 +910,15 @@ Menus are created by the renderer (see [extern class creation and manipulation](
 
 ```py
 def __init__(self,
-                 renderer,
-                 name: str,
-                 side: str = RIGHT,
-                 background=True,
-                 length: int = None,
-                 color: tuple = (155, 155, 155),
-                 text_color: tuple = (255, 255, 255),
-                 **kwargs) -> None:
+             renderer,
+             name: str,
+             side: str = RIGHT,
+             background=True,
+             length: int = None,
+             color: tuple = (155, 155, 155),
+             text_color: tuple = (255, 255, 255),
+             text_size: int = 15,
+             **kwargs) -> None:
     """
     new Menu instance
 
@@ -903,7 +937,7 @@ def __init__(self,
             Default to True
         length : (int, optional)
             lenght of the menu (its height)
-            by default the menu height will be on auto
+            by default the menu height will on auto
             Default to None
         color : (tuple | int | str, optional)
             lines color used for drawing when menu is visible
@@ -911,11 +945,13 @@ def __init__(self,
         text_color : (tuple | int | str, optional)
             text color used for display text inside the menu
             Defaults to (255, 255, 255)
+        text_size : int
+            text size of the menu, must be between 1 and 25
 
     Keywords Arguments
     ------------------
-        * : str
-            name of the buttons on the menu, in order
+        * : str\\
+            name of the buttons on the menu, in order\\
             must be linked to a python function
     """
 ```
@@ -943,7 +979,7 @@ def __init__(self, seed: int = DEFAULT_SEED) -> None:
     """
 ```
 
-There are 4 methods in this class.
+There are 3 methods in this class.
 
 * ``noise.noise2d(xoff, yoff)`` will get the value of the noise space at ``(xoff, yoff)`` and return a value between -1. and 1.
 
@@ -987,7 +1023,7 @@ def noise3d(self, x: float, y: float, z: float) -> float:
     """
 ```
 
-* ``noise.noise4d(xoff, yoff, zoff, woff)`` will get the value of the noise space at ``(xoff, yoff, zoff, dog)`` and return a value between -1. and 1.
+* ``noise.noise4d(xoff, yoff, zoff, woof)`` will get the value of the noise space at ``(xoff, yoff, zoff, woof)`` and return a value between -1. and 1.
 
 ```py
 def noise4d(self, x: float, y: float, z: float, w: float) -> float:
@@ -1027,7 +1063,7 @@ def __call__(self, *args, **kwargs) -> float:
 
 ### ``PerlinNoise`` class
 
-Perlin Noise is the basic noise algorithm. It support n dimensionna evaluation.
+Perlin Noise is the basic noise algorithm. It support n dimensionnal evaluation.
 
 ```py
 noise = PerlinNoise(dim, unbias=True)
