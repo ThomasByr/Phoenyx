@@ -1,12 +1,10 @@
 from phoenyx import *
-import numpy
 
-renderer = Renderer(600, 600, "Perlin Noise Loop")
+renderer: Renderer = Renderer(600, 600, "Perlin Noise Loop")
 
 SHOWINFO = True
 w = 10
 noise = PerlinNoise(3, unbias=True)
-noise_map = numpy.zeros((600 // w, 600 // w), dtype=float)
 t_offset = 0
 spacing = 0.05
 slider: Slider
@@ -47,16 +45,12 @@ def draw() -> None:
     for i in range(600 // w):
         x_offset = 0
         for j in range(600 // w):
-            noise_map[i, j] = noise(x_offset, y_offset, t_offset)
-            x_offset += spacing
-        y_offset += spacing
-
-    for i in range(600 // w):
-        for j in range(600 // w):
-            d = noise_map[i, j]
+            d = noise(x_offset, y_offset, t_offset)
             d = int((d+1) * 255 / 2)
             renderer.fill = d
             renderer.rect((i * w, j * w), w, w)
+            x_offset += spacing
+        y_offset += spacing
 
     t_offset += slider.value
 
