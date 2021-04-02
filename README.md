@@ -91,4 +91,4 @@ This updates covers the brand new SandBox class. Now the Engine in "Pygame Engin
 * scrollbars ~~and side menus~~
 * ~~interractive drawing~~
 * ~~physics Sandbox~~
-* more physics happening for bodies (rotation, friction, stiffness, ...)
+* more physics happening for bodies
