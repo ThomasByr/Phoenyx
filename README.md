@@ -83,7 +83,7 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 Please refer to [the changelog file](changelog.md) for more detail.
 
-This updates covers the brand new SandBox class. Now the Engine in "Pygame Engine" starts making sens. The SandBox class, when created, must be linked to a Renderer to actually draw shapes and physical objects. For now, objects do not rotate, and only circle shapes have been implemented in a way that makes sens. Of course, more to come in the future.
+This updates covers the brand new SandBox class. Now the Engine in "Pygame Engine" starts making sens. The SandBox class, when created, must be linked to a Renderer to actually draw shapes and physical objects. For now, objects do not rotate, and only circular shapes have been implemented in a way that makes sens. Of course, more to come in the future.
 
 ## TODOs
 
