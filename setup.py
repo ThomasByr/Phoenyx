@@ -8,13 +8,13 @@ with open("requirements.txt", "r", encoding="utf-8") as f:
 
 setuptools.setup(
     name="phoenyx",
-    version="0.1.13",
-    author="Thomas B",
-    author_email="tbouyer2000@gmail.com",
+    version="0.2.0",
+    author="Thomas Byr",
+    author_email="thomas-c2000@outlook.fr",
     description="An engine for pygame",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Thomas2-bot/phoenyx.git",
+    url="https://github.com/ThomasByr/phoenyx.git",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
