@@ -1,6 +1,8 @@
-# Phoenyx - Pygame Engine
+# Phoenyx - Pygame Engine 0.2.0
 
 Some simple classes in ``python`` that could make your life much simplier. Relies on the pygame draw engine, based on the idea of the Processing language.
+
+> Get it using pip with ``pip install phoenyx``.
 
 1. [What it does](#what-it-does)
 2. [How to ?](#how-to-)
