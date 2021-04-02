@@ -59,18 +59,18 @@ class PerlinNoise:
         ----------
             dimension : int
                 number of dimension, should be at least 1
-            octaves : (int, optionnal)
+            octaves : int, (optional)
                 number of octaves, determines the fogginess of the noise pattern
                 should be greater than 1 and less than the recommended 4
-                Defaults to 1
-            tile : (tuple[int], optionnal)
+                defaults to 1
+            tile : tuple[int], (optional)
                 tiles the noise pattern along each axis
                 should be same dimension as first parameter
-                Defaults to ()
-            unbias : (bool, optionnal)
-                apply quintic function before output
+                defaults to ()
+            unbias : bool, (optional)
+                apply quintic function (based on octaves) and tiles before output
                 depending on rather or not you rely on frames, you might want to set this to True
-                Defaults to False
+                defaults to False
         """
         self.dimension = dimension
         self.octaves = octaves
@@ -83,7 +83,7 @@ class PerlinNoise:
 
         self.gradient = {}
 
-    def _generate_gradient(self) -> tuple:
+    def _generate_gradient(self) -> tuple[float]:
         # Generate a random unit vector at each grid point -- this is the
         # "gradient" vector, in that the grid tile slopes towards it
 
@@ -101,7 +101,7 @@ class PerlinNoise:
         scale = sum(n * n for n in random_point)**-0.5
         return tuple(coord * scale for coord in random_point)
 
-    def get_plain_noise(self, *point) -> float:
+    def get_plain_noise(self, *point: float) -> float:
         """
         Get plain noise for a single point, without taking into account
         either octaves or tiling.
@@ -151,7 +151,7 @@ class PerlinNoise:
 
         return dots[0] * self.scale_factor
 
-    def __call__(self, *point) -> float:
+    def __call__(self, *point: float) -> float:
         """
         Get the value of this Perlin noise function at the given point.  The
         number of values given should match the number of dimensions.

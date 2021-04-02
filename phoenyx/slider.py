@@ -1,3 +1,4 @@
+from typing import Union
 from phoenyx.errorhandler import *
 
 from phoenyx.constants import *
@@ -30,8 +31,8 @@ class Slider:
                  radius: int = 7,
                  shape: str = CIRCLE,
                  thickness: int = 3,
-                 color: tuple = (155, 155, 155),
-                 fullcolor: tuple = (155, 70, 70),
+                 color: Union[tuple[int, int, int], int, str] = (155, 155, 155),
+                 fullcolor: Union[tuple[int, int, int], int, str] = (155, 70, 70),
                  length: int = 100) -> None:
         """
         new slider instance
@@ -54,25 +55,25 @@ class Slider:
                 current value
             incr : int
                 number of digits
-            radius : (int, optional)
+            radius : int, (optional)
                 radius of the slider cursor
-                Defaults to 7
-            shape : (str, optional)
+                defaults to 7
+            shape : str, (optional)
                 shape of the slider cursor
                 SQUARE | CIRCLE | CROSS | PLUS
-                Defaults to CIRCLE
-            thickness : (int, optional)
+                defaults to CIRCLE
+            thickness : int, (optional)
                 thickness of the slider bar
-                Defaults to 3
-            color : (tuple, optional)
+                defaults to 3
+            color : Union[tuple[int, int, int], int, str], (optional)
                 default color of the bar
-                Defaults to (155, 155, 155)
-            fullcolor : (tuple, optional)
+                defaults to (155, 155, 155)
+            fullcolor : Union[tuple[int, int, int], int, str], (optional)
                 color of the bar when full
-                Defaults to (155, 70, 70)
-            length : (int, optional)
+                defaults to (155, 70, 70)
+            length : int, (optional)
                 length of the slider bar
-                Defaults to 100
+                defaults to 100
         """
         self.has_error = False
         if not (min_val <= value < max_val or min_val < value <= max_val):
@@ -277,12 +278,12 @@ class Slider:
 
         Parameters
         ----------
-            x : (int, optional)
+            x : int, (optional)
                 x-coordinate
-                Defaults to None
-            y : (int, optional)
+                defaults to None
+            y : int, (optional)
                 y-coordinate
-                Defaults to None
+                defaults to None
         """
         if x is not None:
             self._x = x
@@ -357,7 +358,7 @@ class Slider:
         return self._color
 
     @color.setter
-    def color(self, color: tuple) -> None:
+    def color(self, color: Union[tuple[int, int, int], int, str]) -> None:
         """
         sets the slider line color\\
         does not throw error if color is not matched\\
@@ -393,7 +394,7 @@ class Slider:
         return self._fullcolor
 
     @fullcolor.setter
-    def fullcolor(self, fullcolor: tuple) -> None:
+    def fullcolor(self, fullcolor: Union[tuple[int, int, int], int, str]) -> None:
         """
         sets the slider full line color\\
         does not throw error if color is not matched\\

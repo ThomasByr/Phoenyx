@@ -56,7 +56,7 @@ GRADIENTS_4D = (3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, -3, 1, 1, 1, -1,
                 -1, -3, -1, -1, -1, -1, -3, -1, -1, -1, -1, -3)
 
 
-def overflow(x: int):
+def overflow(x: int) -> int:
     # Since normal python ints and longs can be quite humongous we have to use
     # this hack to make them be able to overflow
     return c_int64(x).value
@@ -86,7 +86,7 @@ class OpenSimplexNoise:
         """
         Initiate the class using a permutation array generated from a 64-bit seed number.
         """
-        # Saving seed
+        # Saves seed
         self.seed = seed
         # Generates a proper permutation (i.e. doesn't merely perform N
         # successive pair swaps on a base array)
@@ -126,24 +126,23 @@ class OpenSimplexNoise:
         g1, g2, g3, g4 = GRADIENTS_4D[index:index + 4]
         return g1*dx + g2*dy + g3*dz + g4*dw
 
-    def __call__(self, *args, **kwargs) -> float:
+    def __call__(self, *args) -> float:
         """
-        Gets the value of this Open Simplex Noise function at a given point\\
+        Gets the value of the Open Simplex Noise space at a given point\\
         Added support for 1 dimension evaluation.
 
         Result float is between -1. and 1.
         """
-        points = list(args) + list(kwargs.values())
-        if not (1 <= (n := len(points)) <= 4):
-            raise ValueError(f"Expected 1 to 4 values, got {len(points)}")
+        if not (1 <= (n := len(args)) <= 4):
+            raise ValueError(f"Expected 1 to 4 values, got {len(args)}")
 
         if n == 1:
-            return self.noise2d(*points, 0)
+            return self.noise2d(*args, 0)
         elif n == 2:
-            return self.noise2d(*points)
+            return self.noise2d(*args)
         elif n == 3:
-            return self.noise3d(*points)
-        return self.noise4d(*points)
+            return self.noise3d(*args)
+        return self.noise4d(*args)
 
     def noise2d(self, x: float, y: float) -> float:
         """

@@ -28,7 +28,8 @@ class ErrorHandler:
         new ErrorHangler instance
         """
         cls()
-        print("Hello from Phoenyx")
+        print("Phoenyx -- errors console")
+        move(2, 0)
         self.all_errors: dict[str, int] = dict()
         self.is_soft = True
 
@@ -57,7 +58,16 @@ class ErrorHandler:
             print(f"\r{k} ({v})", end="", flush=True)
 
 
-err = ErrorHandler()  # default for Phoenyx
+err: ErrorHandler  # default for Phoenyx
+
+
+def load_soft() -> None:
+    """
+    initialises Error Handeler\\
+    very usefull for debuging
+    """
+    global err
+    err = ErrorHandler()
 
 
 def set_soft(flush: bool) -> None:
@@ -69,17 +79,27 @@ def set_soft(flush: bool) -> None:
         flush : bool
             True means errors will not turn into spam
     """
-    err.is_soft = flush
+    global err
+    try:
+        err.is_soft = flush
+    except NameError:
+        print(
+            f"ERROR [error handler] : error handler is not running, you might consider adding ``error_handler_load_soft()`` in the previous line"
+        )
 
 
 def warn(msg: str) -> None:
     """
     warns the user\\
-    does not repeat previous warnings
+    does not repeat previous warnings if error handler has been initialised
 
     Parameters
     ----------
         msg : str
             the string that represent the message
     """
-    err.warn(msg)
+    global err
+    try:
+        err.warn(msg)
+    except NameError:
+        print(msg, end="\n")

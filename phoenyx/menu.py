@@ -1,3 +1,4 @@
+from typing import Union
 from phoenyx.errorhandler import *
 
 from phoenyx.constants import *
@@ -30,10 +31,10 @@ class Menu:
                  renderer,
                  name: str,
                  side: str = RIGHT,
-                 background=True,
+                 background: Union[bool, tuple[int, int, int], int, str] = True,
                  length: int = None,
-                 color: tuple = (155, 155, 155),
-                 text_color: tuple = (255, 255, 255),
+                 color: Union[tuple[int, int, int], int, str] = (155, 155, 155),
+                 text_color: Union[tuple[int, int, int], int, str] = (255, 255, 255),
                  text_size: int = 15,
                  **kwargs) -> None:
         """
@@ -45,23 +46,23 @@ class Menu:
                 the Renderer instance the Menu is linked to
             name : str
                 name of the menu
-            side : (str, optional)
+            side : str, (optional)
                 side of the window to display the menu
                 LEFT | RIGHT
-                Default to RIGHT
-            background : (None | bool | tuple | int | str, optional)
+                defaults to RIGHT
+            background : bool | tuple | int | str, (optional)
                 draw a background when expanded
-                Default to True
-            length : (int, optional)
+                defaults to True
+            length : int, (optional)
                 lenght of the menu (its height)
                 by default the menu height will on auto
-                Default to None
-            color : (tuple | int | str, optional)
+                defaults to None
+            color : tuple | int | str, (optional)
                 lines color used for drawing when menu is visible
-                Defaults to (155, 155, 155)
-            text_color : (tuple | int | str, optional)
+                defaults to (155, 155, 155)
+            text_color : tuple | int | str, (optional)
                 text color used for display text inside the menu
-                Defaults to (255, 255, 255)
+                defaults to (255, 255, 255)
             text_size : int
                 text size of the menu, must be between 1 and 25
 
@@ -82,6 +83,7 @@ class Menu:
         self._width = 0
 
         self._background = None
+        self._has_background = False
         if background is None:
             self._has_background = False
         if isinstance(background, bool):
@@ -95,7 +97,8 @@ class Menu:
         elif isinstance(background, str):
             try:
                 self._background = COLORS[background.lower()]
-            except:
+                self._has_background = True
+            except KeyError:
                 close = difflib.get_close_matches(background.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
                 warn(
                     f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
@@ -256,7 +259,7 @@ class Menu:
         return self._background
 
     @background.setter
-    def background(self, background) -> None:
+    def background(self, background: Union[tuple[int, int, int], int, str] = False) -> None:
         """
         sets current background drawing
 
@@ -279,7 +282,8 @@ class Menu:
         elif isinstance(background, str):
             try:
                 self._background = COLORS[background.lower()]
-            except:
+                self._has_background = True
+            except KeyError:
                 close = difflib.get_close_matches(background.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
                 warn(
                     f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
@@ -299,7 +303,7 @@ class Menu:
         return self._color
 
     @color.setter
-    def color(self, color) -> None:
+    def color(self, color: Union[tuple[int, int, int], int, str]) -> None:
         """
         sets menu line color\\
         deprecated : do not use
@@ -334,7 +338,7 @@ class Menu:
         return self._text_color
 
     @text_color.setter
-    def text_color(self, text_color) -> None:
+    def text_color(self, text_color: Union[tuple[int, int, int], int, str]) -> None:
         """
         sets menu text color\\
         deprecated : do not use
@@ -523,9 +527,9 @@ class Menu:
 
         Parameters
         ----------
-            sec : (float, optional)
+            sec : float, (optional)
                 duration of the animation
-                Defaults to 1
+                defaults to 1
         """
         fps = self._renderer.fps
         self.max_ticks = round(fps * sec)

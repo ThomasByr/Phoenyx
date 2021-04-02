@@ -6,10 +6,10 @@ Provides
  1. Vector support for ``python 3.9`` and upper in two or three dimensional space
  2. Fast standards operations using numpy
  3. Full random support plus ndarray and p5 compatibility
- 4. 2D visual renderer using ``pygame`` on ``python 3.9`` and above
+ 4. 2D visual renderer using ``pygame``
  5. Fast drawing features and global settings
- 6. Full ``Vector`` compatibility (accessed as tuples)
- 7. fast 2D, 3D, and 4D Noise algorithms (Open Simplex and Perlin) for smooth randomness
+ 6. Fast 2D, 3D, and 4D Noise algorithms (Open Simplex and Perlin) for smooth randomness
+ 7. A physics sandbox for basic simulation
 
 Initialisation
 --------------
@@ -67,7 +67,8 @@ It is worth noting that you can only create 2 side menus, the first one being
 on the right of the screen (default side) and the second being on the left. Also
 note that extensive actions list might not show up properly depending on the
 size of the window. The menu backgound will show up on the top of all other
-drawings and will be the same color as the window background.
+drawings and will be the same color as the window background unless otherwise
+specified.
 
 Vectors
 -------
@@ -131,17 +132,23 @@ Finally, ERROR and WARNING do not cause a 'real' ``python error`` but throw some
 pieces of information in the console. May turn into spam.
 """
 
+# Hello from Phoenyx
+print(f"Hello from Phoenyx. https://github.com/ThomasByr/phoenyx.git")
+
 # main classes
 from .constants import *
 from .perlinnoise import *
 from .opensimplexnoise import *
 from .vector import *
 from .renderer import *
+from .sandbox import *
 
 # additionnal types
 from .slider import Slider
 from .button import Button
 from .menu import Menu
+from .body import Body
 
 # error handler
 from .errorhandler import set_soft as error_handler_set_soft
+from .errorhandler import load_soft as error_handler_load

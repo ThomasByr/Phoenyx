@@ -1,3 +1,4 @@
+from typing import Union
 import pygame
 import difflib
 import math
@@ -7,6 +8,7 @@ __all__ = ["Renderer"]
 
 from phoenyx.errorhandler import *
 
+from phoenyx.vector import *
 from phoenyx.constants import *
 from phoenyx.button import *
 from phoenyx.slider import *
@@ -16,8 +18,8 @@ from phoenyx.keys import *
 
 class Renderer:
     """
-    Pygame Renderer
-    =============
+    Phoenyx Renderer
+    ================
     Provides:
     1. 2D visual renderer using ``pygame`` on ``python 3.9`` and above
     2. fast drawing features and global settings
@@ -104,9 +106,9 @@ class Renderer:
                 width of the window
             height : int
                 height of the window
-            title : (str, optional)
+            title : str, (optional)
                 title of the window, can be changed
-                Defaults to None
+                defaults to None
         """
         # window management
         self._window = pygame.display.set_mode((width, height))
@@ -124,10 +126,20 @@ class Renderer:
         self._rect_mode = CORNER
         self._bg = (51, 51, 51)
 
-        # offsets and rotations
+        # offsets
+        self._has_translation = False
         self._x_offset = 0
         self._y_offset = 0
         self._translation_behaviour = RESET
+
+        # angles
+        self._has_rotation = False
+        self._rot_angle = 0
+        self._rotation_behaviour = RESET
+
+        # shapes
+        self._is_drawing_shape = False
+        self._all_vertexes: list[tuple] = []
 
         # text management
         self._text_color = (255, 255, 255)
@@ -161,8 +173,8 @@ class Renderer:
         self._pressed = {}
         self.keys = Keys()
 
-        # interactive drawing
-        self._is_lazy = False
+        # bench mode
+        self._benchmark = False
 
         # running
         self._is_running = True
@@ -225,6 +237,18 @@ class Renderer:
         """
         return self.get_mouse_pos()[1]
 
+    def mouse_is_down(self, button: int = 0) -> bool:
+        """
+        gets current state of the mouse button
+
+        Parameters
+        ----------
+            button : int, (optional)
+                0 | 1 | 2 button of the mouse to check
+                defaults to 0
+        """
+        return pygame.get_pressed(num_buttons=3)[button] != 0
+
     def no_fill(self) -> None:
         """
         disables filling globally
@@ -243,7 +267,7 @@ class Renderer:
         return self._fill_color
 
     @fill.setter
-    def fill(self, color) -> None:
+    def fill(self, color: Union[tuple[int, int, int], int, str]) -> None:
         """
         changes the fill color globally
 
@@ -287,7 +311,7 @@ class Renderer:
         return self._stroke_color
 
     @stroke.setter
-    def stroke(self, color) -> None:
+    def stroke(self, color: Union[tuple[int, int, int], int, str]) -> None:
         """
         changes the stroke color globally
 
@@ -352,9 +376,9 @@ class Renderer:
 
         Parameters
         ----------
-            mode : (str, optional)
+            mode : str, (optional)
                 CENTER or CORNER
-                Defaults to CENTER
+                defaults to CENTER
         """
         if mode not in (CENTER, CORNER):
             warn(f"ERROR [renderer] : {mode} is not a valid mode for tect_mode, nothing happened")
@@ -389,7 +413,7 @@ class Renderer:
         return self._text_color
 
     @text_color.setter
-    def text_color(self, color) -> None:
+    def text_color(self, color: Union[tuple[int, int, int], int, str]) -> None:
         """
         changes the text color globally
 
@@ -414,17 +438,71 @@ class Renderer:
         else:
             warn(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
 
+    def begin_shape(self) -> None:
+        """
+        begins drawing shape\\
+        use ``end_shape`` with additionnal args to end drawing shape
+        """
+        if self._is_drawing_shape:
+            warn(f"ERROR [renderer] : already drawing a shape, nothing happened")
+            return
+        self._is_drawing_shape = True
+
+    def end_shape(self, filled: bool = False, closed: bool = False) -> None:
+        """
+        ends drawing shape\\
+        use ``begin_shape`` to begin drawing shape
+
+        Parameters
+        ----------
+            filled : bool, (optional)
+                if sape is filled (will not enable filling)
+                defaults to False
+            closed : bool, (optional)
+                if first point connected to last
+                defaults to False
+        """
+        if not self._is_drawing_shape:
+            warn(f"ERROR [renderer] : not drawing shape, nothing happened")
+            return
+        if closed:
+            self._all_vertexes.append(self._all_vertexes[0])
+
+        if filled:
+            self.polygon(*self._all_vertexes)
+        elif not filled:
+            self.lines(*self._all_vertexes, closed=False)
+
+        self._is_drawing_shape = False
+        self._all_vertexes = []
+
+    def vertex(self, point: Union[tuple, list, Vector]):
+        """
+        draws shapes with given vertixes
+
+        Parameters
+        ----------
+            point : tuple | list | Vector
+                a point
+        """
+        if not self._is_drawing_shape:
+            warn(f"ERROR [renderer] : not drawing shape, nothing happened")
+            return
+        self._all_vertexes.append(point)
+
     def _debug_enabled_drawing_methods(self) -> None:
         """
         Enables stroking if both stroking and filling are disabled\\
         Resets stroke weight back to 1 if needed as 0 fills all shapes
         """
         if (not self._stroke) and (not self._fill):
+            warn(f"ERROR [renderer] : stroking and filling both set to False, stroking is now enabled")
             self._stroke = True
-            if self.stroke_weight == 0:
+            if self.stroke_weight <= 0:
+                warn(f"ERROR [renderer] : stroke weight set to {self.stroke_weight}, stroke weight is now 1")
                 self.stroke_weight = 1
 
-    def _offset_point(self, point: tuple) -> list:
+    def _offset_point(self, point: tuple) -> list[float, float]:
         """
         Offsets a point based on _x_offset and _y_offset
 
@@ -435,13 +513,34 @@ class Renderer:
 
         Returns
         -------
-            tuple : transformed point
+            list : transformed point
         """
         point = list(point)
         new_point = [point[0] + self._x_offset, point[1] + self._y_offset]
         return new_point
 
-    def line(self, point1: tuple, point2: tuple) -> None:
+    def _rotate_point(self, point: tuple) -> list[float, float]:
+        """
+        Rotates a point base on _rot_angle in radians\\
+        relatives to the axis origin
+
+        Parameters
+        ----------
+            point : tuple
+                the point to apply the transformation
+
+        Returns
+        -------
+            list : transformed point
+        """
+        point = list(point)
+        new_point = [
+            point[0] * math.cos(self._rot_angle) - point[1] * math.sin(self._rot_angle),
+            point[0] * math.sin(self._rot_angle) + point[1] * math.cos(self._rot_angle)
+        ]
+        return new_point
+
+    def line(self, point1: Union[tuple, list, Vector], point2: Union[tuple, list, Vector]) -> None:
         """
         draws a line on the screen\\
         uses the stroke color even if stroking is disabled
@@ -453,8 +552,12 @@ class Renderer:
             point2 : tuple | list | Vector
                 second point
         """
-        point1 = self._offset_point(point1)
-        point2 = self._offset_point(point2)
+        if self._has_rotation:
+            point1 = self._rotate_point(point1)
+            point2 = self._rotate_point(point2)
+        if self._has_translation:
+            point1 = self._offset_point(point1)
+            point2 = self._offset_point(point2)
         color = self.stroke
         weight = self.stroke_weight
         pygame.draw.line(self._window, color, point1[:2], point2[:2], weight)
@@ -468,11 +571,14 @@ class Renderer:
         ----------
             points : tuples | lists | Vectors
                 each additionnal arg is a point
-            closed : (bool, optionnal)
+            closed : bool, (optional)
                 last point connected to first
-                Defaults to True
+                defaults to True
         """
-        points = list(map(self._offset_point, points))
+        if self._has_rotation:
+            points = list(map(self._rotate_point, points))
+        if self._has_translation:
+            points = list(map(self._offset_point, points))
         color = self.stroke
         weight = self.stroke_weight
         pygame.draw.lines(self._window, color, closed, points, weight)
@@ -487,7 +593,11 @@ class Renderer:
             points : tuples | lists | Vectors
                 each additionnal arg is a point
         """
-        points = list(map(self._offset_point, points))
+        self._debug_enabled_drawing_methods()
+        if self._has_rotation:
+            points = list(map(self._rotate_point, points))
+        if self._has_translation:
+            points = list(map(self._offset_point, points))
 
         # fill
         if self._fill:
@@ -496,7 +606,7 @@ class Renderer:
         if self._stroke:
             pygame.draw.polygon(self._window, self.stroke, points, self.stroke_weight)
 
-    def rect(self, point: tuple, width: int, height: int) -> None:
+    def rect(self, point: Union[tuple, list, Vector], width: int, height: int) -> None:
         """
         draws a rectangle on the screen\\
         calls debug_enabled_drawing_methods first
@@ -511,20 +621,38 @@ class Renderer:
                 the height of the rectangle
         """
         self._debug_enabled_drawing_methods()
-        point = self._offset_point(point)
         point = list(point)
         if self.rect_mode == CENTER:
             point[0] -= width // 2
             point[1] -= height // 2
+        # if self._has_rotation:
+        #     point = self._rotate_point(point)
+        # if self._has_translation:
+        #     point = self._offset_point(point)
+
+        x, y = point
+        points = [(x, y), (x + width, y), (x + width, y + height), (x, y + height)]
+
+        if self._has_rotation:
+            points = list(map(self._rotate_point, points))
+        if self._has_translation:
+            points = list(map(self._offset_point, points))
+
+        # # fill
+        # if self._fill:
+        #     pygame.draw.rect(self._window, self.fill, (point[:2], (width, height)), 0)
+        # # stroke
+        # if self._stroke:
+        #     pygame.draw.rect(self._window, self.stroke, (point[:2], (width, height)), self.stroke_weight)
 
         # fill
         if self._fill:
-            pygame.draw.rect(self._window, self.fill, (point[:2], (width, height)), 0)
+            pygame.draw.polygon(self._window, self.fill, points, 0)
         # stroke
         if self._stroke:
-            pygame.draw.rect(self._window, self.stroke, (point[:2], (width, height)), self.stroke_weight)
+            pygame.draw.polygon(self._window, self.stroke, points, self.stroke_weight)
 
-    def square(self, point: tuple, size: int) -> None:
+    def square(self, point: Union[tuple, list, Vector], size: int) -> None:
         """
         draws a square on the screen\\
         calls debug_enabled_drawing_methods first
@@ -537,20 +665,38 @@ class Renderer:
                 the size of the square
         """
         self._debug_enabled_drawing_methods()
-        point = self._offset_point(point)
         point = list(point)
         if self.rect_mode == CENTER:
             point[0] -= size // 2
             point[1] -= size // 2
+        # if self._has_rotation:
+        #     point = self._rotate_point(point)
+        # if self._has_translation:
+        #     point = self._offset_point(point)
+
+        x, y = point
+        points = [(x, y), (x + size, y), (x + size, y + size), (x, y + size)]
+
+        if self._has_rotation:
+            points = list(map(self._rotate_point, points))
+        if self._has_translation:
+            points = list(map(self._offset_point, points))
+
+        # # fill
+        # if self._fill:
+        #     pygame.draw.rect(self._window, self.fill, (point[:2], (size, size)), 0)
+        # # stroke
+        # if self._stroke:
+        #     pygame.draw.rect(self._window, self.stroke, (point[:2], (size, size)), self.stroke_weight)
 
         # fill
         if self._fill:
-            pygame.draw.rect(self._window, self.fill, (point[:2], (size, size)), 0)
+            pygame.draw.polygon(self._window, self.fill, points, 0)
         # stroke
         if self._stroke:
-            pygame.draw.rect(self._window, self.stroke, (point[:2], (size, size)), self.stroke_weight)
+            pygame.draw.polygon(self._window, self.stroke, points, self.stroke_weight)
 
-    def ellipse(self, point: tuple, width: int, height: int) -> None:
+    def ellipse(self, point: Union[tuple, list, Vector], width: int, height: int) -> None:
         """
         draws an ellipse on the screen\\
         calls debug_enabled_drawing_methods first
@@ -565,11 +711,14 @@ class Renderer:
                 the height of the rectangle for the ellipse
         """
         self._debug_enabled_drawing_methods()
-        point = self._offset_point(point)
         point = list(point)
         if self.rect_mode == CENTER:
             point[0] -= width // 2
             point[1] -= height // 2
+        if self._has_rotation:
+            point = self._rotate_point(point)
+        if self._has_translation:
+            point = self._offset_point(point)
 
         # fill
         if self._fill:
@@ -578,7 +727,7 @@ class Renderer:
         if self._stroke:
             pygame.draw.ellipse(self._window, self.stroke, (point[:2], (width, height)), self.stroke_weight)
 
-    def circle(self, center: tuple, radius: int) -> None:
+    def circle(self, center: Union[tuple, list, Vector], radius: int) -> None:
         """
         draws a circle on the screen\\
         calls debug_enabled_drawing_methods first
@@ -591,7 +740,10 @@ class Renderer:
                 circle radius
         """
         self._debug_enabled_drawing_methods()
-        center = self._offset_point(center)
+        if self._has_rotation:
+            center = self._rotate_point(center)
+        if self._has_translation:
+            center = self._offset_point(center)
 
         # fill
         if self._fill:
@@ -600,18 +752,21 @@ class Renderer:
         if self._stroke:
             pygame.draw.circle(self._window, self.stroke, center[:2], radius, self._stroke_weight)
 
-    def point(self, point: tuple) -> None:
+    def point(self, point: Union[tuple, list, Vector]) -> None:
         """
         draws a point on the screen\\
-        uses fill color even if filling is disabled
+        uses stroke color and stroke weight even if stroking is disabled
 
         Parameters
         ----------
             point : tuple | list | Vector
                 the point coordinates
         """
-        point = self._offset_point(point)
-        pygame.draw.circle(self._window, self.fill, point[:2], 1, 0)
+        if self._has_rotation:
+            point = self._rotate_point(point)
+        if self._has_translation:
+            point = self._offset_point(point)
+        pygame.draw.circle(self._window, self.fill, point[:2], self._stroke_weight, 0)
 
     def sprites(self, group: pygame.sprite.Group) -> None:
         """
@@ -643,7 +798,7 @@ class Renderer:
         text_label = self.FONT.render(text, True, color)
         self._window.blit(text_label, (x, y))
 
-    def background(self, *color) -> None:
+    def background(self, *color: Union[int, str]) -> None:
         """
         fills the screen with a unique color
 
@@ -675,7 +830,7 @@ class Renderer:
 
     def translate(self, x: int = 0, y: int = 0) -> None:
         """
-        translates the axes origins, not additive
+        translates the axes origin, not additive
 
         Parameters
         ----------
@@ -684,8 +839,27 @@ class Renderer:
             y : int
                 translation for y-axis
         """
+        if x == 0 and y == 0:
+            self._has_translation = False
+        else:
+            self._has_translation = True
         self._x_offset = x
         self._y_offset = y
+
+    def rotate(self, angle: float) -> None:
+        """
+        rotates the axes around the axis origin
+
+        Parameters
+        ----------
+            angle : float
+                angle in randians
+        """
+        if angle == 0:
+            self._has_rotation = False
+        else:
+            self._has_rotation = True
+        self._rot_angle = angle
 
     def rotate_display(self, angle: float) -> None:
         """
@@ -721,18 +895,27 @@ class Renderer:
         """
         reset all translations and drawing modes back to original\\
         almost as if the renderer could pop to its original state\\
-        does not affect colors not sizes
+        does not affect colors and sizes
         """
         self._reset_translation()
+        self._reset_rotation()
         self.rect_mode = CORNER
-        self.translation_behaviour = KEEP
+        self.translation_behaviour = RESET
 
     def _reset_translation(self) -> None:
         """
         resets the axis origin back to normal
         """
+        self._has_translation = False
         self._x_offset = 0
         self._y_offset = 0
+
+    def _reset_rotation(self) -> None:
+        """
+        resets rotation back to normal
+        """
+        self._has_rotation = False
+        self._rot_angle = 0
 
     @property
     def translation_behaviour(self) -> str:
@@ -755,6 +938,28 @@ class Renderer:
             warn(f"WARNING [renderer] : {behaviour} is not a valid translation behaviour, nothing happened")
             return
         self._translation_behaviour = behaviour
+
+    @property
+    def rotation_behaviour(self) -> str:
+        """
+        gets the current rotation behaviour
+        """
+        return self._rotation_behaviour
+
+    @rotation_behaviour.setter
+    def rotation_behaviour(self, behaviour: str) -> None:
+        """
+        sets the global rotation behavious
+
+        Parameters
+        ----------
+            behaviour : str
+                KEEP | RESET
+        """
+        if behaviour not in ("RESET", "KEEP"):
+            warn(f"WARNING [renderer] : {behaviour} is not a valid rotation behaviour, nothing happened")
+            return
+        self._rotation_behaviour = behaviour
 
     def _add_button(self, button: Button) -> None:
         """
@@ -1282,8 +1487,9 @@ class Renderer:
         use ``pop`` to reset the state
         """
         self._save.append([
-            self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset,
-            self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size
+            self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,
+            self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self.rect_mode,
+            self.translation_behaviour, self.rotation_behaviour, self.text_color, self.text_size
         ])
         self._has_save = True
 
@@ -1296,8 +1502,8 @@ class Renderer:
         if not self._has_save:
             warn("WARNING [renderer] : no save was found, nothing changed")
             return
-        self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._x_offset, self._y_offset, self.rect_mode, self.translation_behaviour, self.text_color, self.text_size = self._save.pop(
-        )
+        self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self.rect_mode, self.translation_behaviour, self.rotation_behaviour, self.text_color, self.text_size =\
+            self._save.pop()
         self._has_save = len(self._save) >= 0
 
     @property
@@ -1320,10 +1526,10 @@ class Renderer:
                 keyboard key indentifier
             action : python function
                 action to perform each time the key is pressed
-            behaviour : (str, optionnal)
+            behaviour : str, (optional)
                 key behaviour
                 PRESSED | RELEASED | HOLD
-                Defaults to PRESSED
+                defaults to PRESSED
         """
         if key in self.key_binding:
             warn(f"ERROR [renderer] : {key} is already assigned to a function, try update_key instead")
@@ -1346,10 +1552,10 @@ class Renderer:
                 keyboard key identifier
             action : python function
                 new action
-            behaviour : (str, optionnal)
+            behaviour : str, (optional)
                 key behaviour (if not specified, will keep previous)
                 PRESSED | RELEASED | HOLD
-                Defaults to None
+                defaults to None
         """
         if key not in self.key_binding:
             warn(f"ERROR [renderer] : {key} is not assigned to an existing function, try new_key instead")
@@ -1407,24 +1613,57 @@ class Renderer:
         """
         pygame.quit()
 
+    def set_bench_mode(self, bench: bool) -> None:
+        """
+        sets the bench mode of the Renderer\\
+        setting this to True means nothing will be rendered except the basic drawings\\
+        in other words, it skips all buttons, sliders, menus, ... management\\
+        plus the Renderer no longer struggles to comply with frame rate (which are no longer relevant)
+
+        Parameters
+        ----------
+            bench : bool
+                True to not bother check for subclasses instances
+        """
+        if bench == self._benchmark:
+            warn(f"WARNING [renderer] : bench mode is already at {bench}, nothing changed")
+            return
+        self._benchmark = bench
+
     def run(self, draw, setup=lambda: None) -> None:
         """
         the main loop of the programm\\
-        will call draw over and over until QUIT event is triggered
+        will call draw over and over until ``QUIT`` event is triggered
 
         Parameters
         ----------
             draw : python function
                 the draw function (will be called with parenthesis)
-            setup : (python function, optional)
+            setup : python function, (optional)
                 the setup function, will be called once
-                Defaults to lamda: None
+                defaults to lamda: None
         """
         setup()
         while self._is_running:
             # drawing loop
-            self._clock.tick(self._fps)
             draw()
+
+            # translation management
+            if self.translation_behaviour == RESET:
+                self._reset_translation()
+
+            # rotation management
+            if self.rotation_behaviour == RESET:
+                self._reset_rotation()
+
+            # bench mode
+            if self._benchmark:
+                pygame.display.flip()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        self._is_running = False
+                        break
+                continue
 
             # button management
             if self._has_buttons:
@@ -1462,10 +1701,9 @@ class Renderer:
                     for menu in self._all_menus:
                         if not menu.is_hidden and menu.check_click():
                             menu.update_state(pos)
-                            menu.reinit_click()
                             if (i := menu.collide(pos)) is not None:
                                 menu.trigger(i)
-                                menu.reinit_click()
+                            menu.reinit_click()
 
             else:
                 if self._has_buttons:
@@ -1475,17 +1713,11 @@ class Renderer:
                     for menu in self._all_menus:
                         menu.click()
 
-            # translation management
-            if self.translation_behaviour == RESET:
-                self._reset_translation()
-
-            # quit event and screen refresh
-            pygame.display.flip()
+            # quit event and keys
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self._is_running = False
 
-                # keys
                 if event.type == pygame.KEYUP:
                     if (k := event.key) in self.key_binding:
                         i = self._key_binding[k]
@@ -1508,4 +1740,7 @@ class Renderer:
                     if self._pressed[k]:
                         i = self._key_binding[k]
                         self._actions[i]()
+
+            self._clock.tick(self._fps)
+            pygame.display.flip()
         self.quit()

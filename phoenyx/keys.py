@@ -4,7 +4,7 @@ import pygame
 
 class Keys:
     """
-    random object structure to handle keys
+    random object structure to handle keyboard keys
     """
     def __init__(self) -> None:
         pass

@@ -5,7 +5,7 @@ P3D = "P3D"
 CENTER = "CENTER"
 CORNER = "CORNER"
 
-# translation behaviour
+# translation and rotation behaviour
 RESET = "RESET"
 KEEP = "KEEP"
 

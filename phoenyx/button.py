@@ -1,3 +1,4 @@
+from typing import Union
 from phoenyx.errorhandler import *
 
 from phoenyx.constants import *
@@ -21,8 +22,8 @@ class Button:
                  width: int = 50,
                  height: int = 50,
                  shape: str = RECTANGLE,
-                 color: tuple = None,
-                 stroke: tuple = None,
+                 color: Union[tuple[int, int, int], int, str] = None,
+                 stroke: Union[tuple[int, int, int], int, str] = None,
                  weight: int = 1) -> None:
         """
         new Button instance
@@ -37,32 +38,32 @@ class Button:
                 the y-coordinate (TOP LEFT of the button)
             name : str
                 the name of the button (must be unique !)
-            count : (int, optional)
+            count : int, (optional)
                 number of frames to pass while unclicked to be able to trigger the button again
-                Defaults to 1
-            action : (python function, optional)
+                defaults to 1
+            action : python function, (optional)
                 function to trigger when pressed
-                Defaults to lambda:None
-            width : (int, optional)
+                defaults to lambda:None
+            width : int, (optional)
                 the width of the button
-                Defaults to 50
-            height : (int, optional)
+                defaults to 50
+            height : int, (optional)
                 the height of the button
-                Defaults to 50
-            shape : (str, optional)
+                defaults to 50
+            shape : str, (optional)
                 the shape of the button
                 RECTANGLE | ELLIPSE
-                Defaults to RECTANGLE
-            color : (tuple, optional)
+                defaults to RECTANGLE
+            color : Union[tuple[int, int, int], int, str], (optional)
                 color to fill button and enables filling
                 if both color and stroke are None, the button will be filled by default
-                Defaults to None
-            stroke : (tuple, optional)
+                defaults to None
+            stroke : Union[tuple[int, int, int], int, str], (optional)
                 color to draw the outside box and enables stroking
-                Defaults to None
-            weight : (int, optional)
+                defaults to None
+            weight : int, (optional)
                 stroke weight if stroke is not None
-                Default to 1
+                defaults to 1
         """
         self.has_error = False
         self._renderer = renderer
@@ -224,7 +225,7 @@ class Button:
         return self._color
 
     @color.setter
-    def color(self, color) -> None:
+    def color(self, color: Union[tuple[int, int, int], int, str]) -> None:
         """
         sets button filling color\\
         color can be None to disable filling\\
@@ -268,7 +269,7 @@ class Button:
         return self._stroke
 
     @stroke.setter
-    def stroke(self, stroke) -> None:
+    def stroke(self, stroke: Union[tuple[int, int, int], int, str]) -> None:
         """
         sets button stroking color\\
         color can be None to disable stroking\\
@@ -355,12 +356,12 @@ class Button:
 
         Parameters
         ----------
-            x : (int, optional)
+            x : int, (optional)
                 x-coordinate
-                Defaults to None
-            y : (int, optional)
+                defaults to None
+            y : int, (optional)
                 y-coordinate
-                Defaults to None
+                defaults to None
         """
         if x is not None:
             self._x = x
