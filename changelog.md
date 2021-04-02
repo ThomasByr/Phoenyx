@@ -4,7 +4,7 @@
 
 1.  *v0.0.a1* lets see PyPI...
     * initial commit and packaging
-    * please note that alpha version are no longer accessible for download
+    * please note that alpha versions are no longer accessible for download
 2.  *v0.0.a2* wow such a mess
     * some refractor
     * name changing from pygame_engine to phoenyx (because the bird...)
@@ -69,8 +69,8 @@
     * added a new example file to generate Perlin noise, go check that out !
     * menu now have a proper background (might be off when background is animated though)
 15. *v0.1.10* slm 14 b c
-    * created this file because the README was starting to look like my homework list
-    * short description of the changelog was added in the previous file
+    * created this file because the README was starting to look like my homeworks list
+    * short description of the changelog is added in the README
     * added additionnal documentation, lots of it
     * menu bodys won't disapear anymore when closing menus
     * fixed drawing coordinates for menu background
@@ -101,3 +101,15 @@
     * note that the terminal is not longer usable for standart inputs and outputs
     * worked around previous line, somehow... you can now use ``error_handler_set_soft`` in setup or anywhere in the main body of the program to use standard error messaging
     * you can now know where the mouse is inside of the main window
+19. *v0.2.0* SandBox
+    * added a new ``begin_shape`` and ``end_shape`` method along side with ``vertex`` to draw lines between points
+    * real rotation this time ! you can rotate what will be drawn around the axis origin, previous method is still available
+    * changed the draw method for squares and rectangles to allow for rotation of the vertexes ; rotation only apply for the center point for circles and ellipses
+    * more type hints using Union, working type hints for operations between Vectors and Vectors or scallars
+    * you can get the state of the mouse for each 3 buttons
+    * error handler does no longuer initialise on its own, so you are able not to use it ; note that ``error_handler_load()`` will initialise the error handler when needed
+    * first try of physics ``SandBox``, for now, only simple shapes and basic physic
+    * new classes ``SandBox`` and ``Body`` (type ``help(phoenyx.sanbox.SandBox)`` or ``help(phoenyx.body.Body)`` to learn more)
+    * note that physics is happening based on the frame rate of the Renderer and is only following the first Newton's law of motion : ``mass * acceleration = force`` for now
+    * also note that bodies are not rotating for now, that you should not have too many of them, and that a lot of fixes will occur in future versions
+    * new bench mode that forces the Renderer to not deal with subclasses (buttons, sliders, menus, ... will become hidden and all interractions will be turned down)
