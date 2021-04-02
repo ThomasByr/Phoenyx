@@ -17,7 +17,7 @@ Please go and check [pygame](https://github.com/pygame/pygame.git) for their ama
 
 ## How to ?
 
-Please refer to [test.py](examples/test.py) on GitHub for a very simple but effective test file. You can now also read the [helpme](helpme.md) file for all available methods and objects.
+Please refer to the [examples folder](examples/) on GitHub for very simple but effective test files. You can now also read the [helpme](helpme.md) file for all available methods and objects.
 
 ```py
 from phoenyx import *
@@ -100,9 +100,9 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 ## Changelog
 
-Please refer to [the Changelog file](changelog.md) for more detail.
+Please refer to [the changelog file](changelog.md) for more detail.
 
-This updates covers a better alternative to display errors and warnings. You can set the method to display warnings with ``error_handler_set_soft``.
+This updates covers the brand new SandBox class. Now the Engine in "Pygame Engine" starts making sens. The SandBox class, when created, must be linked to a Renderer to actually draw shapes and physical objects. For now, objects do not rotate, and only circle shapes have been implemented in a way that makes sens. Of course, more to come in the future.
 
 ## TODOs
 
@@ -111,5 +111,5 @@ This updates covers a better alternative to display errors and warnings. You can
 * ~~keyboard integration~~
 * scrollbars ~~and side menus~~
 * ~~interractive drawing~~
-* physics Sandbox
-* widgets, canvas
+* ~~physics Sandbox~~
+* more physics happening for bodies (rotation, friction, stiffness, ...)
