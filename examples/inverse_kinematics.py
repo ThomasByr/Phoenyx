@@ -1,4 +1,6 @@
+from typing import Union
 from phoenyx import *
+
 from math import cos, sin, pi
 from numpy import arange
 
@@ -22,18 +24,14 @@ def _constrain(value: float, low: float = None, hight: float = None) -> float:
     low = (low, value)[low is None]
     hight = (hight, value)[hight is None]
 
-    if value < low:
-        return low
-    elif value > hight:
-        return hight
-    return value
+    return low if value < low else hight if value > hight else value
 
 
 class Segment:
     """
     Segment
     =======
-    based on the ``Renderer`` renderer in python and ``Vector`` class
+    based on the ``Renderer`` in python and ``Vector`` class
 
     Segment has:
      * point ``a`` used as a reference
@@ -64,9 +62,9 @@ class Segment:
                 length of the Segment
             angle : float
                 angle between Segment and the x-axis
-            weight : (float, optional)
+            weight : float, (optional)
                 weight of the Segment, used as thickness to draw
-                Defaults to None
+                defaults to None
         """
         self.a = Vector(x, y)
         self.b = Vector()
@@ -145,12 +143,12 @@ class Tentacle:
                 size of windows
             size : int
                 number of Segments
-            seg_length : (float, optional)
+            seg_length : float, (optional)
                 length of all Segments
-                Defaults to None
-            base : (Vector, optional)
+                defaults to None
+            base : Vector, (optional)
                 a fixed base or a free Tentacle
-                Defaults to None
+                defaults to None
         """
         self.base = base
         self.has_base = True
@@ -260,8 +258,8 @@ class Ball:
             self.vel.x *= -1
 
         if self.pos.y > self.win[1] - self.RADIUS:
+            self.pos.y = self.win[1] - self.RADIUS - 2
             self.vel.y *= -1
-            self.pos.y = self.win[1] - self.RADIUS
 
 
 renderer: Renderer = Renderer(WIDTH, HEIGHT, title="Inverse Kinematics")
@@ -272,7 +270,7 @@ ball: Ball
 def reset_ball() -> None:
     """
     puts the ball back to its original location\\
-    gives it a random velocity towards the right of the screen
+    gives it a random velocity towards the right edge of the screen
     """
     global ball
     ball.__init__(renderer, 100, 100, (WIDTH, HEIGHT))
