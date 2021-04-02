@@ -137,9 +137,12 @@ class Body:
         self._sandbox = sandbox
         self._renderer: Renderer = sandbox._renderer
         self._pos = Vector(x, y)
+        self._opos = self._pos.copy()
         self._vel = Vector(vx, vy)
+        self._ovel = self._vel.copy()
         self._nxtv = Vector()
         self._acc = Vector(ax, ay)
+        self._oaac = self._acc.copy()
 
         self._mass = mass
         self._is_static = is_static
@@ -328,6 +331,15 @@ class Body:
             )
             return
         self._frict = frict
+
+    def reset(self) -> None:
+        """
+        resets body to its original state
+        """
+        self._pos = self._opos.copy()
+        self._vel = self._ovel.copy()
+        self._nxtv = self._ovel.copy()
+        self._acc = self._oaac.copy()
 
     def apply_forces(self, force: Vector):
         """

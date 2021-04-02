@@ -22,62 +22,41 @@ Please refer to the [examples folder](examples/) on GitHub for very simple but e
 ```py
 from phoenyx import *
 
-renderer: Renderer = Renderer(600, 600, "Perlin Noise Loop")
+renderer: Renderer = Renderer(600, 600, "collision")
+sandbox: SandBox = SandBox(renderer, 290, 290)
 
-SHOWINFO = True
-w = 10
-noise = PerlinNoise(3, unbias=True)
-t_offset = 0
-spacing = 0.05
-slider: Slider
+b1: Body
+b2: Body
+b3: Body
 
 
-def switch() -> None:
-    global SHOWINFO
-    SHOWINFO = not SHOWINFO
-
-
-def hide() -> None:
-    global slider
-    if slider.is_hidden:
-        slider.reveal()
-    else:
-        slider.hide()
+def reset() -> None:
+    global b1, b2, b3
+    b1.reset()
+    b2.reset()
+    b3.reset()
 
 
 def setup() -> None:
-    global slider
-    renderer.create_menu("debug panel",
-                         background=False,
-                         text_color=0,
-                         color=0,
-                         show_info=switch,
-                         hide_slider=hide)
-    slider = renderer.create_slider(450, 550, "speed", 0, 0.1, 0.02, 3)
+    global b1, b2, b3
+    renderer.create_menu("options", background=False, color=255, text_color=255, reset=reset)
 
-    renderer.no_stroke()
+    b1 = sandbox.new_body(300, 100, 1, 10)
+    b2 = sandbox.new_body(295, 80, 1, 10)
+    b3 = sandbox.new_body(305, 60, 1, 10)
+    sandbox.set_gravity(Vector(0, .5))
+
     renderer.text_size = 15
-    renderer.text_color = "black"
+    renderer.text_color = 255
 
 
 def draw() -> None:
-    global slider, t_offset
+    global b1, b2, b3
+    renderer.background(51)
 
-    y_offset = 0
-    for i in range(600 // w):
-        x_offset = 0
-        for j in range(600 // w):
-            d = noise(x_offset, y_offset, t_offset)
-            d = int((d+1) * 255 / 2)
-            renderer.fill = d
-            renderer.rect((i * w, j * w), w, w)
-            x_offset += spacing
-        y_offset += spacing
-
-    t_offset += slider.value
-
-    if SHOWINFO:
-        renderer.text(10, 10, f"fps : {round(renderer.fps)}")
+    sandbox.update()
+    sandbox.show()
+    renderer.text(10, 10, f"fps : {round(renderer.fps)}")
 
 
 if __name__ == "__main__":
