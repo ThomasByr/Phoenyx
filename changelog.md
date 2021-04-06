@@ -17,7 +17,7 @@
     * sliders have their name on the left, minimum and maximum value on respective sides
     * added the current value on top of the cursor
 5.  *v0.1.0* how do I upload images on PyPI ?
-    * buttons and sliders do not rely anyore on images for greater portability but are now less customizable
+    * buttons and sliders do not rely anymore on images for greater portability but are now less customizable
     * initial release on PyPI !
 6.  *v0.1.1* too much errors in console
     * buttons and sliders can now be hidden
@@ -37,7 +37,7 @@
     * excluded some unnecessary files from build
     * some typo fix
     * added new colors, a lot of them
-10. *v0.1.5* visual code messing with import statements
+10. *v0.1.5* vs code messing with import statements
     * split renderer lib into many files for readability
     * lib fix, bug from circular imports
 11. *v0.1.6* big update but not really because some stuff doesn't work
@@ -113,3 +113,7 @@
     * note that physics is happening based on the frame rate of the Renderer and is only following the first Newton's law of motion : ``mass * acceleration = force`` for now
     * also note that bodies are not rotating for now, that you should not have too many of them, and that a lot of fixes will occur in future versions
     * new bench mode that forces the Renderer to not deal with subclasses (buttons, sliders, menus, ... will become hidden and all interractions will be turned down)
+20. *v0.2.1* some other more drawing
+    * some bug fixes (point stroke color not used, rect and square position unpacking)
+    * new scaling method for the renderer, old method still available, scaling happens (as always for these new methods) relatively to the axes origin ; note that the stroke weight is not affected by scale
+    * alternate wrap method (there is no real wrap method irl is there ?)
