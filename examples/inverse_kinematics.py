@@ -1,4 +1,3 @@
-from typing import Union
 from phoenyx import *
 
 from math import cos, sin, pi

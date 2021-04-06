@@ -20,8 +20,8 @@ def setup() -> None:
     renderer.create_menu("options", background=False, color=255, text_color=255, reset=reset)
 
     b1 = sandbox.new_body(300, 100, 1, 10)
-    b2 = sandbox.new_body(295, 80, 1, 10)
-    b3 = sandbox.new_body(305, 60, 1, 10)
+    b2 = sandbox.new_body(290, 80, 1, 10)
+    b3 = sandbox.new_body(310, 60, 1, 10)
     sandbox.set_gravity(Vector(0, .5))
 
     renderer.text_size = 15
