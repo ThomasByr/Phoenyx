@@ -1,8 +1,8 @@
-# Phoenyx - Pygame Engine 0.2.0
+# Phoenyx - Pygame Engine 0.2.1
 
 Some simple classes in ``python`` that could make your life much simplier. Relies on the pygame draw engine, based on the idea of the Processing language.
 
-> Get it using pip with ``pip install phoenyx``.
+> Get the latest stable version using pip with ``pip install phoenyx``.
 
 1. [What it does](#what-it-does)
 2. [How to ?](#how-to-)
@@ -13,7 +13,7 @@ Some simple classes in ``python`` that could make your life much simplier. Relie
 
 ## What it does
 
-This library allows you to create graphical components in ``pygame`` in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector class suitable for physics engines and mathematical drawings.
+This library allows you to create graphical components in ``pygame`` in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector and a SanBox class suitable for physics engines and more mathematical drawings.
 
 Please go and check [pygame](https://github.com/pygame/pygame.git) for their amazing work ! Additionnal kudos to Daniel Shiffman.
 
@@ -44,8 +44,8 @@ def setup() -> None:
     renderer.create_menu("options", background=False, color=255, text_color=255, reset=reset)
 
     b1 = sandbox.new_body(300, 100, 1, 10)
-    b2 = sandbox.new_body(295, 80, 1, 10)
-    b3 = sandbox.new_body(305, 60, 1, 10)
+    b2 = sandbox.new_body(290, 80, 1, 10)
+    b3 = sandbox.new_body(310, 60, 1, 10)
     sandbox.set_gravity(Vector(0, .5))
 
     renderer.text_size = 15
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
 Obviously some distribution of python : ``python 3.9`` or above is required.
 
-You will also need ``pygame`` in order to use the Engine and ``numpy`` to use Vectors. Also if you are on Windows and numpy 1.19.4 happens not to work with the last Microsoft update, make sure to update the current distribution of numpy with ``pip install --upgrade numpy``.
+You will also need ``pygame`` in order to use the Renderer and ``numpy`` to use Vectors. To upgrade to a more recent version of any lib, run ``pip install --upgrade ...``. Requirements will automatically be met with pip when installing phoenyx.
 
 ## Licenses
 
@@ -81,9 +81,9 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 ## Changelog
 
-Please refer to [the changelog file](changelog.md) for more detail.
+Please refer to [the changelog file](changelog.md) for more details.
 
-This updates covers the brand new SandBox class. Now the Engine in "Pygame Engine" starts making sens. The SandBox class, when created, must be linked to a Renderer to actually draw shapes and physical objects. For now, objects do not rotate, and only circular shapes have been implemented in a way that makes sens. Of course, more to come in the future.
+The 0.2.0 update featured the new SandBox class, allowing you to create a physics world for Bodies to interract and move around in very few lines of code. This update targets the Renderer class and fixes some drawing methods as well as introduces new ones.
 
 ## TODOs
 
