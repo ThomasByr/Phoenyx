@@ -1,7 +1,8 @@
 from typing import Union
 import math as m
-
 from phoenyx.renderer import Renderer
+
+__all__ = ["Body"]
 
 from phoenyx.errorhandler import *
 
@@ -400,6 +401,7 @@ class Body:
             self._nxtv = self._vel - (2 * (other._mass / (self._mass + other._mass)) *
                                       ((self._vel - other._vel).dot(self._pos - other._pos) /
                                        (self._pos.distance_sq(other._pos))) * (self._pos - other._pos))
+            self._nxtv *= self._stiff
             offset = self._range + other._range - self._pos.distance(other._pos)
             if offset > 0:
                 self._pos += offset * self._nxtv.normalized()
@@ -442,16 +444,16 @@ class Body:
         does not modifies velocity and acceleration
         """
         if self.x < self._sandbox._x - self._sandbox._width:
-            self._pos.x = self._sandbox._x + self._sandbox.width
+            self._pos.x %= self._sandbox._x + self._sandbox.width
 
         elif self.x > self._sandbox._x + self._sandbox.width:
-            self._pos.x = self._sandbox._x - self._sandbox._width
+            self._pos.x %= self._sandbox._x - self._sandbox._width
 
         if self.y < self._sandbox._y - self._sandbox._height:
-            self._pos.y = self._sandbox._y + self._sandbox.height
+            self._pos.y %= self._sandbox._y + self._sandbox.height
 
         elif self.y > self._sandbox._y + self._sandbox.height:
-            self._pos.y = self._sandbox._y - self._sandbox._height
+            self._pos.y %= self._sandbox._y - self._sandbox._height
 
     def check_collision(self, other: "Body") -> bool:
         """

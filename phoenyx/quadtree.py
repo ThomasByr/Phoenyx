@@ -184,7 +184,7 @@ class Rect(Boundary):
         return (point.x >= self.x - self.width and point.x <= self.x + self.width
                 and point.y >= self.y - self.height and point.y <= self.y + self.height)
 
-    def intersects(self, other) -> bool:
+    def intersects(self, other: Boundary) -> bool:
         """
         If a given Rect of Circle is inside the current Rect
 
@@ -254,7 +254,7 @@ class Circle(Boundary):
         return ((point.x - self.x) * (point.x - self.x) + (point.y - self.y) *
                 (point.y - self.y)) <= (self.r + point.r) * (self.r + point.r)
 
-    def intersects(self, other):
+    def intersects(self, other: Boundary):
         """
         If a given Rect of Circle is inside the current Circle
 

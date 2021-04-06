@@ -137,6 +137,11 @@ class Renderer:
         self._rot_angle = 0
         self._rotation_behaviour = RESET
 
+        # scale
+        self._has_scale = False
+        self._scale_factor = 1
+        self._scale_behaviour = RESET
+
         # shapes
         self._is_drawing_shape = False
         self._all_vertexes: list[tuple] = []
@@ -521,7 +526,7 @@ class Renderer:
 
     def _rotate_point(self, point: tuple) -> list[float, float]:
         """
-        Rotates a point base on _rot_angle in radians\\
+        Rotates a point based on _rot_angle in radians\\
         relatives to the axis origin
 
         Parameters
@@ -540,6 +545,24 @@ class Renderer:
         ]
         return new_point
 
+    def _scale_point(self, point: tuple) -> list[float, float]:
+        """
+        Scales a point based on _scale_factor\\
+        relatives to the axis origin
+
+        Parameters
+        ----------
+            point : tuple
+                the point to apply the transformation
+
+        Returns
+        -------
+            list : transformed point
+        """
+        point = list(point)
+        new_point = [point[0] * self._scale_factor, point[1] * self._scale_factor]
+        return new_point
+
     def line(self, point1: Union[tuple, list, Vector], point2: Union[tuple, list, Vector]) -> None:
         """
         draws a line on the screen\\
@@ -552,17 +575,21 @@ class Renderer:
             point2 : tuple | list | Vector
                 second point
         """
+        if self._has_scale:
+            point1 = self._scale_point(point1)
+            point2 = self._scale_point(point2)
         if self._has_rotation:
             point1 = self._rotate_point(point1)
             point2 = self._rotate_point(point2)
         if self._has_translation:
             point1 = self._offset_point(point1)
             point2 = self._offset_point(point2)
+
         color = self.stroke
         weight = self.stroke_weight
         pygame.draw.line(self._window, color, point1[:2], point2[:2], weight)
 
-    def lines(self, *points, closed: bool = True) -> None:
+    def lines(self, *points: Union[tuple, list, Vector], closed: bool = True) -> None:
         """
         draws lines on the screen\\
         uses the stroke color even if stroking is disabled
@@ -575,15 +602,18 @@ class Renderer:
                 last point connected to first
                 defaults to True
         """
+        if self._has_scale:
+            points = list(map(self._scale_point, points))
         if self._has_rotation:
             points = list(map(self._rotate_point, points))
         if self._has_translation:
             points = list(map(self._offset_point, points))
+
         color = self.stroke
         weight = self.stroke_weight
         pygame.draw.lines(self._window, color, closed, points, weight)
 
-    def polygon(self, *points) -> None:
+    def polygon(self, *points: Union[tuple, list, Vector]) -> None:
         """
         draws a polygon on the screen\\
         calls debug_enabled_drawing_methods first
@@ -594,6 +624,8 @@ class Renderer:
                 each additionnal arg is a point
         """
         self._debug_enabled_drawing_methods()
+        if self._has_scale:
+            points = list(map(self._scale_point, points))
         if self._has_rotation:
             points = list(map(self._rotate_point, points))
         if self._has_translation:
@@ -630,9 +662,11 @@ class Renderer:
         # if self._has_translation:
         #     point = self._offset_point(point)
 
-        x, y = point
+        x, y = point[:2]
         points = [(x, y), (x + width, y), (x + width, y + height), (x, y + height)]
 
+        if self._has_scale:
+            points = list(map(self._scale_point, points))
         if self._has_rotation:
             points = list(map(self._rotate_point, points))
         if self._has_translation:
@@ -674,9 +708,11 @@ class Renderer:
         # if self._has_translation:
         #     point = self._offset_point(point)
 
-        x, y = point
+        x, y = point[:2]
         points = [(x, y), (x + size, y), (x + size, y + size), (x, y + size)]
 
+        if self._has_scale:
+            points = list(map(self._scale_point, points))
         if self._has_rotation:
             points = list(map(self._rotate_point, points))
         if self._has_translation:
@@ -715,6 +751,10 @@ class Renderer:
         if self.rect_mode == CENTER:
             point[0] -= width // 2
             point[1] -= height // 2
+        if self._has_scale:
+            point = self._scale_point(point)
+            width *= self._scale_factor
+            height *= self._scale_factor
         if self._has_rotation:
             point = self._rotate_point(point)
         if self._has_translation:
@@ -740,6 +780,9 @@ class Renderer:
                 circle radius
         """
         self._debug_enabled_drawing_methods()
+        if self._has_scale:
+            center = self._scale_point(center)
+            radius *= self._scale_factor
         if self._has_rotation:
             center = self._rotate_point(center)
         if self._has_translation:
@@ -762,11 +805,14 @@ class Renderer:
             point : tuple | list | Vector
                 the point coordinates
         """
+        if self._has_scale:
+            point = self._scale_point(point)
         if self._has_rotation:
             point = self._rotate_point(point)
         if self._has_translation:
             point = self._offset_point(point)
-        pygame.draw.circle(self._window, self.fill, point[:2], self._stroke_weight, 0)
+
+        pygame.draw.circle(self._window, self.stroke, point[:2], self._stroke_weight, 0)
 
     def sprites(self, group: pygame.sprite.Group) -> None:
         """
@@ -876,6 +922,24 @@ class Renderer:
         y = (self.win_height - surface.get_height()) / 2
         self._window.blit(surface, (x, y))
 
+    def scale(self, scale: float) -> None:
+        """
+        scales what will be drawn on the window
+
+        Parameters
+        ----------
+            scale : float
+                scale factor, must be greater than 0
+        """
+        if scale <= 0:
+            warn(f"WARNING [renderer] : scale of {scale} is not allowed, nothing happened")
+            return
+        if scale == 1:
+            self._has_scale = False
+        else:
+            self._has_scale = True
+        self._scale_factor = scale
+
     def scale_display(self, scale: float) -> None:
         """
         scales the entire window by some amount, relative to the center of the screen\\
@@ -916,6 +980,13 @@ class Renderer:
         """
         self._has_rotation = False
         self._rot_angle = 0
+
+    def _reset_scale(self) -> None:
+        """
+        resets scale factor back to 1
+        """
+        self._has_scale = False
+        self._scale_factor = 1
 
     @property
     def translation_behaviour(self) -> str:
@@ -960,6 +1031,28 @@ class Renderer:
             warn(f"WARNING [renderer] : {behaviour} is not a valid rotation behaviour, nothing happened")
             return
         self._rotation_behaviour = behaviour
+
+    @property
+    def scale_behaviour(self) -> str:
+        """
+        gets the global scale behaviour
+        """
+        return self._scale_behaviour
+
+    @scale_behaviour.setter
+    def scale_behaviour(self, behaviour: str) -> None:
+        """
+        sets the global scale behavious
+
+        Parameters
+        ----------
+            behaviour : str
+                KEEP | RESET
+        """
+        if behaviour not in ("RESET", "KEEP"):
+            warn(f"WARNING [renderer] : {behaviour} is not a valid scale behaviour, nothing happened")
+            return
+        self._scale_behaviour = behaviour
 
     def _add_button(self, button: Button) -> None:
         """
@@ -1504,7 +1597,7 @@ class Renderer:
             return
         self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self.rect_mode, self.translation_behaviour, self.rotation_behaviour, self.text_color, self.text_size =\
             self._save.pop()
-        self._has_save = len(self._save) >= 0
+        self._has_save = len(self._save) >= 1
 
     @property
     def key_binding(self) -> dict:
@@ -1648,13 +1741,13 @@ class Renderer:
             # drawing loop
             draw()
 
-            # translation management
+            # translation, rotation, scale management
             if self.translation_behaviour == RESET:
                 self._reset_translation()
-
-            # rotation management
             if self.rotation_behaviour == RESET:
                 self._reset_rotation()
+            if self.scale_behaviour == RESET:
+                self._reset_scale()
 
             # bench mode
             if self._benchmark:

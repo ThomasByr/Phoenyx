@@ -31,7 +31,7 @@ class SandBox:
     Phoenyx SandBox
     ===============
     Provides :
-    1. basic phisics for simple shapes
+    1. basic physics for simple shapes
     2. fully integrated to Phoenyx Renderer
     3. a quadtree acceleration for contact interraction
     """
