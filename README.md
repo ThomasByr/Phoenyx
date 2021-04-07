@@ -1,6 +1,6 @@
 # Phoenyx - Pygame Engine 0.2.1
 
-Some simple classes in ``python`` that could make your life much simplier. Relies on the pygame draw engine, based on the idea of the Processing language.
+Some simple classes in **python** that could make your life much simplier. Relies on the pygame draw engine, based on the idea of the Processing language.
 
 > Get the latest stable version using pip with ``pip install phoenyx``.
 
@@ -13,7 +13,7 @@ Some simple classes in ``python`` that could make your life much simplier. Relie
 
 ## What it does
 
-This library allows you to create graphical components in ``pygame`` in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector and a SanBox class suitable for physics engines and more mathematical drawings.
+This library allows you to create graphical components in **pygame** in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector and a SanBox class suitable for physics engines and more mathematical drawings.
 
 Please go and check [pygame](https://github.com/pygame/pygame.git) for their amazing work ! Additionnal kudos to Daniel Shiffman.
 
