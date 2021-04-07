@@ -1581,8 +1581,9 @@ class Renderer:
         """
         self._save.append([
             self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,
-            self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self.rect_mode,
-            self.translation_behaviour, self.rotation_behaviour, self.text_color, self.text_size
+            self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self._has_scale,
+            self._scale_factor, self.rect_mode, self.translation_behaviour, self.rotation_behaviour,
+            self.scale_behaviour, self.text_color, self.text_size
         ])
         self._has_save = True
 
@@ -1595,7 +1596,7 @@ class Renderer:
         if not self._has_save:
             warn("WARNING [renderer] : no save was found, nothing changed")
             return
-        self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self.rect_mode, self.translation_behaviour, self.rotation_behaviour, self.text_color, self.text_size =\
+        self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self._has_scale, self._scale_factor,self.rect_mode, self.translation_behaviour, self.rotation_behaviour, self.scale_behaviour, self.text_color, self.text_size =\
             self._save.pop()
         self._has_save = len(self._save) >= 1
 
