@@ -114,6 +114,7 @@
     * also note that bodies are not rotating for now, that you should not have too many of them, and that a lot of fixes will occur in future versions
     * new bench mode that forces the Renderer to not deal with subclasses (buttons, sliders, menus, ... will become hidden and all interractions will be turned down)
 20. *v0.2.1* some other more drawing
-    * some bug fixes (point stroke color not used, rect and square position unpacking)
+    * some bug fixes (point stroke color not used, rect and square position unpacking, reset matrix method not reseting rotation)
     * new scaling method for the renderer, old method still available, scaling happens (as always for these new methods) relatively to the axes origin ; note that the stroke weight is not affected by scale
     * alternate wrap method (there is no real wrap method irl is there ?)
+    * changed the gravity setting method of the SandBox
