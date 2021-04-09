@@ -22,7 +22,7 @@ def setup() -> None:
     b1 = sandbox.new_body(300, 100, 1, 10)
     b2 = sandbox.new_body(290, 80, 1, 10)
     b3 = sandbox.new_body(310, 60, 1, 10)
-    sandbox.set_gravity(Vector(0, .5))
+    sandbox.set_gravity(y=.5)
 
     renderer.text_size = 15
     renderer.text_color = 255
