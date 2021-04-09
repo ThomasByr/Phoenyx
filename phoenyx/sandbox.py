@@ -122,7 +122,7 @@ class SandBox:
             return
         self._bounce = bounce
 
-    def set_gravity(self, g: Vector) -> None:
+    def set_gravity(self, x: float = 0, y: float = 0) -> None:
         """
         sets global gravity\\
         note that gravity affects all objects that have a mass\\
@@ -130,10 +130,12 @@ class SandBox:
 
         Parameters
         ----------
-            g : Vector
-                gravity vector (y > 0 is pointing down)
+            x : float, (optional)
+                x component of the g vector ; (x > 0 is pointing to the right)
+            y : float, (optional)
+                y component of the g vector ; (y > 0 is pointing down)
         """
-        self._gravity = g
+        self._gravity = Vector(x, y)
 
     def new_body(self,
                  x: float,

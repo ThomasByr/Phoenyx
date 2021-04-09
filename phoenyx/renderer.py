@@ -924,7 +924,8 @@ class Renderer:
 
     def scale(self, scale: float) -> None:
         """
-        scales what will be drawn on the window
+        scales what will be drawn on the window\\
+        does not affect the stroke weight
 
         Parameters
         ----------
@@ -963,8 +964,11 @@ class Renderer:
         """
         self._reset_translation()
         self._reset_rotation()
+        self._reset_scale()
         self.rect_mode = CORNER
         self.translation_behaviour = RESET
+        self.rotation_behaviour = RESET
+        self.scale_behaviour = RESET
 
     def _reset_translation(self) -> None:
         """
@@ -976,7 +980,7 @@ class Renderer:
 
     def _reset_rotation(self) -> None:
         """
-        resets rotation back to normal
+        resets rotation angle back to 0
         """
         self._has_rotation = False
         self._rot_angle = 0
