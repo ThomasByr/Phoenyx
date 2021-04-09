@@ -375,9 +375,9 @@ def text_size(self, size: int) -> None:
 
 ### other attributes
 
-Other attributes, property or setting that change the way the app behave.
+Other attributes, property or setting that change the way the Renderer behave.
 
-* ``renderer.fps = 144`` will set the desired frame rate of the app ; note that the property associated with this setting returns the actual frame rate in real time
+* ``renderer.fps = 144`` will set the desired frame rate of the app ; note that the property associated with this setter returns the actual frame rate in real time
 
 ```py
 @fps.setter
@@ -431,7 +431,7 @@ def translate(self, x: int = 0, y: int = 0) -> None:
     """
 ```
 
-* ``renderer.rotate(pi)`` will rotate the axis around the origin counter-clockwise by some angle in radians (here 90°) ; also textx are not rotated
+* ``renderer.rotate(pi)`` will rotate the axis around the origin counter-clockwise by some angle in radians (here 90°) ; also texts are not rotated
 
 ```py
 def rotate(self, angle: float) -> None:
@@ -442,6 +442,21 @@ def rotate(self, angle: float) -> None:
     ----------
         angle : float
             angle in randians
+    """
+```
+
+* ``renderer.scale(2)`` will scale the window from the axis origin to some amount (here all shapes will be twice as big) ; this method does not affect stroke weight and texts
+
+```py
+def scale(self, scale: float) -> None:
+    """
+    scales what will be drawn on the window
+    does not affect the stroke weight
+
+    Parameters
+    ----------
+        scale : float
+            scale factor, must be greater than 0
     """
 ```
 
@@ -471,13 +486,28 @@ def translation_behaviour(self, behaviour: str) -> None:
     """
 ```
 
-* ``renderer.rotation_behaviour = "RESET"`` will reset the axis rotation back every time trough ``draw``, setting this to ``"KEEP"`` allows you yo only set the rotation once in ``setup``
+* ``renderer.rotation_behaviour = "RESET"`` will reset the axis rotation back every time trough ``draw``, setting this to ``"KEEP"`` allows you to only set the rotation once in ``setup``
 
 ```py
 @rotation_behaviour.setter
 def rotation_behaviour(self, behaviour: str) -> None:
     """
     sets the global rotation behavious
+
+    Parameters
+    ----------
+        behaviour : str
+            KEEP | RESET
+    """
+```
+
+* ``renderer.scale_behaviour = "RESET"`` will reset the scaling to 1 every time trough ``draw``, setting this to ``"KEEP"`` allows you to only set the scaling once in ``setup``
+
+```py
+@scale_behaviour.setter
+def scale_behaviour(self, behaviour: str) -> None:
+    """
+    sets the global scale behavious
 
     Parameters
     ----------
@@ -1356,7 +1386,7 @@ def new_bodies(self,
 * ``sandbox.set_gravity(g)`` will set the global gravity to a desired vector
 
 ```py
-def set_gravity(self, g: Vector) -> None:
+def set_gravity(self, x: float = 0, y: float = 0) -> None:
     """
     sets global gravity
     note that gravity affects all objects that have a mass
@@ -1364,9 +1394,11 @@ def set_gravity(self, g: Vector) -> None:
 
     Parameters
     ----------
-        g : Vector
-            gravity vector (y > 0 is pointing down)
-    """
+        x : float, (optional)
+            x component of the g vector ; (x > 0 is pointing to the right)
+        y : float, (optional)
+            y component of the g vector ; (y > 0 is pointing down)
+        """
 ```
 
 * ``sandbox.set_bouncing(True)`` will make the bodies bounce on the edges of the world (based on their center position)
