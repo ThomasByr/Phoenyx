@@ -69,12 +69,12 @@ class Vector(np.ndarray):
 
     def __eq__(self, other: "Vector") -> bool:
         if self.shape == other.shape:
-            return np.all(np.absolute(self - other) < EPSILON)
+            return np.all(np.absolute(self - other) <= EPSILON)
         return False
 
     def __ne__(self, other: "Vector") -> bool:
         if self.shape == other.shape:
-            return not np.all(np.absolute(self - other) < EPSILON)
+            return np.any(np.absolute(self - other) > EPSILON)
         return True
 
     def __repr__(self) -> str:
