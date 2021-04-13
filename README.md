@@ -1,6 +1,6 @@
 # Phoenyx - Pygame Engine 0.2.1
 
-Some simple classes in **python** that could make your life much simplier. Relies on the pygame draw engine, based on the idea of the Processing language.
+Some simple classes in **python** that could make your life much simplier. Relies on pygame and numpy, based on the idea of the Processing language.
 
 > Get the latest stable version using pip with ``pip install phoenyx``.
 
@@ -46,7 +46,7 @@ def setup() -> None:
     b1 = sandbox.new_body(300, 100, 1, 10)
     b2 = sandbox.new_body(290, 80, 1, 10)
     b3 = sandbox.new_body(310, 60, 1, 10)
-    sandbox.set_gravity(Vector(0, .5))
+    sandbox.set_gravity(y=.5)
 
     renderer.text_size = 15
     renderer.text_color = 255
@@ -74,7 +74,7 @@ You will also need ``pygame`` in order to use the Renderer and ``numpy`` to use 
 
 ## Licenses
 
-Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details. Phoenyx also includes the following components from other open source projects (see [LICENSES folder](LICENSES/) for more):
+Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details. Phoenyx also includes the following components from other open source projects (see [LICENSES folder](LICENSES/) for more) :
 
 * [numpy](https://numpy.org/) licensed under the BSD 3-Clause "New" or "Revised" License
 * [pygame](https://www.pygame.org/) licended under the GNU LGPL version 2.1
