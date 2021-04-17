@@ -176,7 +176,7 @@ def square(self, point: Union[tuple, list, Vector], size: int) -> None:
     """
 ```
 
-* ``renderer.ellipse(point, width, height)`` will draw an ellipse, described by its outer rectangle, which top left corner will be at ``point``, having a width of ``width`` and a height of ``height``
+* ``renderer.ellipse(point, width, height)`` will draw an ellipse, described by its outer rectangle, which top left corner will be at ``point``, having a width of ``width`` and a height of ``height`` ; note that the rect for ellipses will not experience any rotation
 
 ```py
 def ellipse(self, point: Union[tuple, list, Vector], width: int, height: int) -> None:
@@ -209,6 +209,30 @@ def circle(self, center: Union[tuple, list, Vector], radius: int) -> None:
             center point of the circle
         radius : int
             circle radius
+    """
+```
+
+* ``renderer.arc(point, width, height, start, stop)`` will draw an arc, described by its outer rectangle, which top left corner will be at ``point``, having a width of ``width`` and a height of ``height`` ; note that the rect for arcs will not experience any rotation, but the start and stop angle will
+
+```py
+def arc(self, point: Union[tuple, list, Vector], width: int, height: int, start: float,
+        stop: float) -> None:
+    """
+    draws an arc on the screen
+    calls debug_enabled_drawing_methods first
+
+    Parameters
+    ----------
+        point : tuple | list | Vector
+            base point of the rectangle for the arc
+        width : int
+            the widdth of the rectangle for the arc
+        height : int
+            the height of the rectangle for the arc
+        start : float
+            start angle for the arc
+        stop : float
+            stop angle for the arc
     """
 ```
 
@@ -665,6 +689,21 @@ def mouse_x(self) -> int:
 def mouse_y(self) -> int:
     """
     gets current position of the mouse cursor along the y-axis
+    """
+```
+
+* ``renderer.set_background(51)`` will set an automated background every time through draw so the math to get the right color can only be done once in setup
+
+```py
+def set_background(self, *color: Union[None, int, str]) -> None:
+    """
+    sets an automated background every time through draw\\
+    setting this to None will disable this feature
+
+    Parameters
+    ----------
+        color : tuple | int | str
+            color to fill the screen with, might be None
     """
 ```
 
