@@ -1,6 +1,6 @@
 # Changelog
 
-> "War... war never changes" - the Sole Survivor
+> "I'm calling it right here. This world can officially bite my ass." - the Sole Survivor
 
 1.  *v0.0.a1* lets see PyPI...
     * initial commit and packaging
@@ -113,8 +113,10 @@
     * note that physics is happening based on the frame rate of the Renderer and is only following the first Newton's law of motion : ``mass * acceleration = force`` for now
     * also note that bodies are not rotating for now, that you should not have too many of them, and that a lot of fixes will occur in future versions
     * new bench mode that forces the Renderer to not deal with subclasses (buttons, sliders, menus, ... will become hidden and all interractions will be turned down)
-20. *v0.2.1* some other more drawing
-    * some bug fixes for the Renderer and Vector (point stroke color not used, rect and square position unpacking, reset_matrix not reseting rotation, equality tests for vectors)
+20. *v0.2.1* some other more drawings
+    * some bug fixes for the Renderer and Vector (point stroke color not used, rect and square position unpacking, reset_matrix not reseting rotation, equality tests and representation for vectors)
     * new scaling method for the renderer, old method still available, scaling happens (as always for these new methods) relatively to the axes origin ; note that the stroke weight is not affected by scale
+    * new drawing method to draw arcs ; note that the rect for arcs (as well as for ellipses) does not rotate
+    * alternate method to apply background every time through draw
     * alternate wrap method (there is no real wrap method irl is there ?)
     * changed the gravity setting method of the SandBox
