@@ -124,7 +124,6 @@ class Renderer:
         self._stroke_weight = 1
         self._stroke = True
         self._rect_mode = CORNER
-        self._bg = (51, 51, 51)
 
         # offsets
         self._has_translation = False
@@ -141,6 +140,10 @@ class Renderer:
         self._has_scale = False
         self._scale_factor = 1
         self._scale_behaviour = RESET
+
+        # background
+        self._has_auto_bg = False
+        self._bg = (51, 51, 51)
 
         # shapes
         self._is_drawing_shape = False
@@ -794,6 +797,49 @@ class Renderer:
         # stroke
         if self._stroke:
             pygame.draw.circle(self._window, self.stroke, center[:2], radius, self._stroke_weight)
+
+    def arc(self, point: Union[tuple, list, Vector], width: int, height: int, start: float,
+            stop: float) -> None:
+        """
+        draws an arc on the screen\\
+        calls debug_enabled_drawing_methods first
+
+        Parameters
+        ----------
+            point : tuple | list | Vector
+                base point of the rectangle for the arc
+            width : int
+                the widdth of the rectangle for the arc
+            height : int
+                the height of the rectangle for the arc
+            start : float
+                start angle for the arc
+            stop : float
+                stop angle for the arc
+        """
+        self._debug_enabled_drawing_methods()
+        point = list(point)
+        if self.rect_mode == CENTER:
+            point[0] -= width // 2
+            point[1] -= height // 2
+        if self._has_scale:
+            point = self._scale_point(point)
+            width *= self._scale_factor
+            height *= self._scale_factor
+        if self._has_rotation:
+            point = self._rotate_point(point)
+            start += self._rot_angle
+            stop += self._rot_angle
+        if self._has_translation:
+            point = self._offset_point(point)
+
+        # fill
+        if self._fill:
+            pygame.draw.ellipse(self._window, self.fill, (point[:2], (width, height)), start, stop, 0)
+        # stroke
+        if self._stroke:
+            pygame.draw.ellipse(self._window, self.stroke, (point[:2], (width, height)), start, stop,
+                                self.stroke_weight)
 
     def point(self, point: Union[tuple, list, Vector]) -> None:
         """
@@ -1728,6 +1774,42 @@ class Renderer:
             return
         self._benchmark = bench
 
+    def set_background(self, *color: Union[None, int, str]) -> None:
+        """
+        sets an automated background every time through draw\\
+        setting this to None will disable this feature
+
+        Parameters
+        ----------
+            color : tuple | int | str
+                color to fill the screen with, might be None
+        """
+        self._has_auto_bg = True
+
+        if len(color) == 1:
+            color = color[0]
+        if color is None:
+            self._has_auto_bg = False
+            return
+
+        if isinstance(color, int):
+            color = color, color, color
+        elif isinstance(color, tuple) and len(color) == 3:
+            pass
+        elif isinstance(color, str):
+            try:
+                color = COLORS[color.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                warn(
+                    f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                color = COLORS[close]
+        else:
+            warn(f"ERROR [renderer] : {color} not a valid color parameter, applaying default dark background")
+            color = 51, 51, 51
+        self._bg = color
+
     def run(self, draw, setup=lambda: None) -> None:
         """
         the main loop of the programm\\
@@ -1743,7 +1825,10 @@ class Renderer:
         """
         setup()
         while self._is_running:
+
             # drawing loop
+            if self._has_auto_bg:
+                self._window.fill(self._bg)
             draw()
 
             # translation, rotation, scale management

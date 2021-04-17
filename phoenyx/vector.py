@@ -79,7 +79,7 @@ class Vector(np.ndarray):
 
     def __repr__(self) -> str:
         class_name = self.__class__.__name__
-        fvalues = (class_name, self[0], self[1], self[2])
+        fvalues = (class_name, self.x, self.y, self.z)
         return "{}({:.2f}, {:.2f}, {:.2f})".format(*fvalues)
 
     def __add__(self, other: "Vector") -> "Vector":
