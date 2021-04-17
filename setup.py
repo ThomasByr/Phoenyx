@@ -11,7 +11,7 @@ setuptools.setup(
     version="0.2.1",
     author="Thomas Byr",
     author_email="thomas-c2000@outlook.fr",
-    description="An engine for pygame",
+    description="A drawing and physics engine for Pygame",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ThomasByr/phoenyx.git",
