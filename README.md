@@ -1,4 +1,4 @@
-# Phoenyx - Pygame Engine 0.2.1
+# Phoenyx - Pygame Engine v0.2.1
 
 Some simple classes in **python** that could make your life much simplier. Relies on pygame and numpy, based on the idea of the Processing language.
 
@@ -81,9 +81,21 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 ## Changelog
 
-Please refer to [the changelog file](changelog.md) for more details.
+Please refer to [the changelog file](changelog.md) for the full history.
 
 The 0.2.0 update featured the new SandBox class, allowing you to create a physics world for Bodies to interract and move around in very few lines of code. This update targets the Renderer class and fixes some drawing methods as well as introduces new ones.
+
+<details>
+    <summary> v0.2.1 : some other more drawings </summary>
+
+* some bug fixes for the Renderer and Vector (point stroke color not used, rect and square position unpacking, reset_matrix not reseting rotation, equality tests and representation for vectors)
+* new scaling method for the renderer, old method still available, scaling happens (as always for these new methods) relatively to the axes origin ; note that the stroke weight is not affected by scale
+* new drawing method to draw arcs ; note that the rect for arcs (as well as for ellipses) does not rotate
+* alternate method to apply background every time through draw
+* alternate wrap method (there is no real wrap method irl is there ?)
+* changed the gravity setting method of the SandBox
+
+</details>
 
 ## TODOs
 
