@@ -64,13 +64,13 @@ Now lets focus on some methods you can call in the ``draw`` loop. The signature 
 * ``renderer.background(color)`` will fill the background with the given ``color`` (color range of possibilies as a parameter is discussed in the next subsection, but notice it can be an integer, 3 integers or a string)
 
 ```py
-def background(self, *color) -> None:
+def background(self, *color: Union[int, str]) -> None:
     """
     fills the screen with a unique color
 
     Parameters
     ----------
-        color : tuple | int | str
+        color : tuple[int, int, int] | int | str
             color to fill the screen with
     """
 ```
@@ -397,6 +397,21 @@ def text_size(self, size: int) -> None:
     """
 ```
 
+* ``renderer.set_background(color)`` will set the background color to ``color`` and will apply the background layer every time through ``draw``, so the math to get the right color can only be done once in ``etup`` ; setting this to ``None`` will disable the auto background feature
+
+```py
+def set_background(self, *color: Union[None, int, str]) -> None:
+    """
+    sets an automated background every time through draw
+    setting this to None will disable this feature
+
+    Parameters
+    ----------
+        color : None | tuple[int, int, int] | int | str
+            color to fill the screen with, might be None
+    """
+```
+
 ### other attributes
 
 Other attributes, property or setting that change the way the Renderer behave.
@@ -689,21 +704,6 @@ def mouse_x(self) -> int:
 def mouse_y(self) -> int:
     """
     gets current position of the mouse cursor along the y-axis
-    """
-```
-
-* ``renderer.set_background(51)`` will set an automated background every time through draw so the math to get the right color can only be done once in setup
-
-```py
-def set_background(self, *color: Union[None, int, str]) -> None:
-    """
-    sets an automated background every time through draw\\
-    setting this to None will disable this feature
-
-    Parameters
-    ----------
-        color : tuple | int | str
-            color to fill the screen with, might be None
     """
 ```
 
@@ -1417,7 +1417,7 @@ def new_bodies(self,
                axs: Union[int, float, list[Union[int, float]]] = 0,
                ays: Union[int, float, list[Union[int, float]]] = 0) -> list[Body]:
     """
-    creates ``n`` Bodies at once\\
+    creates ``n`` Bodies at once
     you don't want to put them on the same location but you can
     """
 ```
@@ -1552,7 +1552,7 @@ def __init__(self,
     """
 ```
 
-All following methods are automatically called by the sandbox object when updating.
+All of the following methods are automatically called by SandBox when updating.
 
 * ``body.check_collision(other)`` checks the collision state of two bodies assuming they have standard shapes
 
@@ -1572,7 +1572,7 @@ def check_collision(self, other: "Body") -> bool:
     """
 ```
 
-* ``body.collide(other)`` will modify the velocity of ``self`` and only ``self`` based on the state of the two bodies assuming they are colliding
+* ``body.collide(other)`` will modify the velocity of ``self`` and only ``self`` based on the state of the two bodies assuming they are colliding (for now, only circular bodies collision is correct)
 
 ```py
 def collide(self, other: "Body") -> None:
