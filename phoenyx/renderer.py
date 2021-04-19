@@ -896,7 +896,7 @@ class Renderer:
 
         Parameters
         ----------
-            color : tuple | int | str
+            color : tuple[int, int, int] | int | str
                 color to fill the screen with
         """
         if len(color) == 1:
@@ -1781,7 +1781,7 @@ class Renderer:
 
         Parameters
         ----------
-            color : tuple | int | str
+            color : None | tuple[int, int, int] | int | str
                 color to fill the screen with, might be None
         """
         self._has_auto_bg = True
