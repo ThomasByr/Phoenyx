@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Callable, Union
 from phoenyx.errorhandler import *
 
 from phoenyx.constants import *
@@ -36,7 +36,7 @@ class Menu:
                  color: Union[tuple[int, int, int], int, str] = (155, 155, 155),
                  text_color: Union[tuple[int, int, int], int, str] = (255, 255, 255),
                  text_size: int = 15,
-                 **kwargs) -> None:
+                 **kwargs: Callable[[], None]) -> None:
         """
         new Menu instance
 

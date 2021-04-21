@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Callable, Union
 import pygame
 import difflib
 import math
@@ -1659,7 +1659,7 @@ class Renderer:
         """
         return self._key_binding
 
-    def new_keypress(self, key: int, action, behaviour: str = PRESSED) -> None:
+    def new_keypress(self, key: int, action: Callable[[], None], behaviour: str = PRESSED) -> None:
         """
         adds a new key and its corresponding action\\
         please use ``Renderer.keys.`` to find keys
@@ -1685,7 +1685,7 @@ class Renderer:
         self._keys_behaviour.append(behaviour)
         self._key_binding[key] = len(self._actions) - 1
 
-    def update_keypress(self, key: int, action, behaviour: str = None) -> None:
+    def update_keypress(self, key: int, action: Callable[[], None], behaviour: str = None) -> None:
         """
         updates the action of a given key\\
         please use ``Renderer.keys.`` to find keys
@@ -1810,7 +1810,7 @@ class Renderer:
             color = 51, 51, 51
         self._bg = color
 
-    def run(self, draw, setup=lambda: None) -> None:
+    def run(self, draw: Callable[[], None], setup: Callable[[], None] = lambda: None) -> None:
         """
         the main loop of the programm\\
         will call draw over and over until ``QUIT`` event is triggered
