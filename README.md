@@ -48,13 +48,13 @@ def setup() -> None:
     b3 = sandbox.new_body(310, 60, 1, 10)
     sandbox.set_gravity(y=.5)
 
+    renderer.set_background(51)
     renderer.text_size = 15
     renderer.text_color = 255
 
 
 def draw() -> None:
     global b1, b2, b3
-    renderer.background(51)
 
     sandbox.update()
     sandbox.show()
