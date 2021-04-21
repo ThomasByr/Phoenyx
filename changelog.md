@@ -114,7 +114,7 @@
     * also note that bodies are not rotating for now, that you should not have too many of them, and that a lot of fixes will occur in future versions
     * new bench mode that forces the Renderer to not deal with subclasses (buttons, sliders, menus, ... will become hidden and all interractions will be turned down)
 20. *v0.2.1* some other more drawings
-    * some bug fixes for the Renderer and Vector (point stroke color not used, rect and square position unpacking, reset_matrix not reseting rotation, equality tests and representation for vectors)
+    * some bug fixes for the Renderer and Vector (point stroke color not used, rect and square position unpacking, reset_matrix not reseting rotation, use of the Callable class for clarity, equality tests and representation for vectors)
     * new scaling method for the renderer, old method still available, scaling happens (as always for these new methods) relatively to the axes origin ; note that the stroke weight is not affected by scale
     * new drawing method to draw arcs ; note that the rect for arcs (as well as for ellipses) does not rotate
     * alternate method to apply background every time through draw
