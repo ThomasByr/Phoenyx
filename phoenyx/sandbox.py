@@ -58,11 +58,19 @@ class SandBox:
             bounce : bool, (optional)
                 if bodies bounce on the edges of the world
                 defaults to True
+
+        Note
+        ----
+            The center of the SandBox is the center of the Renderer window ;\\
+            If both wrap and bounce are enabled, wrap will be arbitrarily disabled ;\\
+            The default gravitational constant is set to .5 downwards.
         """
         self._renderer = renderer
 
         self._wrap = wrap
         self._bounce = bounce
+        if wrap and bounce:
+            self._wrap = False
 
         self._x, self._y = self._renderer.win_width / 2, self._renderer.win_height / 2
         bound = Rect(self._renderer, self._x, self._y, width, height)
@@ -70,7 +78,7 @@ class SandBox:
         self._height = height
 
         self._sum_of_forces = Vector()
-        self._gravity = Vector(0, 1)
+        self._gravity = Vector(0, .5)
 
         self._all_bods: set[Body] = set()
         # QuadTree for static Bodies

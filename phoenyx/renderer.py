@@ -264,13 +264,13 @@ class Renderer:
         self._fill = False
 
     @property
-    def fill(self) -> tuple:
+    def fill(self) -> tuple[int, int, int]:
         """
         gets current fill color event if stroking is disabled
 
         Returns
         -------
-            tuple | int | str: color
+            tuple : color
         """
         return self._fill_color
 
@@ -308,13 +308,13 @@ class Renderer:
         self._stroke = False
 
     @property
-    def stroke(self) -> tuple:
+    def stroke(self) -> tuple[int, int, int]:
         """
         gets current stroke color event if stroking is disabled
 
         Returns
         -------
-            tuple | int | str: color
+            tuple : color
         """
         return self._stroke_color
 

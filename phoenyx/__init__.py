@@ -121,6 +121,15 @@ If ``unbias`` is true, the quintic function will be applied to the
 output before returning it, to counteract some of Perlin noise's
 significant bias towards the center of its output range.
 
+SandBox
+-------
+Since v0.2.0 you can create a basic physics engine. It handles the creation of new bodies, some collisions and bouncing on the edges of the world boundaries. It also gives all bodies a default drawing method but you should create your own by inheriting the Body class and modifying what you want. Note that all bodies leaving the world are lost (that applies to bodies that do not teleport around the edges or bounce on the edges of the world). Also note that the SandBox has its center be the center of the renderer window.
+
+# ``SandBox`` object that has a world the same dimensions as the ``Renderer`` window
+>>> sandbox = SandBox(renderer, renderer.win_width/2, renderer.win_height/2, bounce=True)
+
+All bodies will bounce on the edges of the screen (bouncing is based on the center of the bodies).
+
 Please note
 -----------
 Please note that this library is not fully tested and thus may be very buggy.
@@ -129,11 +138,8 @@ remove or trigger them.
 Also both buttons and sliders currently have unsupported methods for the Renderer
 such as moving them on the screen, resizing them, changing their attributes...
 Finally, ERROR and WARNING do not cause a 'real' ``python error`` but throw some
-pieces of information in the console. May turn into spam.
+pieces of information in the console.
 """
-
-# Hello from Phoenyx
-print(f"Hello from Phoenyx. https://github.com/ThomasByr/phoenyx.git")
 
 # main classes
 from .constants import *
@@ -152,3 +158,6 @@ from .body import Body
 # error handler
 from .errorhandler import set_soft as error_handler_set_soft
 from .errorhandler import load_soft as error_handler_load
+
+# Hello from Phoenyx
+print(f"Hello from Phoenyx. https://github.com/ThomasByr/phoenyx.git")
