@@ -1312,7 +1312,7 @@ def __call__(self, *point) -> float:
 
 ## ``SandBox`` physics engine
 
-Since the v0.2.0 you can create a basic physics engine. It handles the creation of new bodies, some collisions and bouncing on the edges of the world boundaries. It also gives all bodies a default drawing method but you should create your own by inheriting the Body class and modifying what you want. Note that all bodies leaving the world are lost (that applies to bodies that do not teleport around the edges or bounce on the edges of the world). Also note that the SandBox has its center be the center of the renderer window.
+Since v0.2.0 you can create a basic physics engine. It handles the creation of new bodies, some collisions and bouncing on the edges of the world boundaries. It also gives all bodies a default drawing method but you should create your own by inheriting the Body class and modifying what you want. Note that all bodies leaving the world are lost (that applies to bodies that do not teleport around the edges or bounce on the edges of the world). Also note that the SandBox has its center be the center of the renderer window.
 
 ### Physics engine basics
 
@@ -1342,6 +1342,12 @@ def __init__(self,
         bounce : bool, (optional)
             if bodies bounce on the edges of the world
             defaults to True
+
+    Note
+    ----
+        The center of the SandBox is the center of the Renderer window ;
+        If both wrap and bounce are enabled, wrap will be arbitrarily disabled ;
+        The default gravitational constant is set to .5 downwards.
     """
 ```
 
