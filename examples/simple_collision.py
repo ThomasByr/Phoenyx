@@ -33,7 +33,7 @@ def draw() -> None:
     global b1, b2, b3
 
     sandbox.update()
-    sandbox.show()
+    sandbox.draw()
     renderer.text(10, 10, f"fps : {round(renderer.fps)}")
 
 

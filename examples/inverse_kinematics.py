@@ -291,6 +291,7 @@ def setup() -> None:
 
     ball = Ball(renderer, 100, 100, (WIDTH, HEIGHT))
 
+    renderer.set_background(51)
     renderer.text_size = 15
     renderer.text_color = 255
 
@@ -300,7 +301,6 @@ def draw() -> None:
     draw function for ``Renderer`` class
     """
     global tentacles, ball
-    renderer.background(51)
 
     ball.update()
 
