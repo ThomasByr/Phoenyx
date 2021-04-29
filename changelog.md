@@ -120,3 +120,7 @@
     * alternate method to apply background every time through draw
     * alternate wrap method (there is no real wrap method irl is there ?)
     * changed the gravity setting method of the SandBox
+21. *v0.2.2* a little bit more convenient
+    * made the renderer look for setup and draw in the main file
+    * more drawing options for each individual body (filling color, stroke and stroke weight)
+    * consistant naming for drawing methods called show sometimes (sandbox, body, quadtree)
