@@ -52,11 +52,11 @@ Great now what we want to to is to setup things inside our ``setup`` function if
 
 Inside of the ``draw`` function, we want to put things that will be repeated over and over until we trigger the ``QUIT`` event of pygame : click the close button. We will call this function the ``draw`` loop because, you guessed it : this is our main loop. So we can apply some background color, draw shapes, move things around, interract with Sliders, Buttons, Menus and the Keyboard in that loop. Such exciting things will be discussed in detail in the commings subsections of this documentation.
 
-Then we need to call the ``run`` method for our ``renderer``, providing it with the ``draw`` function and the optional ``setup``. This should look like this :
+Then we need to call the ``run`` method for our ``renderer``, optionnaly providing it with the ``draw`` function and the optional ``setup`` (if your draw and setup functions are named properly you don't need to pass them inside of the run method ; you still can name them to your likings but will need to put them as parameters for the run method). This should look like this :
 
 ```py
 if __name__ == "__main__":
-    renderer.run(draw, setup=setup)
+    renderer.run()
 ```
 
 Now lets focus on some methods you can call in the ``draw`` loop. The signature and docstring of the methods will follow their quick meaning. Filling and strocking will be discussed in more detail in the next subsection but for now all you need to know is that is tells the ``Renderer`` what color to use to draw shapes and / or fill them. For methods that will draw fillable shapes, we first make sure that either stroking or filling is enabled, and if not, we arbitrary activate one of them. Note that code below is part of a class and thus what you will see are methods that are part of the ``Renderer`` class.
@@ -198,9 +198,15 @@ def ellipse(self, point: Union[tuple, list, Vector], width: int, height: int) ->
 * ``renderer.circle(point, radius)`` will draw a circle centered at ``point`` with a radius of ``radius``
 
 ```py
-def circle(self, center: Union[tuple, list, Vector], radius: int) -> None:
+def circle(self,
+           center: Union[tuple, list, Vector],
+           radius: int,
+           draw_top_right: bool = None,
+           draw_top_left: bool = None,
+           draw_bottom_left: bool = None,
+           draw_bottom_right: bool = None) -> None:
     """
-    draws a circle on the screen\\
+    draws a circle on the screen
     calls debug_enabled_drawing_methods first
 
     Parameters
@@ -209,6 +215,23 @@ def circle(self, center: Union[tuple, list, Vector], radius: int) -> None:
             center point of the circle
         radius : int
             circle radius
+        draw_top_right : bool, (optional)
+            if this is set to True then the top right corner of the circle will be drawn
+            defaults to None
+        draw_top_left : bool, (optional)
+            if this is set to True then the top left corner of the circle will be drawn
+            defaults to None
+        draw_bottom_left : bool, (optional)
+            if this is set to True then the bottom left corner of the circle will be drawn
+            defaults to None
+        draw_bottom_right : bool, (optional)
+            if this is set to True then the bottom right corner of the circle will be drawn
+            defaults to None
+
+    Note
+    ----
+        If any of the draw_circle_part is True the, it will draw all circle
+        parts that have the True value, otherwise it will draw the entire circle.
     """
 ```
 
@@ -1390,6 +1413,12 @@ def new_body(self,
             amount of tangent velocity lost every time the object bounces on a surface
             0 means the object is really really sticky
             1 means no friction will occur
+        color : tuple[int, int, int] | int | str
+            filling color
+        stroke : tuple[int, int, int] | int | str
+            stroking color
+        weight : int
+            stroke weight
         vx : float
             x velocity
         vy : float
@@ -1418,6 +1447,11 @@ def new_bodies(self,
                shapes: Union[str, list[str]] = CIRCLE,
                stiffs: Union[int, float, list[Union[int, float]]] = .99,
                fricts: Union[int, float, list[Union[int, float]]] = .999,
+               colors: Union[tuple[int, int, int], int, str, list[Union[tuple[int, int, int], int,
+                                                                  str]]] = 255,
+               strokes: Union[tuple[int, int, int], int, str, list[Union[tuple[int, int, int], int,
+                                                                   str]]] = None,
+               weights: Union[int, list[int]] = 1,
                vxs: Union[int, float, list[Union[int, float]]] = 0,
                vys: Union[int, float, list[Union[int, float]]] = 0,
                axs: Union[int, float, list[Union[int, float]]] = 0,
