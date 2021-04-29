@@ -157,7 +157,7 @@ class Rect(Boundary):
         """
         super().__init__(renderer, x, y, width, height)
 
-    def show(self) -> None:
+    def draw(self) -> None:
         """
         calls draw methods from ``Renderer``\\
         draws a centered rectangle on the main screen
@@ -228,7 +228,7 @@ class Circle(Boundary):
         super().__init__(renderer, x, y, r, r)
         self.r = r
 
-    def show(self) -> None:
+    def draw(self) -> None:
         """
         calls draw methods from ``Renderer``\\
         draws a centered rectangle on the main screen
@@ -303,17 +303,17 @@ class QuadTree:
         self._southwest: QuadTree = None
         self._southeast: QuadTree = None
 
-    def show(self) -> None:
+    def draw(self) -> None:
         """
-        calls show method from Boundary\\
+        calls draw method from Boundary\\
         recursively shows all cells
         """
-        self._boundary.show()
+        self._boundary.draw()
         if self._is_divided:
-            self._northwest.show()
-            self._northeast.show()
-            self._southwest.show()
-            self._southeast.show()
+            self._northwest.draw()
+            self._northeast.draw()
+            self._southwest.draw()
+            self._southeast.draw()
 
     def subdivide(self) -> None:
         """

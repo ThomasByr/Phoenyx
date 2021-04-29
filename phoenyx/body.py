@@ -5,6 +5,7 @@ from phoenyx.renderer import Renderer
 __all__ = ["Body"]
 
 from phoenyx.errorhandler import *
+import difflib
 
 from phoenyx.constants import *
 from phoenyx.vector import *
@@ -85,6 +86,9 @@ class Body:
                  stiff: float = .99,
                  frict: float = .999,
                  is_static: bool = False,
+                 color: Union[tuple[int, int, int], int, str] = None,
+                 stroke: Union[tuple[int, int, int], int, str] = None,
+                 weight: int = 1,
                  vx: float = 0,
                  vy: float = 0,
                  ax: float = 0,
@@ -120,6 +124,15 @@ class Body:
             is_static : bool, (optional)
                 is the body not allowed to move
                 defaults to False
+            color : tuple[int, int, int] | int | str, (optional)
+                filling color of the body
+                defaults to None
+            stroke : tuple[int, int, int] | int | str, (optional)
+                stroking color of the body
+                defaults to None
+            weight : int
+                stroke weight
+                defaults to 1
             vx : float, (optional)
                 x velocity
                 defaults to 0
@@ -147,6 +160,47 @@ class Body:
 
         self._mass = mass
         self._is_static = is_static
+
+        self._weight = weight
+
+        color = 255 if (color is None and stroke is None) else color
+        if isinstance(color, tuple) and len(color) == 3:
+            self._color = color
+        elif isinstance(color, int):
+            self._color = color, color, color
+        elif isinstance(color, str):
+            try:
+                self._color = COLORS[color.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                warn(
+                    f"ERROR [body at {x, y}] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                self._color = COLORS[close]
+        elif color is None:
+            self._color = None
+        else:
+            warn(f"ERROR [body at {x, y}] : wrong color parameter, body was not created")
+            self.has_error = True
+
+        if isinstance(stroke, tuple) and len(stroke) == 3:
+            self._stroke = stroke
+        elif isinstance(stroke, int):
+            self._stroke = stroke, stroke, stroke
+        elif isinstance(stroke, str):
+            try:
+                self._stroke = COLORS[stroke.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(stroke, COLORS.keys(), n=1, cutoff=.5)[0]
+                warn(
+                    f"ERROR [body at {x, y}] : {stroke} is not a valid color name, using closest match {close} instead"
+                )
+                self._stroke = COLORS[close]
+        elif stroke is None:
+            self._stroke = None
+        else:
+            warn(f"ERROR [body at {x, y}] : wrong stroke parameter, body was not created")
+            self.has_error = True
 
         if shape not in (CIRCLE, SQUARE, RECTANGLE):
             warn(f"ERROR [body at {x, y}] : wrong shape parameter, body was not created")
@@ -333,6 +387,118 @@ class Body:
             return
         self._frict = frict
 
+    @property
+    def color(self) -> tuple[int, int, int]:
+        """
+        gets current filling color of the body\\
+        might be None if filling is disabled for this body
+        """
+        return self._color
+
+    @color.setter
+    def color(self, color: Union[None, tuple[int, int, int], int, str]) -> None:
+        """
+        sets body filling color\\
+        color can be None to disable filling\\
+        deprecated : do not use
+
+        Parameters
+        ----------
+            color : None | tuple | int | str
+                the new color
+        """
+        warn(f"INFO [body at {self.x, self.y}] : attempting filling change")
+        if isinstance(color, tuple) and len(color) == 3:
+            self._color = color
+        elif isinstance(color, int):
+            self._color = color, color, color
+        elif isinstance(color, str):
+            try:
+                self._color = COLORS[color.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                warn(
+                    f"ERROR [body at {self.x, self.y}] : {color} is not a valid color name, using closest match {close} instead"
+                )
+                self._color = COLORS[close]
+        elif color is None:
+            if self._stroke is None:
+                warn(
+                    f"ERROR [body at {self.x, self.y}] : filling can't be disabled if stroking also is, nothing changed"
+                )
+                return
+            self._color = None
+        else:
+            warn(f"ERROR [body at {self.x, self.y}] : {color} is not a valid color, nothing changed")
+
+    @property
+    def stroke(self) -> tuple[int, int, int]:
+        """
+        gets current stroking color of the body\\
+        might be None if stroking is disabled for this body
+        """
+        return self._stroke
+
+    @stroke.setter
+    def stroke(self, stroke: Union[tuple[int, int, int], int, str]) -> None:
+        """
+        sets body stroking color\\
+        color can be None to disable stroking\\
+        deprecated : do not use
+
+        Parameters
+        ----------
+            stroke : None | tuple | int | str
+                the new color
+        """
+        if isinstance(stroke, tuple) and len(stroke) == 3:
+            self._stroke = stroke
+        elif isinstance(stroke, int):
+            self._stroke = stroke, stroke, stroke
+        elif isinstance(stroke, str):
+            try:
+                self._stroke = COLORS[stroke.lower()]
+            except KeyError:
+                close = difflib.get_close_matches(stroke, COLORS.keys(), n=1, cutoff=.5)[0]
+                warn(
+                    f"ERROR [body at {self.x, self.y}] : {stroke} is not a valid color name, using closest match {close} instead"
+                )
+                self._stroke = COLORS[close]
+        elif stroke is None:
+            if self._color is None:
+                warn(
+                    f"ERROR [body at {self.x, self.y}] : stroking can't be disabled if filling also is, nothing changed"
+                )
+                return
+            self._stroke = None
+        else:
+            warn(f"ERROR [body at {self.x, self.y}] : {stroke} is not a valid color, nothing changed")
+
+    @property
+    def weight(self) -> int:
+        """
+        gets current stroke weight of the body
+        """
+        return self._weight
+
+    @weight.setter
+    def weight(self, weight: int) -> None:
+        """
+        sets stroke weight for this body\\
+        can be any integer if stroking is disabled
+
+        Parameters
+        ----------
+            weight : int
+                the new weight
+        """
+        if weight <= 0 and self._stroke is not None:
+            warn(
+                f"ERROR [body at {self.x, self.y}] : weight can't be {weight} if stroking is not disabled, nothing changed"
+            )
+            return
+        self._weight = weight
+
     def reset(self) -> None:
         """
         resets body to its original state
@@ -374,10 +540,20 @@ class Body:
 
         self._acc *= 0
 
-    def show(self):
+    def draw(self):
         """
-        shows current body
+        draws current body
         """
+        if self.color is not None:
+            self._renderer.fill = self.color
+        else:
+            self._renderer.no_fill()
+        if self.stroke is not None:
+            self._renderer.stroke = self.stroke
+            self._renderer.stroke_weight = self.weight
+        else:
+            self._renderer.no_stroke()
+
         if self.shape == CIRCLE:
             self._renderer.circle(self._pos, self._dim)
         elif self.shape == RECTANGLE:

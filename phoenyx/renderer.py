@@ -1,11 +1,12 @@
 from typing import Callable, Union
 import pygame
 import difflib
-import math
+import math as m
 pygame.init()
 
 __all__ = ["Renderer"]
 
+import __main__  # type: ignore (pylance bad)
 from phoenyx.errorhandler import *
 
 from phoenyx.vector import *
@@ -172,13 +173,15 @@ class Renderer:
 
         # save
         self._has_save = False
-        self._save: list[list] = []
+        # list[list[tuple[int, int, int], bool, tuple[int, int, int], int, bool, bool, int, int, bool,
+        #           Union[int, float], bool, Union[int, float], str, str, str, str, tuple[int, int, int], int]]
+        self._save: list[list[18]] = []
 
         # keys
-        self._key_binding = {}
-        self._actions = []
-        self._keys_behaviour = []
-        self._pressed = {}
+        self._key_binding: dict[int, int] = {}
+        self._actions: list[Callable[[], None]] = []
+        self._keys_behaviour: list[str] = []
+        self._pressed: dict[int, bool] = {}
         self.keys = Keys()
 
         # bench mode
@@ -414,7 +417,7 @@ class Renderer:
         self.FONT = pygame.font.SysFont("comicsans", size)
 
     @property
-    def text_color(self) -> tuple:
+    def text_color(self) -> tuple[int, int, int]:
         """
         gets the current text color
         """
@@ -543,8 +546,8 @@ class Renderer:
         """
         point = list(point)
         new_point = [
-            point[0] * math.cos(self._rot_angle) - point[1] * math.sin(self._rot_angle),
-            point[0] * math.sin(self._rot_angle) + point[1] * math.cos(self._rot_angle)
+            point[0] * m.cos(self._rot_angle) - point[1] * m.sin(self._rot_angle),
+            point[0] * m.sin(self._rot_angle) + point[1] * m.cos(self._rot_angle)
         ]
         return new_point
 
@@ -963,7 +966,7 @@ class Renderer:
             angle : float
                 angle in radians
         """
-        surface = pygame.transform.rotate(self._window, math.degrees(angle))
+        surface = pygame.transform.rotate(self._window, m.degrees(angle))
         x = (self.win_width - surface.get_width()) / 2
         y = (self.win_height - surface.get_height()) / 2
         self._window.blit(surface, (x, y))
@@ -1641,7 +1644,7 @@ class Renderer:
         """
         resets the state of the renderer based on the previous save\\
         does nothing if save is not found\\
-        to generate save, use ``push``
+        use ``push`` to generate save
         """
         if not self._has_save:
             warn("WARNING [renderer] : no save was found, nothing changed")
@@ -1651,7 +1654,7 @@ class Renderer:
         self._has_save = len(self._save) >= 1
 
     @property
-    def key_binding(self) -> dict:
+    def key_binding(self) -> dict[int, int]:
         """
         gets current state of the Renderer key binding\\
         dict keys are keyboard keys identifiers (also used by pygame)\\
@@ -1810,22 +1813,41 @@ class Renderer:
             color = 51, 51, 51
         self._bg = color
 
-    def run(self, draw: Callable[[], None], setup: Callable[[], None] = lambda: None) -> None:
+    def run(self, draw: Callable[[], None] = None, setup: Callable[[], None] = None) -> None:
         """
-        the main loop of the programm\\
+        the main loop of the program\\
         will call draw over and over until ``QUIT`` event is triggered
+
+        The Renderer will try to load the ``draw`` and ``setup`` functions of the
+        main file (the one that calls this method), and will raise an error if the
+        draw function is not provided and can not be found in the file. However, you
+        have the option to pass in the functions with the names of your likings as
+        parameters to this method. In that case the Renderer will not scan your main
+        file.
 
         Parameters
         ----------
-            draw : python function
-                the draw function (will be called with parenthesis)
+            draw : python function, (optional)
+                the main draw function
+                defaults to None
             setup : python function, (optional)
                 the setup function, will be called once
-                defaults to lamda: None
+                defaults to None
         """
+        if setup is None:
+            if hasattr(__main__, "setup"):
+                setup = __main__.setup
+            else:
+                setup = lambda: None
+        if draw is None:
+            if hasattr(__main__, "draw"):
+                draw = __main__.draw
+            else:
+                raise NameError(
+                    "ERROR [renderer] : draw function was not provided and was not found in the main file")
         setup()
-        while self._is_running:
 
+        while self._is_running:
             # drawing loop
             if self._has_auto_bg:
                 self._window.fill(self._bg)

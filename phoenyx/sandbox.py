@@ -181,6 +181,12 @@ class SandBox:
                 amount of velocity lost every time the object bounces on a surface
                 0 means the object is really really sticky
                 1 means no friction will occur
+            color : tuple[int, int, int] | int | str
+                filling color
+            stroke : tuple[int, int, int] | int | str
+                stroking color
+            weight : int
+                stroke weight
             vx : float
                 x velocity
             vy : float
@@ -219,6 +225,11 @@ class SandBox:
                    shapes: Union[str, list[str]] = CIRCLE,
                    stiffs: Union[int, float, list[Union[int, float]]] = .99,
                    fricts: Union[int, float, list[Union[int, float]]] = .999,
+                   colors: Union[tuple[int, int, int], int, str, list[Union[tuple[int, int, int], int,
+                                                                            str]]] = 255,
+                   strokes: Union[tuple[int, int, int], int, str, list[Union[tuple[int, int, int], int,
+                                                                             str]]] = None,
+                   weights: Union[int, list[int]] = 1,
                    vxs: Union[int, float, list[Union[int, float]]] = 0,
                    vys: Union[int, float, list[Union[int, float]]] = 0,
                    axs: Union[int, float, list[Union[int, float]]] = 0,
@@ -243,6 +254,12 @@ class SandBox:
             stiffs = [stiffs] * n
         if isinstance(fricts, (int, float)):
             fricts = [fricts] * n
+        if isinstance(colors, (tuple, int, str)) or colors is None:
+            colors = [colors] * n
+        if isinstance(strokes, (tuple, int, str)) or strokes is None:
+            strokes = [strokes] * n
+        if isinstance(weights, int):
+            weights = [weights] * n
         if isinstance(vxs, (int, float)):
             vxs = [vxs] * n
         if isinstance(vys, (int, float)):
@@ -254,8 +271,8 @@ class SandBox:
 
         all_bodies: list[Body] = []
         for i in range(n):
-            body = Body(self, xs[i], ys[i], masses[i], dims[i], shapes[i], stiffs[i], fricts[i], vxs[i],
-                        vys[i], axs[i], ays[i])
+            body = Body(self, xs[i], ys[i], masses[i], dims[i], shapes[i], stiffs[i], fricts[i],
+                        are_static[i], colors[i], strokes[i], weights[i], vxs[i], vys[i], axs[i], ays[i])
             if body.has_error:
                 return
 
@@ -285,34 +302,34 @@ class SandBox:
         """
         self._sum_of_forces += force
 
-    def show(self) -> None:
+    def draw(self) -> None:
         """
         shows all bodies
         """
         self._renderer.push()
         self._renderer.rect_mode = CENTER
         for body in self._all_bods:
-            body.show()
+            body.draw()
 
         self._renderer.pop()
 
-    def debug_show(self, index: int = 0) -> None:
+    def debug_draw(self, index: int = 0) -> None:
         """
         shows QuadTrees
 
         Parameters
         ----------
             index : int, (optional)
-                0 : show non static quadtree and static quadtree
-                1 : only show non static bodies quadtree
-                2 : only show static bodies quadtree
+                0 : draw non static quadtree and static quadtree
+                1 : only draw non static bodies quadtree
+                2 : only draw static bodies quadtree
                 defaults to 0
         """
         self._renderer.push()
         if index != 2:
-            self._mqt.show()
+            self._mqt.draw()
         if index != 1:
-            self._sqt.show()
+            self._sqt.draw()
         self._renderer.pop()
 
     def update(self) -> None:

@@ -1,7 +1,7 @@
 from collections import namedtuple
 import random
-import math as ma
-from typing import Union
+import math as m
+from typing import Union, Type
 import numpy as np
 
 __all__ = ["Vector"]
@@ -310,10 +310,10 @@ class Vector(np.ndarray):
         return np.dot(self, other)
 
     @classmethod
-    def random(cls, vMin: float, vMax: float, size: int = 3, dtype=float) -> "Vector":
+    def random(cls, v1: float, v2: float, size: int = 3, dtype: Type[Union[float, int]] = float) -> "Vector":
         """
         Creates a random generated Vector\\
-        both ``vMin`` and ``vMax`` are included
+        both ``v1`` and ``v2`` are included
 
         Examples
         --------
@@ -325,9 +325,9 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
-            vMin : float or int
+            v1 : float or int
                 the minimum value
-            vMax : float or int
+            v2 : float or int
                 the maximum value
             size : int, (optional)
                 the number of random-generated coordinates : min=0 | max=3
@@ -341,14 +341,15 @@ class Vector(np.ndarray):
             Vector : a new Vector
         """
         assert not ((size := abs(size)) >= 4), "please enter valid size"
-        f = (random.randint, random.uniform)[dtype is float]
+        f = random.uniform if dtype is float else random.randint
+        cast = float if dtype is float else int
         x, y, z = 0, 0, 0
         if size >= 1:
-            x = f(vMin, vMax)
+            x = f(cast(v1), cast(v2))
         if size >= 2:
-            y = f(vMin, vMax)
+            y = f(cast(v1), cast(v2))
         if size == 3:
-            z = f(vMin, vMax)
+            z = f(cast(v1), cast(v2))
         return cls(x, y, z)
 
     @classmethod
@@ -404,7 +405,7 @@ class Vector(np.ndarray):
             >>> print(p)
             Vector(0.29, 0.43, 0.86)
         """
-        return ma.sqrt(np.dot(self, self))
+        return m.sqrt(np.dot(self, self))
 
     @magnitude.setter
     def magnitude(self, value: float) -> None:
@@ -420,7 +421,7 @@ class Vector(np.ndarray):
 
     @magnitude_sq.setter
     def magnitude_sq(self, value: float) -> None:
-        self.magnitude = ma.sqrt(value)
+        self.magnitude = m.sqrt(value)
 
     def __abs__(self) -> float:
         return self.magnitude
@@ -486,7 +487,7 @@ class Vector(np.ndarray):
         -------
             float : The distance between the current point and the given point
         """
-        return ma.sqrt(sum((v := (self - other)) * v))
+        return m.sqrt(sum((v := (self - other)) * v))
 
     def distance_sq(self, other: "Vector") -> float:
         """
@@ -550,8 +551,8 @@ class Vector(np.ndarray):
             theta : float or int
                 angle in radians
         """
-        x = self.x * ma.cos(theta) - self.y * ma.sin(theta)
-        y = self.x * ma.sin(theta) + self.y * ma.cos(theta)
+        x = self.x * m.cos(theta) - self.y * m.sin(theta)
+        y = self.x * m.sin(theta) + self.y * m.cos(theta)
         self.x = x
         self.y = y
 
@@ -568,8 +569,8 @@ class Vector(np.ndarray):
         -------
             Vector : new vector
         """
-        x = self.x * ma.cos(theta) - self.y * ma.sin(theta)
-        y = self.x * ma.sin(theta) + self.y * ma.cos(theta)
+        x = self.x * m.cos(theta) - self.y * m.sin(theta)
+        y = self.x * m.sin(theta) + self.y * m.cos(theta)
         return self.__class__(x, y)
 
     def angle_between(self, other: "Vector") -> float:

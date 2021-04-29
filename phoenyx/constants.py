@@ -1,3 +1,5 @@
+import math as m
+
 P2D = "P2D"
 P3D = "P3D"
 
@@ -25,6 +27,11 @@ HOLD = "HOLD"
 # menus sides
 LEFT = "LEFT"
 RIGHT = "RIGHT"
+
+# some math
+E = m.e
+PI = m.pi
+TAU = m.tau
 
 # colors
 COLORS: dict[str, tuple[int, int, int]] = {

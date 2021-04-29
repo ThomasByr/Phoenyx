@@ -160,4 +160,4 @@ from .errorhandler import set_soft as error_handler_set_soft
 from .errorhandler import load_soft as error_handler_load
 
 # Hello from Phoenyx
-print(f"Hello from Phoenyx. https://github.com/ThomasByr/phoenyx.git")
+print(f"Hello from Phoenyx - please visit us on GitHub")

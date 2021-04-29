@@ -217,7 +217,7 @@ class Button:
         self._shape = shape
 
     @property
-    def color(self) -> tuple:
+    def color(self) -> tuple[int, int, int]:
         """
         gets button filling color\\
         might be None if filling is disabled for this button
@@ -261,7 +261,7 @@ class Button:
             warn(f"ERROR [button {self._name}] : {color} is not a valid color, nothing changed")
 
     @property
-    def stroke(self) -> tuple:
+    def stroke(self) -> tuple[int, int, int]:
         """
         gets button stroking color\\
         might be None if stroking is disabled for this button
@@ -277,7 +277,7 @@ class Button:
 
         Parameters
         ----------
-            stroke : tuple | int | str
+            stroke : None | tuple | int | str
                 the new color
         """
         if isinstance(stroke, tuple) and len(stroke) == 3:
