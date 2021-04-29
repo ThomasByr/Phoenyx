@@ -70,6 +70,25 @@ def rect_circle_collision(a: Vector, b: Vector, c: Vector, d: Vector, ct: Vector
         or intersect_circle(d, a, ct, r)
 
 
+def rotate_bary(a: Vector, b: Vector, c: Vector, d: Vector, theta: float) -> None:
+    """
+    rotates 4 vectors around their mid-point by some angle in randians
+    """
+    center = a.lerp(c, .5)
+    a -= center
+    b -= center
+    c -= center
+    d -= center
+    a.rotate(theta)
+    b.rotate(theta)
+    c.rotate(theta)
+    d.rotate(theta)
+    a += center
+    b += center
+    c += center
+    d += center
+
+
 class Body:
     """
     Pygame Body
@@ -152,6 +171,8 @@ class Body:
         self._renderer: Renderer = sandbox._renderer
         self._pos = Vector(x, y)
         self._opos = self._pos.copy()
+        self._angle = .0
+        self._oangle = self._angle
         self._vel = Vector(vx, vy)
         self._ovel = self._vel.copy()
         self._nxtv = Vector()
@@ -273,6 +294,20 @@ class Body:
     @y.setter
     def y(self, y: float) -> None:
         self._pos.y = y
+
+    @property
+    def angle(self) -> float:
+        """
+        gets current angle of the body
+        """
+        return self._angle
+
+    @angle.setter
+    def angle(self, angle: float) -> None:
+        """
+        sets current angle of the body
+        """
+        self._angle = angle
 
     @property
     def vel(self) -> Vector:
@@ -574,13 +609,64 @@ class Body:
         """
         if not other.is_static:
             # formula for circle-circle collision
-            self._nxtv = self._vel - (2 * (other._mass / (self._mass + other._mass)) *
-                                      ((self._vel - other._vel).dot(self._pos - other._pos) /
-                                       (self._pos.distance_sq(other._pos))) * (self._pos - other._pos))
-            self._nxtv *= self._stiff
-            offset = self._range + other._range - self._pos.distance(other._pos)
-            if offset > 0:
-                self._pos += offset * self._nxtv.normalized()
+            if self.shape == CIRCLE and other.shape == CIRCLE:
+                self._nxtv = self._vel - (2 * (other._mass / (self._mass + other._mass)) *
+                                          ((self._vel - other._vel).dot(self._pos - other._pos) /
+                                           (self._pos.distance_sq(other._pos))) * (self._pos - other._pos))
+                self._nxtv *= self._stiff
+                offset = self._range + other._range - self._pos.distance(other._pos)
+                if offset > 0:
+                    self._pos += offset * self._nxtv.normalized()
+
+            # formula for rect-rect collision
+            elif self.shape != CIRCLE and other.shape != CIRCLE:
+                raise NotImplementedError("Please wait 5 hours for a new update to come")
+                a1, b1, c1, d1, a2, b2, c2, d2 = [None] * 8
+                # getting corners
+                if self.shape == RECTANGLE:
+                    if other.shape == RECTANGLE:
+                        a1: Vector = self._pos - Vector(*self._dim)
+                        b1: Vector = self._pos + Vector(self._dim[0]) - Vector(0, self._dim[1])
+                        c1: Vector = self._pos + Vector(*self._dim)
+                        d1: Vector = self._pos - Vector(self._dim[0]) + Vector(0, self._dim[1])
+                        a2: Vector = other._pos - Vector(*other._dim)
+                        b2: Vector = other._pos + Vector(other._dim[0]) - Vector(0, other._dim[1])
+                        c2: Vector = other._pos + Vector(*other._dim)
+                        d2: Vector = other._pos - Vector(other._dim[0]) + Vector(0, other._dim[1])
+                    elif other.shape == SQUARE:
+                        a1: Vector = self._pos - Vector(*self._dim)
+                        b1: Vector = self._pos + Vector(self._dim[0]) - Vector(0, self._dim[1])
+                        c1: Vector = self._pos + Vector(*self._dim)
+                        d1: Vector = self._pos - Vector(self._dim[0]) + Vector(0, self._dim[1])
+                        a2: Vector = other._pos - Vector(other._dim, other._dim)
+                        b2: Vector = other._pos + Vector(other._dim) - Vector(0, other._dim)
+                        c2: Vector = other._pos + Vector(other._dim, other._dim)
+                        d2: Vector = other._pos - Vector(other._dim) + Vector(0, other._dim)
+                elif self.shape == SQUARE:
+                    if other.shape == RECTANGLE:
+                        a1: Vector = self._pos - Vector(self._dim, self._dim)
+                        b1: Vector = self._pos + Vector(self._dim[0]) - Vector(0, self._dim[1])
+                        c1: Vector = self._pos + Vector(self._dim, self._dim)
+                        d1: Vector = self._pos - Vector(self._dim[0]) + Vector(0, self._dim[1])
+                        a2: Vector = other._pos - Vector(*other._dim)
+                        b2: Vector = other._pos + Vector(other._dim[0]) - Vector(0, other._dim[1])
+                        c2: Vector = other._pos + Vector(*other._dim)
+                        d2: Vector = other._pos - Vector(other._dim[0]) + Vector(0, other._dim[1])
+                    elif other.shape == SQUARE:
+                        a1: Vector = self._pos - Vector(self._dim, self._dim)
+                        b1: Vector = self._pos + Vector(self._dim[0]) - Vector(0, self._dim[1])
+                        c1: Vector = self._pos + Vector(self._dim, self._dim)
+                        d1: Vector = self._pos - Vector(self._dim[0]) + Vector(0, self._dim[1])
+                        a2: Vector = other._pos - Vector(other._dim, other._dim)
+                        b2: Vector = other._pos + Vector(other._dim) - Vector(0, other._dim)
+                        c2: Vector = other._pos + Vector(other._dim, other._dim)
+                        d2: Vector = other._pos - Vector(other._dim) + Vector(0, other._dim)
+                rotate_bary(a1, b1, c1, d1, self.angle)
+                rotate_bary(a2, b2, c2, d2, other.angle)
+
+            # circle-rect formula
+            else:
+                raise NotImplementedError("Please wait 5 hours for a new update to come")
 
         else:
             d: Vector = self._pos - other._pos
@@ -652,12 +738,14 @@ class Body:
                 b: Vector = other._pos + Vector(other._dim[0]) - Vector(0, other._dim[1])
                 c: Vector = other._pos + Vector(*other._dim)
                 d: Vector = other._pos - Vector(other._dim[0]) + Vector(0, other._dim[1])
+                rotate_bary(a, b, c, d, other.angle)
                 return rect_circle_collision(a, b, c, d, self._pos, self._dim)
             elif other.shape == SQUARE:
                 a: Vector = other._pos - Vector(other._dim, other._dim)
                 b: Vector = other._pos + Vector(other._dim) - Vector(0, other._dim)
                 c: Vector = other._pos + Vector(other._dim, other._dim)
                 d: Vector = other._pos - Vector(other._dim) + Vector(0, other._dim)
+                rotate_bary(a, b, c, d, other.angle)
                 return rect_circle_collision(a, b, c, d, self._pos, self._dim)
         elif self.shape == RECTANGLE:
             if other.shape == CIRCLE:
@@ -665,6 +753,7 @@ class Body:
                 b: Vector = self._pos + Vector(self._dim[0]) - Vector(0, self._dim[1])
                 c: Vector = self._pos + Vector(*self._dim)
                 d: Vector = self._pos - Vector(self._dim[0]) + Vector(0, self._dim[1])
+                rotate_bary(a, b, c, d, self.angle)
                 return rect_circle_collision(a, b, c, d, other._pos, other._dim)
             elif other.shape == RECTANGLE:
                 a1: Vector = self._pos - Vector(*self._dim)
@@ -675,6 +764,8 @@ class Body:
                 b2: Vector = other._pos + Vector(other._dim[0]) - Vector(0, other._dim[1])
                 c2: Vector = other._pos + Vector(*other._dim)
                 d2: Vector = other._pos - Vector(other._dim[0]) + Vector(0, other._dim[1])
+                rotate_bary(a1, b1, c1, d1, self.angle)
+                rotate_bary(a2, b2, c2, d2, other.angle)
                 return rect_rect_collision(a1, b1, c1, d1, a2, b2, c2, d2)
             elif other.shape == SQUARE:
                 a1: Vector = self._pos - Vector(*self._dim)
@@ -685,6 +776,8 @@ class Body:
                 b2: Vector = other._pos + Vector(other._dim) - Vector(0, other._dim)
                 c2: Vector = other._pos + Vector(other._dim, other._dim)
                 d2: Vector = other._pos - Vector(other._dim) + Vector(0, other._dim)
+                rotate_bary(a1, b1, c1, d1, self.angle)
+                rotate_bary(a2, b2, c2, d2, other.angle)
                 return rect_rect_collision(a1, b1, c1, d1, a2, b2, c2, d2)
         elif self.shape == SQUARE:
             if other.shape == CIRCLE:
@@ -692,6 +785,7 @@ class Body:
                 b: Vector = self._pos + Vector(self._dim[0]) - Vector(0, self._dim[1])
                 c: Vector = self._pos + Vector(self._dim, self._dim)
                 d: Vector = self._pos - Vector(self._dim[0]) + Vector(0, self._dim[1])
+                rotate_bary(a, b, c, d, self.angle)
                 return rect_circle_collision(a, b, c, d, other._pos, other._dim)
             elif other.shape == RECTANGLE:
                 a1: Vector = self._pos - Vector(self._dim, self._dim)
@@ -702,6 +796,8 @@ class Body:
                 b2: Vector = other._pos + Vector(other._dim[0]) - Vector(0, other._dim[1])
                 c2: Vector = other._pos + Vector(*other._dim)
                 d2: Vector = other._pos - Vector(other._dim[0]) + Vector(0, other._dim[1])
+                rotate_bary(a1, b1, c1, d1, self.angle)
+                rotate_bary(a2, b2, c2, d2, other.angle)
                 return rect_rect_collision(a1, b1, c1, d1, a2, b2, c2, d2)
             elif other.shape == SQUARE:
                 a1: Vector = self._pos - Vector(self._dim, self._dim)
@@ -712,4 +808,6 @@ class Body:
                 b2: Vector = other._pos + Vector(other._dim) - Vector(0, other._dim)
                 c2: Vector = other._pos + Vector(other._dim, other._dim)
                 d2: Vector = other._pos - Vector(other._dim) + Vector(0, other._dim)
+                rotate_bary(a1, b1, c1, d1, self.angle)
+                rotate_bary(a2, b2, c2, d2, other.angle)
                 return rect_rect_collision(a1, b1, c1, d1, a2, b2, c2, d2)
