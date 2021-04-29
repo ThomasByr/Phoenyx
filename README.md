@@ -1,4 +1,4 @@
-# Phoenyx - Pygame Engine v0.2.1
+# Phoenyx - Pygame Engine v0.2.2
 
 Some simple classes in **python** that could make your life much simplier. Relies on pygame and numpy, based on the idea of the Processing language.
 
@@ -57,12 +57,12 @@ def draw() -> None:
     global b1, b2, b3
 
     sandbox.update()
-    sandbox.show()
+    sandbox.draw()
     renderer.text(10, 10, f"fps : {round(renderer.fps)}")
 
 
 if __name__ == "__main__":
-    renderer.run(draw, setup=setup)
+    renderer.run()
 
 ```
 
@@ -83,17 +83,14 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 Please refer to [the changelog file](changelog.md) for the full history.
 
-The 0.2.0 update featured the new SandBox class, allowing you to create a physics world for Bodies to interract and move around in very few lines of code. This update targets the Renderer class and fixes some drawing methods as well as introduces new ones.
+The 0.2.0 update featured the new SandBox class, allowing you to create a physics world for Bodies to interract and move around in very few lines of code. In this update, some methods were modified to make them more automated and work even with few info provided. Also, better physics (I hope) has been implemented.
 
 <details>
-    <summary> v0.2.1 : some other more drawings </summary>
+    <summary> v0.2.2 : a little bit more convenient (click to expand) </summary>
 
-* some bug fixes for the Renderer and Vector (point stroke color not used, rect and square position unpacking, reset_matrix not reseting rotation, use of the Callable class for clarity, equality tests and representation for vectors)
-* new scaling method for the renderer, old method still available, scaling happens (as always for these new methods) relatively to the axes origin ; note that the stroke weight is not affected by scale
-* new drawing method to draw arcs ; note that the rect for arcs (as well as for ellipses) does not rotate
-* alternate method to apply background every time through draw
-* alternate wrap method (there is no real wrap method irl is there ?)
-* changed the gravity setting method of the SandBox
+* made the renderer look for setup and draw in the main file
+* more drawing options for each individual body (filling color, stroke and stroke weight)
+* consistant naming for drawing methods called show sometimes (sandbox, body, quadtree)
 
 </details>
 
@@ -106,3 +103,4 @@ The 0.2.0 update featured the new SandBox class, allowing you to create a physic
 * ~~interractive drawing~~
 * ~~physics Sandbox~~
 * more physics happening for bodies
+* get rid of the renderer and sandbox objects and bring all methods into main scope (not guaranteed)
