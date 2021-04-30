@@ -620,7 +620,9 @@ class Body:
 
             # formula for rect-rect collision
             elif self.shape != CIRCLE and other.shape != CIRCLE:
-                raise NotImplementedError("Please wait 5 hours for a new update to come")
+                raise NotImplementedError(
+                    f"Exception [body at {self.x,self.y}] on rect-rect collision : Please wait 5 hours for a new update to come"
+                )
                 a1, b1, c1, d1, a2, b2, c2, d2 = [None] * 8
                 # getting corners
                 if self.shape == RECTANGLE:
@@ -666,7 +668,9 @@ class Body:
 
             # circle-rect formula
             else:
-                raise NotImplementedError("Please wait 5 hours for a new update to come")
+                raise NotImplementedError(
+                    f"Exception [body at {self.x,self.y}] on circle-rect collision : Please wait 5 hours for a new update to come"
+                )
 
         else:
             d: Vector = self._pos - other._pos
