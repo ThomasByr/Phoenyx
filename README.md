@@ -1,6 +1,6 @@
-# Phoenyx - Pygame Engine v0.2.2
+# Phoenyx - Pygame Engine v0.3.0
 
-Some simple classes in **python** that could make your life much simplier. Relies on pygame and numpy, based on the idea of the Processing language.
+Some simple classes in **python** that could make your life much simplier. Relies on pygame, numpy and pymunk, based on the idea of the Processing language.
 
 > Get the latest stable version using pip with ``pip install phoenyx``.
 
@@ -13,9 +13,9 @@ Some simple classes in **python** that could make your life much simplier. Relie
 
 ## What it does
 
-This library allows you to create graphical components in **pygame** in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector and a SanBox class suitable for physics engines and more mathematical drawings.
+This library allows you to create graphical components in **pygame** in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector and a SanBox wrapper class for **pymunk** suitable for physics engines and more mathematical drawings.
 
-Please go and check [pygame](https://github.com/pygame/pygame.git) for their amazing work ! Additionnal kudos to Daniel Shiffman.
+Please go and check [pygame](https://github.com/pygame/pygame.git) and [pymunk](https://github.com/viblo/pymunk.git) for their amazing work ! Additionnal kudos to Daniel Shiffman.
 
 ## How to ?
 
@@ -70,27 +70,27 @@ if __name__ == "__main__":
 
 Obviously some distribution of python : ``python 3.9`` or above is required.
 
-You will also need ``pygame`` in order to use the Renderer and ``numpy`` to use Vectors. To upgrade to a more recent version of any lib, run ``pip install --upgrade ...``. Requirements will automatically be met with pip when installing phoenyx.
+You will also need ``pygame`` in order to use the Renderer, ``numpy`` to use Vectors math and ``pymunk`` to enable physics. To upgrade to a more recent version of any lib, run ``pip install --upgrade ...``. Requirements will automatically be met with pip when installing phoenyx.
 
 ## Licenses
 
 Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details. Phoenyx also includes the following components from other open source projects (see [LICENSES folder](LICENSES/) for more) :
 
 * [numpy](https://numpy.org/) licensed under the BSD 3-Clause "New" or "Revised" License
-* [pygame](https://www.pygame.org/) licended under the GNU LGPL version 2.1
+* [pygame](https://www.pygame.org/) licensed under the GNU LGPL version 2.1 License
+* [pymunk](http://www.pymunk.org/) licensed under the MIT License
 
 ## Changelog
 
 Please refer to [the changelog file](changelog.md) for the full history.
 
-The 0.2.0 update featured the new SandBox class, allowing you to create a physics world for Bodies to interract and move around in very few lines of code. In this update, some methods were modified to make them more automated and work even with few info provided. Also, better physics (I hope) has been implemented.
+Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Only some shapes have been implemented yet. Please wait for joints, strings and motorized vehicles !
 
 <details>
-    <summary> v0.2.2 : a little bit more convenient (click to expand) </summary>
+    <summary> v0.3.0 : to pymunk (click to expand) </summary>
 
-* made the renderer look for setup and draw in the main file
-* more drawing options for each individual body (filling color, stroke and stroke weight)
-* consistant naming for drawing methods called show sometimes (sandbox, body, quadtree)
+* first points of previous non released update
+* restructured the SandBox class completely, please be carefull when updating lib and importing code
 
 </details>
 
