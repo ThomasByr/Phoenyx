@@ -153,7 +153,7 @@ from .sandbox import *
 from .slider import Slider
 from .button import Button
 from .menu import Menu
-from .body import Body
+from pymunk import Body
 
 # error handler
 from .errorhandler import set_soft as error_handler_set_soft
