@@ -160,6 +160,36 @@ class SandBox:
         return not (self._x - self.width <= x <= self._x + self.width)\
             or not (self._y - self.height <= y <= self._y + self.height)
 
+    def add_ball(self, x: float, y: float, mass: float, radius: int, friction: float = 1) -> pymunk.Circle:
+        """
+        new circular body
+
+        Parameters
+        ----------
+            x : float
+                x location of the Body
+            y : float
+                y location of the Body
+            mass : float
+                mass of the Body
+            radius : float
+                outer radius of the circle
+
+        Options
+        -------
+            fiction : float, (optional)
+                defaults to 1
+        """
+        inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
+        body = pymunk.Body(mass, inertia)
+        body.position = x, y
+        shape = pymunk.Circle(body, radius, (0, 0))
+        shape.friction = friction
+
+        self._space.add(body, shape)
+        self._all_bods.add(body)
+        return shape
+
     def step(self, iter: int = 1) -> None:
         """
         go forward in time by one step\\
