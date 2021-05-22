@@ -66,7 +66,7 @@ class SandBox:
         ----
             The center of the SandBox is the center of the Renderer window ;\\
             If both wrap and bounce are enabled, wrap will be arbitrarily disabled ;\\
-            The default gravitational constant is set to 1000 downwards.
+            The default gravitational constant is set to 900 downwards.
         """
         self._renderer = renderer
 
@@ -81,7 +81,7 @@ class SandBox:
         self._height = height
 
         self._sum_of_forces = Vector()
-        self._gravity = Vector(0, 1000)
+        self._gravity = Vector(0, 900)
 
         self._borders: set[pymunk.Shape] = set()
         self._all_shapes: set[pymunk.Shape] = set()
@@ -226,9 +226,9 @@ class SandBox:
         -------
             fiction : float, (optional)
                 defaults to .99
-            elasticity: float, (optional)
+            elasticity : float, (optional)
                 defaults to 0
-            is_static: bool, (optional)
+            is_static : bool, (optional)
                 defaults to False
         """
         inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
@@ -246,16 +246,32 @@ class SandBox:
     def add_segment(self,
                     p1: Union[tuple[float, float], Vector],
                     p2: Union[tuple[float, float], Vector],
-                    thickness: float,
+                    radius: float,
                     friction: float = .99,
                     elasticity: float = 0) -> pymunk.Segment:
         """
         new static Segment body with uniform mass repartition
+
+        Parameters
+        ----------
+            p1 : Union[tuple[float, float], Vector]
+                position of the first vertex
+            p2 : Union[tuple[float, float], Vector]
+                position of the second vertex
+            radius : float
+                radius of segment
+
+        Options
+        -------
+            fiction : float, (optional)
+                defaults to .99
+            elasticity : float, (optional)
+                defaults to 0
         """
         a = p1[:2]
         b = p2[:2]
 
-        shape = pymunk.Segment(self._space.static_body, a, b, thickness)
+        shape = pymunk.Segment(self._space.static_body, a, b, radius)
         shape.friction = friction
         shape.elasticity = elasticity
 
