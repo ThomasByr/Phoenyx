@@ -25,28 +25,19 @@ Please refer to the [examples folder](examples/) on GitHub for very simple but e
 from phoenyx import *
 
 renderer: Renderer = Renderer(600, 600, "collision")
-sandbox: SandBox = SandBox(renderer, 290, 290)
-
-b1: Body
-b2: Body
-b3: Body
-
-
-def reset() -> None:
-    global b1, b2, b3
-    b1.reset()
-    b2.reset()
-    b3.reset()
+sandbox: SandBox = SandBox(renderer, 300, 300, bounce=True)
 
 
 def setup() -> None:
-    global b1, b2, b3
-    renderer.create_menu("options", background=False, color=255, text_color=255, reset=reset)
+    ball_opts = {"friction": .99, "elasticity": .99}
+    seg_opts = {"friction": .99, "elasticity": .8}
 
-    b1 = sandbox.new_body(300, 100, 1, 10)
-    b2 = sandbox.new_body(290, 80, 1, 10)
-    b3 = sandbox.new_body(310, 60, 1, 10)
-    sandbox.set_gravity(y=.5)
+    sandbox.add_ball(300, 40, 1, 10, **ball_opts)
+    sandbox.add_ball(295, 80, 1, 10, **ball_opts)
+    sandbox.add_ball(305, 60, 1, 10, **ball_opts)
+    sandbox.add_segment((50, 500), (550, 400), 5, **seg_opts)
+
+    sandbox.set_gravity(y=900)
 
     renderer.set_background(51)
     renderer.text_size = 15
@@ -54,9 +45,7 @@ def setup() -> None:
 
 
 def draw() -> None:
-    global b1, b2, b3
-
-    sandbox.update()
+    sandbox.step()
     sandbox.draw()
     renderer.text(10, 10, f"fps : {round(renderer.fps)}")
 
