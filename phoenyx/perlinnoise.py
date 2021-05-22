@@ -27,7 +27,6 @@ class PerlinNoise:
     Perlin Noise n-dimensional gradient noise functions.
      * Perlin Noise noise object for python ``3.9`` and more recent versions
      * support for any dimensional evaluation
-     * to be used with Phoenyx
 
     Callable that produces Perlin noise for an arbitrary point in an
     arbitrary number of dimensions.  The underlying grid is aligned with the
@@ -69,7 +68,7 @@ class PerlinNoise:
                 defaults to ()
             unbias : bool, (optional)
                 apply quintic function (based on octaves) and tiles before output
-                depending on rather or not you rely on frames, you might want to set this to True
+                depending on rather or not you rely on frames, you might want let it False
                 defaults to False
         """
         self.dimension = dimension

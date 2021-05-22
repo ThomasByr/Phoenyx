@@ -1,5 +1,11 @@
 from typing import Union
+
+from numpy import inner
 from phoenyx.renderer import Renderer
+
+import time
+import pymunk
+import pymunk.pygame_util
 
 __all__ = ["SandBox"]
 
@@ -7,7 +13,6 @@ from phoenyx.errorhandler import *
 
 from phoenyx.constants import *
 from phoenyx.vector import *
-from phoenyx.body import *
 from phoenyx.quadtree import *
 
 
@@ -40,7 +45,7 @@ class SandBox:
                  width: int,
                  height: int,
                  wrap: bool = False,
-                 bounce: bool = True) -> None:
+                 bounce: bool = False) -> None:
         """
         new SandBox instance
 
@@ -57,34 +62,37 @@ class SandBox:
                 defaults to False
             bounce : bool, (optional)
                 if bodies bounce on the edges of the world
-                defaults to True
+                defaults to False
 
         Note
         ----
             The center of the SandBox is the center of the Renderer window ;\\
             If both wrap and bounce are enabled, wrap will be arbitrarily disabled ;\\
-            The default gravitational constant is set to .5 downwards.
+            The default gravitational constant is set to 1000 downwards.
         """
         self._renderer = renderer
 
+        self._buffer = 10
         self._wrap = wrap
         self._bounce = bounce
         if wrap and bounce:
             self._wrap = False
 
         self._x, self._y = self._renderer.win_width / 2, self._renderer.win_height / 2
-        bound = Rect(self._renderer, self._x, self._y, width, height)
         self._width = width
         self._height = height
 
         self._sum_of_forces = Vector()
-        self._gravity = Vector(0, .5)
+        self._gravity = Vector(0, 1000)
 
-        self._all_bods: set[Body] = set()
-        # QuadTree for static Bodies
-        self._sqt = QuadTree(bound)
-        # QuadTree for non static Bodies
-        self._mqt = QuadTree(bound)
+        self._borders: set[pymunk.Shape] = set()
+        self._all_shapes: set[pymunk.Shape] = set()
+        self._space = pymunk.Space()
+
+        self._draw_options = pymunk.pygame_util.DrawOptions(renderer._window)
+
+        if bounce:
+            self._add_borders()
 
     @property
     def width(self) -> int:
@@ -100,20 +108,53 @@ class SandBox:
         """
         return self._height
 
-    def set_wraping(self, wrap: bool) -> None:
+    @property
+    def bodies(self) -> set[pymunk.Body]:
         """
-        sets the wraping behavior of the bodies
+        gets current living bodies
+        """
+        return self._all_bods
 
-        Parameters
-        ----------
-            wrap : bool
-                if bodies teleport around the edges of the world
-        """
-        warn(f"WARNING [sandbox] : change in bodies wraping behavior, may alter simulation")
-        if self._bounce and wrap:
-            warn(f"ERROR [sandbox] : bouncing and wraping can not be both active, nothing changed")
-            return
-        self._wrap = wrap
+    # def set_wraping(self, wrap: bool) -> None:
+    #     """
+    #     sets the wraping behavior of the bodies
+
+    #     Parameters
+    #     ----------
+    #         wrap : bool
+    #             if bodies teleport around the edges of the world
+    #     """
+    #     warn(f"WARNING [sandbox] : change in bodies wraping behavior, may alter simulation")
+    #     if self._bounce and wrap:
+    #         warn(f"ERROR [sandbox] : bouncing and wraping can not be both active, nothing changed")
+    #         return
+    #     self._wrap = wrap
+
+    def _add_borders(self) -> None:
+        o = -self._buffer
+        w = 2 * self.width - o
+        h = 2 * self.height - o
+        s1 = pymunk.Segment(self._space.static_body, (o, o), (w, o), -o - 1)
+        s1.friction = .99
+        s1.elasticity = .99
+        s2 = pymunk.Segment(self._space.static_body, (w, o), (w, h), -o - 1)
+        s2.friction = .99
+        s2.elasticity = .99
+        s3 = pymunk.Segment(self._space.static_body, (w, h), (o, h), -o - 1)
+        s3.friction = .99
+        s3.elasticity = .99
+        s4 = pymunk.Segment(self._space.static_body, (o, h), (o, o), -o - 1)
+        s4.friction = .99
+        s4.elasticity = .99
+
+        self._borders.add(s1)
+        self._borders.add(s2)
+        self._borders.add(s3)
+        self._borders.add(s4)
+        self._space.add(s1)
+        self._space.add(s2)
+        self._space.add(s3)
+        self._space.add(s4)
 
     def set_bouncing(self, bounce: bool) -> None:
         """
@@ -130,6 +171,14 @@ class SandBox:
             return
         self._bounce = bounce
 
+        if bounce:
+            self._add_borders()
+
+        else:
+            for wall in self._borders:
+                self._space.remove(wall)
+            self._borders.clear()
+
     def set_gravity(self, x: float = 0, y: float = 0) -> None:
         """
         sets global gravity\\
@@ -144,233 +193,114 @@ class SandBox:
                 y component of the g vector ; (y > 0 is pointing down)
         """
         self._gravity = Vector(x, y)
+        self._space.gravity = self._gravity.x, self._gravity.y
 
-    def new_body(self,
+    def _is_out(self, position: tuple[float, float]) -> bool:
+        x, y = position
+        w = self.width + self._buffer
+        h = self.height + self._buffer
+        return not ((self._x - w <= x <= self._x + w)\
+               and (self._y - h <= y <= self._y + h))
+
+    def add_ball(self,
                  x: float,
                  y: float,
                  mass: float,
-                 dim: Union[float, tuple],
-                 is_static: bool = False,
-                 **kwargs) -> Body:
+                 radius: int,
+                 friction: float = .99,
+                 elasticity: float = 0,
+                 is_static: bool = False) -> pymunk.Circle:
         """
-        creates a new Body and adds it to the physics world
+        new circular body with uniform mass repartition
 
         Parameters
         ----------
             x : float
-                x position of the Body
+                x location of the Body
             y : float
-                y position of the Body
+                y location of the Body
             mass : float
                 mass of the Body
-            dim : Union[float, tuple]
-                dimension (radius for circle, side for square, width and height for rectangle)
-            is_static : bool, (optional)
-                is the Body allowed to move
-                defaults to False
+            radius : float
+                outer radius of the circle
 
         Options
         -------
-            shape : str
-                CIRCLE | SQUARE | RECTANGLE
-            stiff : float
-                amount of velocity transfered through elastic collision (between 0 and 1)
-                0 means no velocity is transfered
-                1 means perfectly elactic collision
-            frict : float
-                amount of velocity lost every time the object bounces on a surface
-                0 means the object is really really sticky
-                1 means no friction will occur
-            color : tuple[int, int, int] | int | str
-                filling color
-            stroke : tuple[int, int, int] | int | str
-                stroking color
-            weight : int
-                stroke weight
-            vx : float
-                x velocity
-            vy : float
-                y velocity
-            ax : float
-                x acceleration
-            ay : float
-                y acceleration
-
-        Returns
-        -------
-            Body : new Body if successfull
+            fiction : float, (optional)
+                defaults to .99
+            elasticity: float, (optional)
+                defaults to 0
+            is_static: bool, (optional)
+                defaults to False
         """
+        inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
+        opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
+        body = pymunk.Body(mass, inertia, **opt)
+        body.position = x, y
+        shape = pymunk.Circle(body, radius, (0, 0))
+        shape.friction = friction
+        shape.elasticity = elasticity
 
-        body = Body(self, x, y, mass, dim, **kwargs)
-        if body.has_error:
-            return
-        point = Point(x, y, body.range, body)
-        inserted = False
-        if is_static:
-            inserted = self._sqt.insert(point)
-        else:
-            inserted = self._mqt.insert(point)
+        self._space.add(body, shape)
+        self._all_shapes.add(shape)
+        return shape
 
-        if inserted:
-            self._all_bods.add(body)
-        return body
-
-    def new_bodies(self,
-                   n: int,
-                   xs: Union[int, float, list[Union[int, float]]],
-                   ys: Union[int, float, list[Union[int, float]]],
-                   masses: Union[float, list[Union[int, float]]],
-                   dims: Union[int, float, tuple, list[Union[int, float, tuple]]],
-                   are_static: Union[bool, list[bool]] = False,
-                   shapes: Union[str, list[str]] = CIRCLE,
-                   stiffs: Union[int, float, list[Union[int, float]]] = .99,
-                   fricts: Union[int, float, list[Union[int, float]]] = .999,
-                   colors: Union[tuple[int, int, int], int, str, list[Union[tuple[int, int, int], int,
-                                                                            str]]] = 255,
-                   strokes: Union[tuple[int, int, int], int, str, list[Union[tuple[int, int, int], int,
-                                                                             str]]] = None,
-                   weights: Union[int, list[int]] = 1,
-                   vxs: Union[int, float, list[Union[int, float]]] = 0,
-                   vys: Union[int, float, list[Union[int, float]]] = 0,
-                   axs: Union[int, float, list[Union[int, float]]] = 0,
-                   ays: Union[int, float, list[Union[int, float]]] = 0) -> list[Body]:
+    def add_segment(self,
+                    p1: Union[tuple[float, float], Vector],
+                    p2: Union[tuple[float, float], Vector],
+                    thickness: float,
+                    friction: float = .99,
+                    elasticity: float = 0) -> pymunk.Segment:
         """
-        creates ``n`` Bodies at once\\
-        you don't want to put them on the same location but you can
+        new static Segment body with uniform mass repartition
         """
-        if isinstance(xs, (int, float)):
-            xs = [xs] * n
-        if isinstance(ys, (int, float)):
-            ys = [ys] * n
-        if isinstance(masses, (int, float)):
-            masses = [masses] * n
-        if isinstance(dims, (int, float, tuple)):
-            dims = [dims] * n
-        if isinstance(are_static, bool):
-            are_static = [are_static] * n
-        if isinstance(shapes, str):
-            shapes = [shapes] * n
-        if isinstance(stiffs, (int, float)):
-            stiffs = [stiffs] * n
-        if isinstance(fricts, (int, float)):
-            fricts = [fricts] * n
-        if isinstance(colors, (tuple, int, str)) or colors is None:
-            colors = [colors] * n
-        if isinstance(strokes, (tuple, int, str)) or strokes is None:
-            strokes = [strokes] * n
-        if isinstance(weights, int):
-            weights = [weights] * n
-        if isinstance(vxs, (int, float)):
-            vxs = [vxs] * n
-        if isinstance(vys, (int, float)):
-            vys = [vys] * n
-        if isinstance(axs, (int, float)):
-            axs = [axs] * n
-        if isinstance(ays, (int, float)):
-            ays = [ays] * n
+        a = p1[:2]
+        b = p2[:2]
 
-        all_bodies: list[Body] = []
-        for i in range(n):
-            body = Body(self, xs[i], ys[i], masses[i], dims[i], shapes[i], stiffs[i], fricts[i],
-                        are_static[i], colors[i], strokes[i], weights[i], vxs[i], vys[i], axs[i], ays[i])
-            if body.has_error:
-                return
+        shape = pymunk.Segment(self._space.static_body, a, b, thickness)
+        shape.friction = friction
+        shape.elasticity = elasticity
 
-            point = Point(xs[i], ys[i], body.range, body)
-            inserted = False
-            if are_static[i]:
-                inserted = self._sqt.insert(point)
-            else:
-                inserted = self._mqt.insert(point)
-            if inserted:
-                all_bodies.append(body)
+        self._space.add(shape)
+        # self._all_shapes.add(shape)
+        return shape
 
-        for bod in all_bodies:
-            self._all_bods.add(bod)
-        return all_bodies
-
-    def new_force(self, force: Vector) -> None:
+    def add_poly(self, points: list[Union[tuple[int, int], Vector]]) -> pymunk.Poly:
         """
-        adds a new global force to the world\\
-        each time this method is called, the given force is added to the SandBox forces\\
-        each time through ``update``, all non static bodies will experience this force
+        new convex Polygon body with uniform mass repartition
+        """
+        ...
+
+    def step(self, fps: int = 60, iter: int = 10) -> None:
+        """
+        go forward in time by one step\\
+        the dt used for computation is taken since the last time this method was called
 
         Parameters
         ----------
-            force : Vector
-                a new global force
+            fps : int, (optional)
+                number of frames per second
+                defaults to 60
+            iter : int, (optional)
+                number of iterations to perform, could increase accuracy
+                defaults to 10
         """
-        self._sum_of_forces += force
+        dt = 1 / (fps*iter)
+        for _ in range(iter):
+            self._space.step(dt)
+
+        bodies_to_remove: set[pymunk.Shape] = set()
+        for b in self._all_shapes:
+            if self._is_out(b.body.position):
+                bodies_to_remove.add(b)
+
+        for b in bodies_to_remove:
+            self._space.remove(b, b.body)
+            self._all_shapes.discard(b)
 
     def draw(self) -> None:
         """
-        shows all bodies
+        default drawing method for the physics engine\\
+        usefull for debuging
         """
-        self._renderer.push()
-        self._renderer.rect_mode = CENTER
-        for body in self._all_bods:
-            body.draw()
-
-        self._renderer.pop()
-
-    def debug_draw(self, index: int = 0) -> None:
-        """
-        shows QuadTrees
-
-        Parameters
-        ----------
-            index : int, (optional)
-                0 : draw non static quadtree and static quadtree
-                1 : only draw non static bodies quadtree
-                2 : only draw static bodies quadtree
-                defaults to 0
-        """
-        self._renderer.push()
-        if index != 2:
-            self._mqt.draw()
-        if index != 1:
-            self._sqt.draw()
-        self._renderer.pop()
-
-    def update(self) -> None:
-        """
-        step trhough time
-        1. apply global forces on all non static bodies
-        2. collide all non static bodies with other non static bodies and static bodies
-        3. update all non static bodies and redo QuadTree
-
-        Note
-        ----
-            Bodies that are out of the boundaries of the world are\\
-            automatically deleted of the world and will no longuer be shown
-        """
-        bound = Rect(self._renderer, self._x, self._y, self.width, self.height)
-        non_static_points = self._mqt.query(bound)
-        non_static_bodies: list[Body] = list(map(lambda p: p.data, non_static_points))
-
-        for body in non_static_bodies:
-            body.apply_forces(self._sum_of_forces)
-            if body.mass > 0:
-                body.acc += self._gravity
-
-        for body in non_static_bodies:
-            x, y = body.x, body.y
-            r = body.range
-            bnd = Circle(self._renderer, x, y, r)
-            other_points = self._mqt.query(bnd) + self._sqt.query(bnd)
-            others: list[Body] = list(map(lambda p: p.data, other_points))
-            for other in others:
-                if body != other and body.check_collision(other):
-                    body.collide(other)
-
-        self._mqt = QuadTree(bound)
-        for body in non_static_bodies:
-            body.update()
-
-            if self._bounce:
-                body.bounce()
-            elif self._wrap:
-                body.wrap()
-            pt = Point(body.x, body.y, body.range, body)
-            if not self._mqt.insert(pt):
-                self._all_bods.discard(body)
+        self._space.debug_draw(self._draw_options)

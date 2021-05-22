@@ -69,7 +69,6 @@ class OpenSimplexNoise:
     OpenSimplex n-dimensional gradient noise functions.
      * OpenSimplex noise object for python ``3.9`` and more recent versions
      * support for 2/3/4 dimensional evaluation
-     * to be used with Phoenyx
 
     Based on a modified Simplex Noise algorithm, Open Simplex Noise by Curt Spencer.
     Simplex Noise is a beautification of the Perlin Noise algorithm.
@@ -129,7 +128,7 @@ class OpenSimplexNoise:
     def __call__(self, *args) -> float:
         """
         Gets the value of the Open Simplex Noise space at a given point\\
-        Added support for 1 dimension evaluation.
+        Added support for 1 dimensionnal evaluation.
 
         Result float is between -1. and 1.
         """

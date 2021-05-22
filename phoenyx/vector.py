@@ -1,4 +1,5 @@
 from collections import namedtuple
+from functools import lru_cache
 import random
 import math as m
 from typing import Union, Type
@@ -66,6 +67,9 @@ class Vector(np.ndarray):
         (a := [e for e in args]).extend([0 for _ in range(3 - n)])
         obj = np.asarray(a, dtype=np.float64).view(cls)
         return obj
+
+    def __hash__(self) -> int:
+        return hash(tuple(self))
 
     def __eq__(self, other: "Vector") -> bool:
         if self.shape == other.shape:
@@ -262,6 +266,7 @@ class Vector(np.ndarray):
 
         self.x, self.y, self.z = tuple(map(catch, self))
 
+    @lru_cache(maxsize=5, typed=False)
     def cross(self, other: "Vector") -> "Vector":
         """
         Return the cross product of the two vectors
@@ -286,6 +291,7 @@ class Vector(np.ndarray):
         x, y, z = np.cross(self, other)
         return self.__class__(x, y, z)
 
+    @lru_cache(maxsize=5, typed=False)
     def dot(self, other: "Vector") -> float:
         """
         Computes the dot product of two vectors
@@ -384,6 +390,7 @@ class Vector(np.ndarray):
         return self.__class__(x, y, z)
 
     @property
+    @lru_cache(maxsize=5, typed=False)
     def magnitude(self) -> float:
         """
         The magnitude of the vector
@@ -413,6 +420,7 @@ class Vector(np.ndarray):
             self *= abs(value) / m
 
     @property
+    @lru_cache(maxsize=5, typed=False)
     def magnitude_sq(self) -> float:
         """
         The squared magnitude of the vector
