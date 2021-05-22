@@ -1300,7 +1300,7 @@ def __init__(self, dimension: int, octaves: int = 1, tile: tuple[int] = (), unbi
             defaults to ()
         unbias : bool, (optional)
             apply quintic function (based on octaves) and tiles before output
-            depending on rather or not you rely on frames, you might want to set this to True
+            depending on rather or not you rely on frames, you might want to let it False
             defaults to False
     """
 ```
@@ -1333,4 +1333,4 @@ def __call__(self, *point) -> float:
 
 ## ``SandBox`` physics engine
 
-Since v0.3.0 you can create a physics engine. It handles the creation of new bodies, a world of bodies, collisions detection and a default drawing method. Please note that this is a wrapper of the pymunk physics engine, and that it has artificial boundaries to delete bodies when needed.
+Since v0.3.0 you can create a physics engine. It handles the creation of new bodies, a world of bodies, collisions detection and a default drawing method. Please note that this is a wrapper of the pymunk physics engine, and that it has artificial boundaries to delete bodies when necessary.
