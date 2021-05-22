@@ -608,6 +608,7 @@ class Renderer:
                 last point connected to first
                 defaults to True
         """
+        points: list[list[float, float]] = [list(p[:2]) for p in points]
         if self._has_scale:
             points = list(map(self._scale_point, points))
         if self._has_rotation:
@@ -630,6 +631,7 @@ class Renderer:
                 each additionnal arg is a point
         """
         self._debug_enabled_drawing_methods()
+        points: list[list[float, float]] = [list(p[:2]) for p in points]
         if self._has_scale:
             points = list(map(self._scale_point, points))
         if self._has_rotation:
