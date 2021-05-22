@@ -1,4 +1,6 @@
 from typing import Union
+
+from numpy import inner
 from phoenyx.renderer import Renderer
 
 import time
@@ -70,6 +72,7 @@ class SandBox:
         """
         self._renderer = renderer
 
+        self._buffer = 10
         self._wrap = wrap
         self._bounce = bounce
         if wrap and bounce:
@@ -82,11 +85,14 @@ class SandBox:
         self._sum_of_forces = Vector()
         self._gravity = Vector(0, 1000)
 
-        self._all_bods: set[pymunk.Body] = set()
+        self._borders: set[pymunk.Shape] = set()
+        self._all_shapes: set[pymunk.Shape] = set()
         self._space = pymunk.Space()
 
         self._draw_options = pymunk.pygame_util.DrawOptions(renderer._window)
-        self._prev = time.time_ns()
+
+        if bounce:
+            self._add_borders()
 
     @property
     def width(self) -> int:
@@ -109,20 +115,46 @@ class SandBox:
         """
         return self._all_bods
 
-    def set_wraping(self, wrap: bool) -> None:
-        """
-        sets the wraping behavior of the bodies
+    # def set_wraping(self, wrap: bool) -> None:
+    #     """
+    #     sets the wraping behavior of the bodies
 
-        Parameters
-        ----------
-            wrap : bool
-                if bodies teleport around the edges of the world
-        """
-        warn(f"WARNING [sandbox] : change in bodies wraping behavior, may alter simulation")
-        if self._bounce and wrap:
-            warn(f"ERROR [sandbox] : bouncing and wraping can not be both active, nothing changed")
-            return
-        self._wrap = wrap
+    #     Parameters
+    #     ----------
+    #         wrap : bool
+    #             if bodies teleport around the edges of the world
+    #     """
+    #     warn(f"WARNING [sandbox] : change in bodies wraping behavior, may alter simulation")
+    #     if self._bounce and wrap:
+    #         warn(f"ERROR [sandbox] : bouncing and wraping can not be both active, nothing changed")
+    #         return
+    #     self._wrap = wrap
+
+    def _add_borders(self) -> None:
+        o = -self._buffer
+        w = 2 * self.width - o
+        h = 2 * self.height - o
+        s1 = pymunk.Segment(self._space.static_body, (o, o), (w, o), -o - 1)
+        s1.friction = .99
+        s1.elasticity = .99
+        s2 = pymunk.Segment(self._space.static_body, (w, o), (w, h), -o - 1)
+        s2.friction = .99
+        s2.elasticity = .99
+        s3 = pymunk.Segment(self._space.static_body, (w, h), (o, h), -o - 1)
+        s3.friction = .99
+        s3.elasticity = .99
+        s4 = pymunk.Segment(self._space.static_body, (o, h), (o, o), -o - 1)
+        s4.friction = .99
+        s4.elasticity = .99
+
+        self._borders.add(s1)
+        self._borders.add(s2)
+        self._borders.add(s3)
+        self._borders.add(s4)
+        self._space.add(s1)
+        self._space.add(s2)
+        self._space.add(s3)
+        self._space.add(s4)
 
     def set_bouncing(self, bounce: bool) -> None:
         """
@@ -138,6 +170,14 @@ class SandBox:
             warn(f"ERROR [sandbox] : bouncing and wraping can not be both active, nothing changed")
             return
         self._bounce = bounce
+
+        if bounce:
+            self._add_borders()
+
+        else:
+            for wall in self._borders:
+                self._space.remove(wall)
+            self._borders.clear()
 
     def set_gravity(self, x: float = 0, y: float = 0) -> None:
         """
@@ -157,12 +197,21 @@ class SandBox:
 
     def _is_out(self, position: tuple[float, float]) -> bool:
         x, y = position
-        return not (self._x - self.width <= x <= self._x + self.width)\
-            or not (self._y - self.height <= y <= self._y + self.height)
+        w = self.width + self._buffer
+        h = self.height + self._buffer
+        return not ((self._x - w <= x <= self._x + w)\
+               and (self._y - h <= y <= self._y + h))
 
-    def add_ball(self, x: float, y: float, mass: float, radius: int, friction: float = 1) -> pymunk.Circle:
+    def add_ball(self,
+                 x: float,
+                 y: float,
+                 mass: float,
+                 radius: int,
+                 friction: float = .99,
+                 elasticity: float = 0,
+                 is_static: bool = False) -> pymunk.Circle:
         """
-        new circular body
+        new circular body with uniform mass repartition
 
         Parameters
         ----------
@@ -178,42 +227,76 @@ class SandBox:
         Options
         -------
             fiction : float, (optional)
-                defaults to 1
+                defaults to .99
+            elasticity: float, (optional)
+                defaults to 0
+            is_static: bool, (optional)
+                defaults to False
         """
         inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
-        body = pymunk.Body(mass, inertia)
+        opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
+        body = pymunk.Body(mass, inertia, **opt)
         body.position = x, y
         shape = pymunk.Circle(body, radius, (0, 0))
         shape.friction = friction
+        shape.elasticity = elasticity
 
         self._space.add(body, shape)
-        self._all_bods.add(body)
+        self._all_shapes.add(shape)
         return shape
 
-    def step(self, iter: int = 1) -> None:
+    def add_segment(self,
+                    p1: Union[tuple[float, float], Vector],
+                    p2: Union[tuple[float, float], Vector],
+                    thickness: float,
+                    friction: float = .99,
+                    elasticity: float = 0) -> pymunk.Segment:
+        """
+        new static Segment body with uniform mass repartition
+        """
+        a = p1[:2]
+        b = p2[:2]
+
+        shape = pymunk.Segment(self._space.static_body, a, b, thickness)
+        shape.friction = friction
+        shape.elasticity = elasticity
+
+        self._space.add(shape)
+        # self._all_shapes.add(shape)
+        return shape
+
+    def add_poly(self, points: list[Union[tuple[int, int], Vector]]) -> pymunk.Poly:
+        """
+        new convex Polygon body with uniform mass repartition
+        """
+        ...
+
+    def step(self, fps: int = 60, iter: int = 10) -> None:
         """
         go forward in time by one step\\
         the dt used for computation is taken since the last time this method was called
 
         Parameters
         ----------
+            fps : int, (optional)
+                number of frames per second
+                defaults to 60
             iter : int, (optional)
                 number of iterations to perform, could increase accuracy
-                defaults to 1
+                defaults to 10
         """
-        dt = 1e-9 * iter * (time.time_ns() - self._prev)
-        self._prev = time.time_ns()
+        dt = 1 / (fps*iter)
         for _ in range(iter):
-            self._space.step(1 / dt)
+            self._space.step(dt)
 
-        bodies_to_remove: set[pymunk.Body] = set()
-        for b in self._all_bods:
-            if self._is_out(b.position):
+        bodies_to_remove: set[pymunk.Shape] = set()
+        for b in self._all_shapes:
+            if self._is_out(b.body.position):
                 bodies_to_remove.add(b)
 
         for b in bodies_to_remove:
             self._space.remove(b, b.body)
-            self._all_bods.discard(b)
+            self._all_shapes.discard(b)
 
     def draw(self) -> None:
         """
