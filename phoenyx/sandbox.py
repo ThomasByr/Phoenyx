@@ -1,9 +1,7 @@
 from typing import Union
 
-from numpy import inner
 from phoenyx.renderer import Renderer
 
-import time
 import pymunk
 import pymunk.pygame_util
 
@@ -289,14 +287,14 @@ class SandBox:
         for _ in range(iter):
             self._space.step(dt)
 
-        bodies_to_remove: set[pymunk.Shape] = set()
-        for b in self._all_shapes:
-            if self._is_out(b.body.position):
-                bodies_to_remove.add(b)
+        shapes_to_remove: set[pymunk.Shape] = set()
+        for s in self._all_shapes:
+            if self._is_out(s.body.position):
+                shapes_to_remove.add(s)
 
-        for b in bodies_to_remove:
-            self._space.remove(b, b.body)
-            self._all_shapes.discard(b)
+        for s in shapes_to_remove:
+            self._space.remove(s, s.body)
+            self._all_shapes.discard(s)
 
     def draw(self) -> None:
         """
