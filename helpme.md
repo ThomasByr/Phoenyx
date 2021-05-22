@@ -1334,3 +1334,122 @@ def __call__(self, *point) -> float:
 ## ``SandBox`` physics engine
 
 Since v0.3.0 you can create a physics engine. It handles the creation of new bodies, a world of bodies, collisions detection and a default drawing method. Please note that this is a wrapper of the pymunk physics engine, and that it has artificial boundaries to delete bodies when necessary.
+
+* ``sandbox = SandBox(renderer, 300, 300, bounce=True)`` will create a new SandBox having the size of the Renderer that will make all dynamic bodies bounce on its boundaries
+
+```py
+def __init__(self,
+             renderer: Renderer,
+             width: int,
+             height: int,
+             wrap: bool = False,
+             bounce: bool = False) -> None:
+    """
+    new SandBox instance
+
+    Parameters
+    ----------
+        renderer : Renderer
+            main renderer
+        width : int
+            width of the world from the center
+        height : int
+            height of the world from the center
+        wrap : bool, (optional)
+            if bodies teleport around the edges of the world
+            defaults to False
+        bounce : bool, (optional)
+            if bodies bounce on the edges of the world
+            defaults to False
+
+    Note
+    ----
+        The center of the SandBox is the center of the Renderer window ;
+        If both wrap and bounce are enabled, wrap will be arbitrarily disabled ;
+        The default gravitational constant is set to 900 downwards.
+    """
+```
+
+* ``sandbox.set_gravity(y=900)`` will set the gravity to 900 downwards
+
+```py
+def set_gravity(self, x: float = 0, y: float = 0) -> None:
+    """
+    sets global gravity
+    note that gravity affects all objects that have a mass
+    but does not depend on that mass assuming it is not equal to zero
+
+    Parameters
+    ----------
+        x : float, (optional)
+            x component of the g vector ; (x > 0 is pointing to the right)
+        y : float, (optional)
+            y component of the g vector ; (y > 0 is pointing down)
+    """
+```
+
+* ``sandbox.add_ball(300, 10, 1, 10)`` will create a new dynamic circular body at the top center of the window, having a mass of 1 and a radius of 10
+
+```py
+def add_ball(self,
+             x: float,
+             y: float,
+             mass: float,
+             radius: int,
+             friction: float = .99,
+             elasticity: float = 0,
+             is_static: bool = False) -> pymunk.Circle:
+    """
+    new circular body with uniform mass repartition
+
+    Parameters
+    ----------
+        x : float
+            x location of the Body
+        y : float
+            y location of the Body
+        mass : float
+            mass of the Body
+        radius : float
+            outer radius of the circle
+
+    Options
+    -------
+        fiction : float, (optional)
+            defaults to .99
+        elasticity : float, (optional)
+            defaults to 0
+        is_static : bool, (optional)
+            defaults to False
+    """
+```
+
+* ``sandbox.add_segment((0,0), (600,600), 5)`` will create a new static segment from top left to bottom right corners of the window
+
+```py
+def add_segment(self,
+                p1: Union[tuple[float, float], Vector],
+                p2: Union[tuple[float, float], Vector],
+                radius: float,
+                friction: float = .99,
+                elasticity: float = 0) -> pymunk.Segment:
+    """
+    new static Segment body with uniform mass repartition
+
+    Parameters
+    ----------
+        p1 : Union[tuple[float, float], Vector]
+            position of the first vertex
+        p2 : Union[tuple[float, float], Vector]
+            position of the second vertex
+        radius : float
+            radius of segment
+
+    Options
+    -------
+        fiction : float, (optional)
+            defaults to .99
+        elasticity : float, (optional)
+            defaults to 0
+    """
+```
