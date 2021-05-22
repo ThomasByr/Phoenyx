@@ -80,6 +80,7 @@ Migrating to the pymunk library for better physics (and complete support of chap
 
 * first points of previous non released update
 * restructured the SandBox class completely, please be carefull when updating lib and importing code
+* new static object called segment
 
 </details>
 
