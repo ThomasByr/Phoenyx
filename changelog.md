@@ -127,3 +127,4 @@
 22. *v0.3.0* to pymunk
     * first points of previous non released update
     * restructured the SandBox class completely, please be carefull when updating lib and importing code
+    * new static object called segment
