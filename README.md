@@ -1,4 +1,4 @@
-# Phoenyx - Pygame Engine v0.3.0
+# Phoenyx - Pygame Engine v0.3.1
 
 Some simple classes in **python** that could make your life much simplier. Relies on pygame, numpy and pymunk, based on the idea of the Processing language.
 
@@ -30,12 +30,14 @@ sandbox: SandBox = SandBox(renderer, 300, 300, bounce=True)
 
 def setup() -> None:
     ball_opts = {"friction": .99, "elasticity": .99}
-    seg_opts = {"friction": .99, "elasticity": .8}
+    seg_opts = {"friction": .99, "elasticity": .8, "is_static": True}
+    poly_opts = {"friction": .99, "elasticity": 0}
 
     sandbox.add_ball(300, 40, 1, 10, **ball_opts)
     sandbox.add_ball(295, 80, 1, 10, **ball_opts)
     sandbox.add_ball(305, 60, 1, 10, **ball_opts)
-    sandbox.add_segment((50, 500), (550, 400), 5, **seg_opts)
+    sandbox.add_segment((50, 500), (550, 100), 2, 5, **seg_opts)
+    sandbox.add_poly([(100, 100), (190, 100), (100, 190)], 2, **poly_opts)
 
     sandbox.set_gravity(y=900)
 
@@ -76,11 +78,12 @@ Please refer to [the changelog file](changelog.md) for the full history.
 Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Only some shapes have been implemented yet. Please wait for joints, strings and motorized vehicles !
 
 <details>
-    <summary> v0.3.0 : to pymunk (click to expand) </summary>
+    <summary> v0.3.1 : more physics (click to expand) </summary>
 
-* first points of previous non released update
-* restructured the SandBox class completely, please be carefull when updating lib and importing code
-* new static object called segment
+* tried to avoid error messages when closing app (don't panic if "TypeError: 'NoneType' object is not callable" error pops up when closing app)
+* tried to implement dynamic segments (why is the body's position always offset for non circular shapes ?)
+* new dynamic convex polygons (why is the body so far away)
+* bodies that are out of the drawing window are not immediately deleted (to counter that strange offset)
 
 </details>
 
