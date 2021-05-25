@@ -31,6 +31,8 @@ RIGHT = "RIGHT"
 # some math
 E = m.e
 PI = m.pi
+HALF_PI = PI / 2
+QUARTER_PI = PI / 4
 TAU = m.tau
 
 # colors

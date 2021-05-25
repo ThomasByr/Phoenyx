@@ -149,6 +149,7 @@ class Vector(np.ndarray):
     def z(self, value: float) -> None:
         self[2] = value
 
+    @lru_cache(maxsize=5)
     def getCoord(self, get: str = "xyz") -> np.ndarray:
         """
         Returns the coordinates of a Vector in a numpy array

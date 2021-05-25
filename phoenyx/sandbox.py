@@ -1,5 +1,7 @@
 from typing import Union
 
+import pygame
+
 from phoenyx.renderer import Renderer
 
 import pymunk
@@ -195,10 +197,23 @@ class SandBox:
 
     def _is_out(self, position: tuple[float, float]) -> bool:
         x, y = position
-        w = self.width + self._buffer
-        h = self.height + self._buffer
+        w = 10 * self.width + self._buffer
+        h = 10 * self.height + self._buffer
         return not ((self._x - w <= x <= self._x + w)\
                and (self._y - h <= y <= self._y + h))
+
+    def _get_center(self, *points: tuple[int, int]) -> tuple[int, int]:
+        """
+        
+        """
+        cx = 0
+        cy = 0
+        for p in points:
+            cx += p[0]
+            cy += p[1]
+        x, y = cx / len(points), cy / len(points)
+
+        return x, y
 
     def add_ball(self,
                  x: float,
@@ -232,9 +247,11 @@ class SandBox:
                 defaults to False
         """
         inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
+
         opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
         body = pymunk.Body(mass, inertia, **opt)
         body.position = x, y
+
         shape = pymunk.Circle(body, radius, (0, 0))
         shape.friction = friction
         shape.elasticity = elasticity
@@ -246,9 +263,11 @@ class SandBox:
     def add_segment(self,
                     p1: Union[tuple[float, float], Vector],
                     p2: Union[tuple[float, float], Vector],
+                    mass: float,
                     radius: float,
                     friction: float = .99,
-                    elasticity: float = 0) -> pymunk.Segment:
+                    elasticity: float = 0,
+                    is_static: bool = False) -> pymunk.Segment:
         """
         new static Segment body with uniform mass repartition
 
@@ -258,6 +277,8 @@ class SandBox:
                 position of the first vertex
             p2 : Union[tuple[float, float], Vector]
                 position of the second vertex
+            mass: float
+                mass of segment
             radius : float
                 radius of segment
 
@@ -267,23 +288,89 @@ class SandBox:
                 defaults to .99
             elasticity : float, (optional)
                 defaults to 0
+            is_static : bool, (optional)
+                defaults to False
         """
         a = p1[:2]
         b = p2[:2]
 
-        shape = pymunk.Segment(self._space.static_body, a, b, radius)
+        inertia = pymunk.moment_for_segment(mass, a, b, radius)
+        opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
+        body = pymunk.Body(mass, inertia, **opt)
+
+        shape = pymunk.Segment(body, a, b, radius)
         shape.friction = friction
         shape.elasticity = elasticity
 
-        self._space.add(shape)
-        # self._all_shapes.add(shape)
+        if not is_static:
+            body.position = self._get_center(a, b)
+        body.center_of_gravity = shape.center_of_gravity
+
+        self._space.add(body, shape)
+        self._all_shapes.add(shape)
         return shape
 
-    def add_poly(self, points: list[Union[tuple[int, int], Vector]]) -> pymunk.Poly:
+    def add_poly(self,
+                 points: list[Union[tuple[int, int], Vector]],
+                 mass: float,
+                 radius: float = .01,
+                 friction: float = .99,
+                 elasticity: float = 0,
+                 is_static: bool = False) -> pymunk.Poly:
         """
         new convex Polygon body with uniform mass repartition
+
+        Parameters
+        ----------
+            points : list[Union[tuple[int, int], Vector]]
+                position of the vertexes
+            mass: float
+                mass of polygon
+
+        Options
+        -------
+            radius : float, (optional)
+                defaults to .01
+            fiction : float, (optional)
+                defaults to .99
+            elasticity : float, (optional)
+                defaults to 0
+            is_static : bool, (optional)
+                defaults to False
+
+        Note
+        ----
+            adding a small radius bevel the corners and can significantly reduce problems where the poly gets stuck on seams in your geometry
         """
-        ...
+        points = [p[:2] for p in points]
+
+        inertia = pymunk.moment_for_poly(mass, points, radius=radius)
+        opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
+        body = pymunk.Body(mass, inertia, **opt)
+
+        shape = pymunk.Poly(body, points, radius=radius)
+        shape.friction = friction
+        shape.elasticity = elasticity
+
+        body.position = self._get_center(*points)
+        body.center_of_gravity = shape.center_of_gravity
+
+        self._space.add(body, shape)
+        self._all_shapes.add(shape)
+        return shape
+
+    def clear(self) -> None:
+        """
+        clear space
+        """
+        to_remove: set[Union[pymunk.Body, pymunk.Shape]] = set()
+        for b in self._space.bodies:
+            to_remove.add(b)
+        for s in self._space.shapes:
+            to_remove.add(s)
+
+        for e in to_remove:
+            self._space.remove(e)
 
     def step(self, fps: int = 60, iter: int = 10) -> None:
         """

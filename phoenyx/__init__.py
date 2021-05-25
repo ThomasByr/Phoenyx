@@ -153,11 +153,11 @@ from .sandbox import *
 from .slider import Slider
 from .button import Button
 from .menu import Menu
-from pymunk import Body as pBody
+# from pymunk import Circle, Segment, Poly, PinJoint, PivotJoint, Body
 
 # error handler
-from .errorhandler import set_soft as error_handler_set_soft
-from .errorhandler import load_soft as error_handler_load
+from .errorhandler import set_soft as phoenyx_error_handler_set_soft
+from .errorhandler import load_soft as phoenyx_error_handler_load
 
 # Hello from Phoenyx
 print(f"Hello from Phoenyx - please visit us on GitHub")

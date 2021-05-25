@@ -1,6 +1,6 @@
 import os
 
-__all__ = ["warn"]
+__all__ = ["warn", "set_soft", "load_soft"]
 
 
 def move(y, x):
