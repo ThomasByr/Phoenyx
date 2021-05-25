@@ -6,12 +6,14 @@ sandbox: SandBox = SandBox(renderer, 300, 300, bounce=True)
 
 def setup() -> None:
     ball_opts = {"friction": .99, "elasticity": .99}
-    seg_opts = {"friction": .99, "elasticity": .8}
+    seg_opts = {"friction": .99, "elasticity": .8, "is_static": True}
+    poly_opts = {"friction": .99, "elasticity": 0}
 
     sandbox.add_ball(300, 40, 1, 10, **ball_opts)
     sandbox.add_ball(295, 80, 1, 10, **ball_opts)
     sandbox.add_ball(305, 60, 1, 10, **ball_opts)
-    sandbox.add_segment((50, 500), (550, 400), 5, **seg_opts)
+    sandbox.add_segment((50, 500), (550, 100), 2, 5, **seg_opts)
+    sandbox.add_poly([(100, 100), (190, 100), (100, 190)], 2, **poly_opts)
 
     sandbox.set_gravity(y=900)
 
