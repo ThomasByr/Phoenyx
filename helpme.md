@@ -1424,15 +1424,17 @@ def add_ball(self,
     """
 ```
 
-* ``sandbox.add_segment((0,0), (600,600), 5)`` will create a new static segment from top left to bottom right corners of the window
+* ``sandbox.add_segment((0,0), (600,600), 2, 5)`` will create a new dynamic segment from top left to bottom right corners of the window
 
 ```py
 def add_segment(self,
                 p1: Union[tuple[float, float], Vector],
                 p2: Union[tuple[float, float], Vector],
+                mass: float,
                 radius: float,
                 friction: float = .99,
-                elasticity: float = 0) -> pymunk.Segment:
+                elasticity: float = 0,
+                is_static: bool = False) -> pymunk.Segment:
     """
     new static Segment body with uniform mass repartition
 
@@ -1442,6 +1444,8 @@ def add_segment(self,
             position of the first vertex
         p2 : Union[tuple[float, float], Vector]
             position of the second vertex
+        mass: float
+            mass of segment
         radius : float
             radius of segment
 
@@ -1451,5 +1455,44 @@ def add_segment(self,
             defaults to .99
         elasticity : float, (optional)
             defaults to 0
+        is_static : bool, (optional)
+            defaults to False
+    """
+```
+
+* ``sandbox.add_poly(points, 2)`` will create a convex polygonal dynamic shape whom convex hull will contain points  of the points list and having a mass of 2
+
+```py
+def add_poly(self,
+             points: list[Union[tuple[int, int], Vector]],
+             mass: float,
+             radius: float = .01,
+             friction: float = .99,
+             elasticity: float = 0,
+             is_static: bool = False) -> pymunk.Poly:
+    """
+    new convex Polygon body with uniform mass repartition
+
+    Parameters
+    ----------
+        points : list[Union[tuple[int, int], Vector]]
+            position of the vertexes
+        mass: float
+            mass of polygon
+
+    Options
+    -------
+        radius : float, (optional)
+            defaults to .01
+        fiction : float, (optional)
+            defaults to .99
+        elasticity : float, (optional)
+            defaults to 0
+        is_static : bool, (optional)
+            defaults to False
+
+    Note
+    ----
+        adding a small radius bevel the corners and can significantly reduce problems where the poly gets stuck on seams in your geometry
     """
 ```
