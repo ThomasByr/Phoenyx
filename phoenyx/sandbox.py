@@ -88,6 +88,7 @@ class SandBox:
         self._borders: set[pymunk.Shape] = set()
         self._all_shapes: set[pymunk.Shape] = set()
         self._space = pymunk.Space()
+        self._space.gravity = self._gravity.x, self._gravity.y
 
         self._draw_options = pymunk.pygame_util.DrawOptions(renderer._window)
 
@@ -291,8 +292,8 @@ class SandBox:
             is_static : bool, (optional)
                 defaults to False
         """
-        a = p1[:2]
-        b = p2[:2]
+        a = p1[0], p1[1]
+        b = p2[0], p2[1]
 
         inertia = pymunk.moment_for_segment(mass, a, b, radius)
         opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
@@ -342,7 +343,7 @@ class SandBox:
         ----
             adding a small radius bevel the corners and can significantly reduce problems where the poly gets stuck on seams in your geometry
         """
-        points = [p[:2] for p in points]
+        points = [(p[0], p[1]) for p in points]
 
         inertia = pymunk.moment_for_poly(mass, points, radius=radius)
         opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
@@ -359,6 +360,112 @@ class SandBox:
         self._all_shapes.add(shape)
         return shape
 
+    def extend_segment(self,
+                       segment: pymunk.Segment,
+                       pos: Union[tuple[float, float], Vector],
+                       angle: float,
+                       len: float,
+                       mass: float,
+                       radius: float,
+                       friction: float = .99,
+                       elasticity: float = 0) -> pymunk.Segment:
+        """
+        extends an existing segment
+
+        Parameters
+        ----------
+            segment : pymunk.Segment
+                the segment to extend
+            pos : Union[tuple[float, float], Vector]
+                base position
+            angle : float
+                the angle
+            len : float
+                the length
+            mass : float
+                mass of segment to add
+            radius : float
+                radius of segment to add
+
+        Options
+        -------
+            friction : float, (optional)
+                defaults to .99
+            elasticity : float, (optional)
+                defaults to 0
+
+        Note
+        ----
+            note that extending a dynamic segment may introduce a transient state\\
+            also, the static or dynamic nature will follow the base segment
+        """
+        body = segment.body
+
+        a = pos[0], pos[1]
+        p1 = Vector(pos[0], pos[1])
+        v = Vector(len)
+        v.angle = angle
+        p2 = p1 + v
+        b = p2.x, p2.y
+
+        seg = pymunk.Segment(body, a, b, radius)
+        seg.mass = mass
+        seg.friction = friction
+        seg.elasticity = elasticity
+
+        self._space.add(seg)
+        self._all_shapes.add(seg)
+        return seg
+
+    def add_pin_joint(self, pos: Union[tuple[float, float], Vector], shape: pymunk.Shape) -> pymunk.PinJoint:
+        """
+        new static pin joint
+
+        Parameters
+        ----------
+            pos : Union[tuple[float, float], Vector]
+                position of the pin joint
+            shape : Shape
+                the shape to attach to\\
+                can be Circle, Segment and Poly
+        """
+        pos = pos[0], pos[1]
+        rotation_center_body = pymunk.Body(body_type=pymunk.Body.STATIC)
+        rotation_center_body.position = pos
+        body = shape.body
+        # body.position = pos
+
+        rotation_center_joint = pymunk.PinJoint(body, rotation_center_body, pos, (0, 0))
+        rotation_center_joint.distance = 0
+        self._space.add(rotation_center_joint)
+        return rotation_center_joint
+
+    def add_slide_joint(self, pos: Union[tuple[float, float], Vector], shape: pymunk.Shape,
+                        limit: Union[float, tuple[float, float]]) -> pymunk.SlideJoint:
+        """
+        new static slide joint
+
+        Parameters
+        ----------
+            pos : Union[tuple[float, float], Vector]
+                position of the slide joint
+            shape : pymunk.Shape
+                the shape to attach to\\
+                can be Circle, Segment and Poly
+            limit : Union[float, tuple[float, float]]
+                 max distance limit, optionnal lower limit
+        """
+        pos = pos[0], pos[1]
+        rotation_limit_body = pymunk.Body(body_type=pymunk.Body.STATIC)
+        rotation_limit_body.position = pos
+        body = shape.body
+
+        up = limit if isinstance(limit, (float, int)) else max(limit)
+        low = 0 if isinstance(limit, (float, int)) else min(limit)
+        rotation_limit_joint = pymunk.SlideJoint(body, rotation_limit_body, pos, (0, 0), low, up)
+        self._space.add(rotation_limit_joint)
+        return rotation_limit_joint
+
     def clear(self) -> None:
         """
         clear space
@@ -371,6 +478,7 @@ class SandBox:
 
         for e in to_remove:
             self._space.remove(e)
+            self._all_shapes.discard(e)
 
     def step(self, fps: int = 60, iter: int = 10) -> None:
         """

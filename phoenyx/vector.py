@@ -2,7 +2,7 @@ from collections import namedtuple
 from functools import lru_cache
 import random
 import math as m
-from typing import Union, Type
+from typing import Iterable, Union, Type
 import numpy as np
 
 __all__ = ["Vector"]
@@ -115,6 +115,10 @@ class Vector(np.ndarray):
 
     def __rfloordiv__(self, other: Union[float, int, "Vector"]) -> "Vector":
         return super().__floordiv__(other)
+
+    def __iter__(self):
+        for v in self:
+            yield v
 
     @property
     def x(self) -> float:
