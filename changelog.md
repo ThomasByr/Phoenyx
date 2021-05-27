@@ -133,3 +133,5 @@
     * tried to implement dynamic segments (why is the body's position always offset for non circular shapes ?)
     * new dynamic convex polygons (why is the body so far away)
     * bodies that are out of the drawing window are not immediately deleted (to counter that strange offset)
+    * you can now extend segments and create static pin or slide joints
+    * functionnal iter method for vectors
