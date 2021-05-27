@@ -1496,3 +1496,84 @@ def add_poly(self,
         adding a small radius bevel the corners and can significantly reduce problems where the poly gets stuck on seams in your geometry
     """
 ```
+
+* ``sandbox.extend_segment(segment, (600, 600), 0, 100, 2, 5)`` will extend our previously created segment (assuming we stored the result of add_segment in segment) with a segment of lenght 100, mass 2 and radius 5 which makes an angle of 0 with the x-axis
+
+```py
+ def extend_segment(self,
+                    segment: pymunk.Segment,
+                    pos: Union[tuple[float, float], Vector],
+                    angle: float,
+                    len: float,
+                    mass: float,
+                    radius: float,
+                    friction: float = .99,
+                    elasticity: float = 0) -> pymunk.Segment:
+    """
+    extends an existing segment
+
+    Parameters
+    ----------
+        segment : pymunk.Segment
+            the segment to extend
+        pos : Union[tuple[float, float], Vector]
+            base position
+        angle : float
+            the angle
+        len : float
+            the length
+        mass : float
+            mass of segment to add
+        radius : float
+            radius of segment to add
+
+    Options
+    -------
+        friction : float, (optional)
+            defaults to .99
+        elasticity : float, (optional)
+            defaults to 0
+
+    Note
+    ----
+        note that extending a dynamic segment may introduce a transient state\\
+        also, the static or dynamic nature will follow the base segment
+    """
+```
+
+* ``sandbox.add_pin_joint(pos, shape)`` will create a pin joint at pos that will make shape rotate around it (pos can be in the shape)
+
+```py
+def add_pin_joint(self, pos: Union[tuple[float, float], Vector], shape: pymunk.Shape) -> pymunk.PinJoint:
+    """
+    new static pin joint
+
+    Parameters
+    ----------
+        pos : Union[tuple[float, float], Vector]
+            position of the pin joint
+        shape : Shape
+            the shape to attach to
+            can be Circle, Segment and Poly
+    """
+```
+
+* ``sandbox.add_slide_joint(pos, shape, limit)`` will create a slide joint at pos that will let shape move around its attach point by limit (pos can be in shape and limit can include a lower bound)
+
+```py
+def add_slide_joint(self, pos: Union[tuple[float, float], Vector], shape: pymunk.Shape,
+                    limit: Union[float, tuple[float, float]]) -> pymunk.SlideJoint:
+    """
+    new static slide joint
+
+    Parameters
+    ----------
+        pos : Union[tuple[float, float], Vector]
+            position of the slide joint
+        shape : pymunk.Shape
+            the shape to attach to
+            can be Circle, Segment and Poly
+        limit : Union[float, tuple[float, float]]
+                max distance limit, optionnal lower limit
+    """
+```
