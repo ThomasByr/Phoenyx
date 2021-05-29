@@ -468,7 +468,7 @@ class SandBox:
 
     def clear(self) -> None:
         """
-        clear space
+        clear space : will delete all shapes and bodies
         """
         to_remove: set[Union[pymunk.Body, pymunk.Shape]] = set()
         for b in self._space.bodies:

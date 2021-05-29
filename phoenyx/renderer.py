@@ -1305,6 +1305,8 @@ class Renderer:
                 color of the bar when its full
             length : int
                 the length of the slider bar
+            count : int
+                number of frames to pass while inactive to send value
 
         Returns
         -------
@@ -1903,6 +1905,7 @@ class Renderer:
                     for slider in self._all_sliders:
                         if not slider.is_hidden and slider.collide(pos):
                             slider.set_value(pos)
+                            slider.reinit_click()
 
                 if self._has_left_menu or self._has_right_menu:
                     for menu in self._all_menus:
@@ -1916,6 +1919,9 @@ class Renderer:
                 if self._has_buttons:
                     for button in self._all_buttons:
                         button.click()
+                if self._has_sliders:
+                    for slider in self._all_sliders:
+                        slider.click()
                 if self._has_left_menu or self._has_right_menu:
                     for menu in self._all_menus:
                         menu.click()

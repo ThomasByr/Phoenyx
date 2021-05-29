@@ -33,7 +33,8 @@ class Slider:
                  thickness: int = 3,
                  color: Union[tuple[int, int, int], int, str] = (155, 155, 155),
                  fullcolor: Union[tuple[int, int, int], int, str] = (155, 70, 70),
-                 length: int = 100) -> None:
+                 length: int = 100,
+                 count: int = 30) -> None:
         """
         new slider instance
 
@@ -74,6 +75,9 @@ class Slider:
             length : int, (optional)
                 length of the slider bar
                 defaults to 100
+            count : int, (optional)
+                number of frames to pass while inactive to send value
+                defaults to 30
         """
         self.has_error = False
         if not (min_val <= value < max_val or min_val < value <= max_val):
@@ -100,6 +104,8 @@ class Slider:
         self._radius = radius
         self._thickness = thickness
         self._is_hidden = False
+        self._click_count = count
+        self._click = 0
 
         if isinstance(color, tuple) and len(color) == 3:
             self._color = color
@@ -144,6 +150,55 @@ class Slider:
         self._pad = self.length / (self.max_val - self.min_val)
         x = self._x + int(self._pad * (self.value - self._min_val)) - self._radius
         self.rect = x + self._radius, self._y
+
+    @property
+    def click_count(self) -> int:
+        """
+        gets click_count of the slider
+        """
+        return self._click_count
+
+    @click_count.setter
+    def click_count(self, click_count: int) -> None:
+        """
+        sets the click_count of the slider\\
+        deprecated : do not use
+
+        Parameters
+        ----------
+            click_count : int
+                new click_count
+        """
+        warn(f"INFO [slider {self._name}] : attempting to modify click behaviour")
+        if click_count < 0:
+            warn(f"ERROR [slider {self._name}] : bad click_count, nothing changed")
+            return
+        self._click_count = click_count
+
+    def click(self) -> None:
+        """
+        increments click
+        """
+        self._click += 1
+
+    def reinit_click(self):
+        """
+        puts click back to 0
+        """
+        self._click = 0
+
+    def check_click(self) -> bool:
+        """
+        check if click greater that click_count
+        """
+        return self._click >= self._click_count
+
+    def is_active(self) -> bool:
+        """
+        if the slider is active\\
+        i.e. its value was modified in the last frames (count setting)
+        """
+        return not self.check_click()
 
     def _redo_rect(self) -> None:
         """
