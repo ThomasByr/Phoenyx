@@ -753,13 +753,13 @@ So as you can see basic drawing instructions work the same way it did when we ha
 def flip(self) -> None:
     """
     updates window
-    used for interractive drawing without the run main loop
+    used for interractive drawing without the draw main loop
     """
 
 def start(self) -> None:
     """
     opens a new window if the sketch is closed
-    used for interractive drawing without the run main loop
+    used for interractive drawing without the draw main loop
     """
 
 def quit(self) -> None:
@@ -895,8 +895,8 @@ def create_menu(self, name: str, **kwargs) -> Menu:
 
     Keywords Arguments
     ------------------
-        * : str\\
-            name of the buttons on the menu in order\\
+        * : str
+            name of the buttons on the menu in order
             must be linked to a python function
 
     Returns
@@ -1542,7 +1542,7 @@ def add_poly(self,
 
     Note
     ----
-        note that extending a dynamic segment may introduce a transient state\\
+        note that extending a dynamic segment may introduce a transient state
         also, the static or dynamic nature will follow the base segment
     """
 ```
