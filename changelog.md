@@ -125,13 +125,14 @@
     * more drawing options for each individual body (filling color, stroke and stroke weight)
     * consistant naming for drawing methods called show sometimes (sandbox, body, quadtree)
 22. *v0.3.0* to pymunk
-    * first points of previous non released update
+    * first point of previous non released update
     * restructured the SandBox class completely, please be carefull when updating lib and importing code
-    * new static object called segment
+    * new static object called ``segment``
 23. *v0.3.1* more physics
     * tried to avoid error messages when closing app (don't panic if "TypeError: 'NoneType' object is not callable" error pops up when closing app)
     * tried to implement dynamic segments (why is the body's position always offset for non circular shapes ?)
-    * new dynamic convex polygons (why is the body so far away)
+    * new dynamic convex ``polygons`` (why is the body so far away)
     * bodies that are out of the drawing window are not immediately deleted (to counter that strange offset)
     * you can now extend segments and create static pin or slide joints
     * functionnal iter method for vectors
+    * new method for Slider to check if they are active (i.e. if their value has been modified in the last few frames, this can be set when creating with the count keyword)
