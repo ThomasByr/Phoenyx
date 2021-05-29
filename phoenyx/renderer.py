@@ -927,7 +927,7 @@ class Renderer:
 
     def translate(self, x: int = 0, y: int = 0) -> None:
         """
-        translates the axes origin, not additive
+        translates the axes origin, additive
 
         Parameters
         ----------
@@ -936,27 +936,29 @@ class Renderer:
             y : int
                 translation for y-axis
         """
-        if x == 0 and y == 0:
+        if self._has_rotation:
+            x, y = self._rotate_point((x, y))
+        self._x_offset += x
+        self._y_offset += y
+        if self._x_offset == 0 and self._y_offset == 0:
             self._has_translation = False
         else:
             self._has_translation = True
-        self._x_offset = x
-        self._y_offset = y
 
     def rotate(self, angle: float) -> None:
         """
-        rotates the axes around the axis origin
+        rotates the axes around the axis origin, additive
 
         Parameters
         ----------
             angle : float
                 angle in randians
         """
-        if angle == 0:
+        self._rot_angle += angle
+        if self._rot_angle == 0:
             self._has_rotation = False
         else:
             self._has_rotation = True
-        self._rot_angle = angle
 
     def rotate_display(self, angle: float) -> None:
         """
@@ -1746,14 +1748,14 @@ class Renderer:
     def flip(self) -> None:
         """
         updates window\\
-        used for interractive drawing without the run main loop
+        used for interractive drawing without the draw main loop
         """
         pygame.display.flip()
 
     def start(self) -> None:
         """
         opens a new window if the sketch is closed\\
-        used for interractive drawing without the run main loop
+        used for interractive drawing without the draw main loop
         """
         self._window = pygame.display.set_mode((self._width, self._height))
         pygame.display.set_caption(self._title)
@@ -1789,7 +1791,7 @@ class Renderer:
         Parameters
         ----------
             color : None | tuple[int, int, int] | int | str
-                color to fill the screen with, might be None
+                color to fill the screen with, might be ``None``
         """
         self._has_auto_bg = True
 

@@ -106,6 +106,7 @@ class Slider:
         self._is_hidden = False
         self._click_count = count
         self._click = 0
+        self._prev_state = True
 
         if isinstance(color, tuple) and len(color) == 3:
             self._color = color
@@ -199,6 +200,17 @@ class Slider:
         i.e. its value was modified in the last frames (count setting)
         """
         return not self.check_click()
+
+    def new_value(self) -> Union[float, None]:
+        """
+        value of slider if slider was activated then idle\\
+        will be ``None`` most of the time
+        """
+        if self._prev_state and not self.is_active():
+            self._prev_state = self.is_active()
+            return self.value
+        self._prev_state = self.is_active()
+        return None
 
     def _redo_rect(self) -> None:
         """

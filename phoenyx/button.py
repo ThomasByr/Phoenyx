@@ -463,7 +463,7 @@ class Button:
                                  0)
             if self.stroke is not None:
                 pygame.draw.rect(renderer._window, self.stroke, (self._x, self._y, self._width, self._height),
-                                 self.stroke_weight)
+                                 self.weight)
             # renderer.rect((x, y), self._width, self._height)
         elif self.shape == ELLIPSE:
             if self.color is not None:
@@ -471,7 +471,7 @@ class Button:
                                     (self._x, self._y, self._width, self._height), 0)
             if self.stroke is not None:
                 pygame.draw.ellipse(renderer._window, self.stroke,
-                                    (self._x, self._y, self._width, self._height), self.stroke_weight)
+                                    (self._x, self._y, self._width, self._height), self.weight)
             # renderer.ellipse((x, y), self._width, self._height)
 
         x -= name_label.get_width() // 2
