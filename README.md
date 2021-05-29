@@ -1,4 +1,4 @@
-# Phoenyx - Pygame Engine v0.3.1
+# Phoenyx - Pygame Engine v0.3.2
 
 Some simple classes in **python** that could make your life much simplier. Relies on pygame, numpy and pymunk, based on the idea of the Processing language.
 
@@ -97,18 +97,19 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 Please refer to [the changelog file](changelog.md) for the full history.
 
-Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Only some shapes have been implemented yet. Please wait for joints, strings and motorized vehicles !
+Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Only some shapes have been implemented yet. Some fixes have been made to the Renderer. More example files.
 
 <details>
-    <summary> v0.3.1 : more physics (click to expand) </summary>
+    <summary> v0.3.2:  caching error (click to expand) </summary>
 
-* tried to avoid error messages when closing app (don't panic if "TypeError: 'NoneType' object is not callable" error pops up when closing app)
-* tried to implement dynamic segments (why is the body's position always offset for non circular shapes ?)
-* new dynamic convex polygons (why is the body so far away)
-* bodies that are out of the drawing window are not immediately deleted (to counter that strange offset)
-* you can now extend segments and create static pin or slide joints
-* functionnal iter method for vectors
-* new method for Slider to check if they are active (i.e. if their value has been modified in the last few frames, this can be set when creating with the count keyword)
+* fixed error when tried to cache result of non static vectors
+* removed iter method for vectors (be carefull when slicing vectors)
+* new example file, Ramer–Douglas–Peucker line simpification algorithm
+* new example file, convex hull by Chan algorithm (see Graham scan and Jarvis march)
+* new example file, L-system fractal trees
+* fixed drawing method for buttons
+* made the translate and rotate methods (renderer) additive as they are in Processing and P5
+* the translate function takes rotation into account (rotate before translating to see the effet, translating before rotating won't have the same effect now)
 
 </details>
 
@@ -120,5 +121,6 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * scrollbars ~~and side menus~~
 * ~~interractive drawing~~
 * ~~physics Sandbox~~
-* more physics happening for bodies
+* ~~more physics happening for bodies~~
+* integrate some utility function (based on the example files)
 * get rid of the renderer and sandbox objects and bring all methods into main scope (not guaranteed)
