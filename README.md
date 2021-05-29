@@ -108,6 +108,7 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * bodies that are out of the drawing window are not immediately deleted (to counter that strange offset)
 * you can now extend segments and create static pin or slide joints
 * functionnal iter method for vectors
+* new method for Slider to check if they are active (i.e. if their value has been modified in the last few frames, this can be set when creating with the count keyword)
 
 </details>
 
