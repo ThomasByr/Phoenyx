@@ -63,7 +63,7 @@ def setup() -> None:
 
 def draw() -> None:
     global count, fall
-    sandbox.step(iter=100)
+    sandbox.step(iter=1)
     sandbox.draw()
     renderer.text(10, 10, f"fps : {round(renderer.fps)}")
 

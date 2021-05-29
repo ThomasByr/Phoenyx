@@ -855,6 +855,8 @@ def create_slider(self, x: int, y: int, name: str, min: float, max: float, value
             color of the bar when its full
         length : int
             the length of the slider bar
+        count : int
+            number of frames to pass while inactive to send value
 
     Returns
     -------
@@ -1049,7 +1051,8 @@ def __init__(self,
              thickness: int = 3,
              color: tuple = (155, 155, 155),
              fullcolor: tuple = (155, 70, 70),
-             length: int = 100) -> None:
+             length: int = 100
+             count: int = 30) -> None:
     """
     new slider instance
 
@@ -1090,6 +1093,9 @@ def __init__(self,
         length : int, (optional)
             length of the slider bar
             defaults to 100
+        count : int, (optional)
+            number of frames to pass while inactive to send value
+            defaults to 30
     """
 ```
 
@@ -1333,7 +1339,7 @@ def __call__(self, *point) -> float:
 
 ## ``SandBox`` physics engine
 
-Since v0.3.0 you can create a physics engine. It handles the creation of new bodies, a world of bodies, collisions detection and a default drawing method. Please note that this is a wrapper of the pymunk physics engine, and that it has artificial boundaries to delete bodies when necessary.
+Since v0.3.0 you can create a physics engine. It handles the creation of new bodies, a world of bodies, collisions detection and a default drawing method. Note that the mass of the bodies doesn't matter if they are static (i.e. not allowed to move).
 
 * ``sandbox = SandBox(renderer, 300, 300, bounce=True)`` will create a new SandBox having the size of the Renderer that will make all dynamic bodies bounce on its boundaries
 
