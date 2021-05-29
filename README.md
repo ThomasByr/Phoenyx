@@ -97,7 +97,7 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 Please refer to [the changelog file](changelog.md) for the full history.
 
-Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Only some shapes have been implemented yet. Some fixes have been made to the Renderer. More example files.
+Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Circles, Segments and Polygons have been implemented (either dynamic or static ones). Pin joints, slide joints and segment extension has followed. Some fixes have been made to the Renderer. More example files.
 
 <details>
     <summary> v0.3.2:  caching error (click to expand) </summary>
@@ -122,5 +122,5 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * ~~interractive drawing~~
 * ~~physics Sandbox~~
 * ~~more physics happening for bodies~~
-* integrate some utility function (based on the example files)
+* integrate some utility functions (based on the example files)
 * get rid of the renderer and sandbox objects and bring all methods into main scope (not guaranteed)
