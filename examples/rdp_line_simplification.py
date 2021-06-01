@@ -82,7 +82,7 @@ def setup() -> None:
 
 def draw() -> None:
     global epsilon_slider, rdp_points
-    epsilon = epsilon_slider.new_value()
+    epsilon = epsilon_slider.get_new_value()
     if epsilon is not None:
         rdp_points = rdp(all_points, epsilon)
 

@@ -2,7 +2,7 @@ from phoenyx import *
 import random as rd
 
 renderer: Renderer = Renderer(600, 600, "collision")
-sandbox: SandBox = SandBox(renderer, 300, 300)
+sandbox: SandBox = SandBox(renderer)
 
 count = 0
 fall = True

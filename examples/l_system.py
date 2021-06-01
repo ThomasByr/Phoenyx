@@ -36,7 +36,7 @@ def generate() -> None:
 
 
 def turtle() -> None:
-    global length, angle, sentence
+    global length, sentence
     renderer.background(51)
     renderer.reset_matrix()
     renderer.translate(200, 400)
@@ -81,7 +81,7 @@ def setup() -> None:
     turtle()
 
 
-def draw():
+def draw() -> None:
     ...
 
 
