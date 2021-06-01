@@ -475,12 +475,12 @@ def pop(self) -> None:
     """
 ```
 
-* ``renderer.translate(x, y)`` will translate the axis origin to ``(x, y)``, translating to (0, 0) will reset the translation ; also texts are always rendered based on the window axis and thus do not experience any tanslations
+* ``renderer.translate(x, y)`` will translate the axis origin to ``(x, y)`` ; also texts are always rendered based on the window axis and thus do not experience any tanslations
 
 ```py
 def translate(self, x: int = 0, y: int = 0) -> None:
     """
-    translates the axes origins, not additive
+    translates the axes origins, additive
 
     Parameters
     ----------
@@ -496,7 +496,7 @@ def translate(self, x: int = 0, y: int = 0) -> None:
 ```py
 def rotate(self, angle: float) -> None:
     """
-    rotates the axes around the axis origin
+    rotates the axes around the axis origin, additive
 
     Parameters
     ----------
@@ -511,7 +511,7 @@ def rotate(self, angle: float) -> None:
 def scale(self, scale: float) -> None:
     """
     scales what will be drawn on the window
-    does not affect the stroke weight
+    does not affect the stroke weight, additive
 
     Parameters
     ----------
@@ -1161,7 +1161,7 @@ def __init__(self,
 
 ## Noise algorithms
 
-Phoenyx implements small data structure usefull to handle noises algorithm. These can be used for mathematical drawings, gif loops, random cave or maps generation. On similar cases you will have slightly different looking results depending on the algorithm you choose, but the OpenSimplex Noise algorithm was found to be slightly more faster than it's Perlin Noise counterpart.
+Phoenyx implements small data structure usefull to handle noises algorithm. These can be used for mathematical drawings, gif loops, random cave or maps generation. On similar cases you will have slightly different looking results depending on the algorithm you choose, but the OpenSimplex Noise algorithm was found to be slightly more faster than it's Perlin counterpart.
 
 ### ``OpenSimplexNoise`` class
 
@@ -1253,7 +1253,7 @@ In addition to these methods, the noise object is callable. This means that you 
 * ``noise(*point)`` will get the value of the noise space at ``point`` and return a value between -1. and 1. Also ``point`` should have 1 to 4 coordinates.
 
 ```py
-def __call__(self, *args, **kwargs) -> float:
+def __call__(self, *args) -> float:
     """
     Gets the value of this Open Simplex Noise function at a given point
     Added support for 1 dimension evaluation.
@@ -1264,7 +1264,7 @@ def __call__(self, *args, **kwargs) -> float:
 
 ### ``PerlinNoise`` class
 
-Perlin Noise is the basic noise algorithm. It support n dimensionnal evaluation.
+Perlin Noise is the basic noise algorithm. It supports n dimensionnal evaluation.
 
 ```py
 noise = PerlinNoise(dim, unbias=True)
@@ -1346,9 +1346,8 @@ Since v0.3.0 you can create a physics engine. It handles the creation of new bod
 ```py
 def __init__(self,
              renderer: Renderer,
-             width: int,
-             height: int,
-             wrap: bool = False,
+             width: int = None,
+             height: int = None,
              bounce: bool = False) -> None:
     """
     new SandBox instance
@@ -1357,21 +1356,20 @@ def __init__(self,
     ----------
         renderer : Renderer
             main renderer
-        width : int
+        width : int, (optional)
             width of the world from the center
-        height : int
+            defaults to None
+        height : int, (optional)
             height of the world from the center
-        wrap : bool, (optional)
-            if bodies teleport around the edges of the world
-            defaults to False
+            defaults to None
         bounce : bool, (optional)
             if bodies bounce on the edges of the world
             defaults to False
 
     Note
     ----
-        The center of the SandBox is the center of the Renderer window ;
-        If both wrap and bounce are enabled, wrap will be arbitrarily disabled ;
+        The center of the SandBox is the center of the Renderer window ;\\
+        The default size of the SandBox is set to fill the Renderer window ;\\
         The default gravitational constant is set to 900 downwards.
     """
 ```
