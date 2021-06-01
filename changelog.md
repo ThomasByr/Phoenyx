@@ -1,6 +1,6 @@
 # Changelog
 
-> "I'm calling it right here. This world can officially bite my ass." - the Sole Survivor
+> "Lazyness is nothing more than the habit of resting before you get tired." - the Sole Survivor
 
 1.  *v0.0.a1* lets see PyPI...
     * initial commit and packaging
@@ -137,6 +137,7 @@
     * functionnal iter method for vectors
     * new method for Slider to check if they are active (i.e. if their value has been modified in the last few frames, this can be set when creating with the count keyword)
 24. *v0.3.2* caching error
+    * new method for Slider to get the value of the slider if it has been modified (evaluates as None otherwise)
     * fixed error when tried to cache result of non static vectors
     * removed iter method for vectors (be carefull when slicing vectors)
     * new example file, Ramer–Douglas–Peucker line simpification algorithm
@@ -144,4 +145,5 @@
     * new example file, L-system fractal trees
     * fixed drawing method for buttons
     * made the translate and rotate methods (renderer) additive as they are in Processing and P5
-    * the translate function takes rotation into account (rotate before translating to see the effet, translating before rotating won't have the same effect now)
+    * the translate function takes rotation and scale into account (rotate before translating to see the effet, translating before rotating won't have the same effect now, same with scaling)
+    * removed wrap method for SandBox since it is not relevent with bodies positions
