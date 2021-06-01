@@ -1,7 +1,5 @@
 from typing import Union
 
-import pygame
-
 from phoenyx.renderer import Renderer
 
 import pymunk
@@ -24,11 +22,10 @@ def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:
 
 
 def _constrain(x: float, mn: float, mx: float) -> int:
-    if x < mn:
-        return mn
-    elif x > mx:
-        return mx
-    return x
+    """
+    value constrain
+    """
+    return mn if x < mn else mx if x > mx else x
 
 
 class SandBox:
@@ -38,13 +35,12 @@ class SandBox:
     Provides :
     1. basic physics for simple shapes
     2. fully integrated to Phoenyx Renderer
-    3. a quadtree acceleration for contact interraction
+    3. C acceleration
     """
     def __init__(self,
                  renderer: Renderer,
-                 width: int,
-                 height: int,
-                 wrap: bool = False,
+                 width: int = None,
+                 height: int = None,
                  bounce: bool = False) -> None:
         """
         new SandBox instance
@@ -53,13 +49,12 @@ class SandBox:
         ----------
             renderer : Renderer
                 main renderer
-            width : int
+            width : int, (optional)
                 width of the world from the center
-            height : int
+                defaults to None
+            height : int, (optional)
                 height of the world from the center
-            wrap : bool, (optional)
-                if bodies teleport around the edges of the world
-                defaults to False
+                defaults to None
             bounce : bool, (optional)
                 if bodies bounce on the edges of the world
                 defaults to False
@@ -67,20 +62,17 @@ class SandBox:
         Note
         ----
             The center of the SandBox is the center of the Renderer window ;\\
-            If both wrap and bounce are enabled, wrap will be arbitrarily disabled ;\\
+            The default size of the SandBox is set to fill the Renderer window ;\\
             The default gravitational constant is set to 900 downwards.
         """
         self._renderer = renderer
 
         self._buffer = 10
-        self._wrap = wrap
         self._bounce = bounce
-        if wrap and bounce:
-            self._wrap = False
 
         self._x, self._y = self._renderer.win_width / 2, self._renderer.win_height / 2
-        self._width = width
-        self._height = height
+        self._width = width if width is not None else self._renderer.win_width / 2
+        self._height = height if height is not None else self._renderer.win_height / 2
 
         self._sum_of_forces = Vector()
         self._gravity = Vector(0, 900)
@@ -115,21 +107,6 @@ class SandBox:
         gets current living bodies
         """
         return self._all_bods
-
-    # def set_wraping(self, wrap: bool) -> None:
-    #     """
-    #     sets the wraping behavior of the bodies
-
-    #     Parameters
-    #     ----------
-    #         wrap : bool
-    #             if bodies teleport around the edges of the world
-    #     """
-    #     warn(f"WARNING [sandbox] : change in bodies wraping behavior, may alter simulation")
-    #     if self._bounce and wrap:
-    #         warn(f"ERROR [sandbox] : bouncing and wraping can not be both active, nothing changed")
-    #         return
-    #     self._wrap = wrap
 
     def _add_borders(self) -> None:
         o = -self._buffer
@@ -483,7 +460,7 @@ class SandBox:
     def step(self, fps: int = 60, iter: int = 10) -> None:
         """
         go forward in time by one step\\
-        the dt used for computation is taken since the last time this method was called
+        the dt used for computation is based on the parameters
 
         Parameters
         ----------

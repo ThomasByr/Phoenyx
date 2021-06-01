@@ -201,7 +201,7 @@ class Slider:
         """
         return not self.check_click()
 
-    def new_value(self) -> Union[float, None]:
+    def get_new_value(self) -> Union[float, None]:
         """
         value of slider if slider was activated then idle\\
         will be ``None`` most of the time

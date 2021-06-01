@@ -936,8 +936,11 @@ class Renderer:
             y : int
                 translation for y-axis
         """
+        if self._has_scale:
+            x, y = self._scale_point((x, y))
         if self._has_rotation:
             x, y = self._rotate_point((x, y))
+
         self._x_offset += x
         self._y_offset += y
         if self._x_offset == 0 and self._y_offset == 0:
@@ -978,7 +981,7 @@ class Renderer:
     def scale(self, scale: float) -> None:
         """
         scales what will be drawn on the window\\
-        does not affect the stroke weight
+        does not affect the stroke weight, additive
 
         Parameters
         ----------
@@ -988,11 +991,11 @@ class Renderer:
         if scale <= 0:
             warn(f"WARNING [renderer] : scale of {scale} is not allowed, nothing happened")
             return
-        if scale == 1:
+        self._scale_factor *= scale
+        if self._scale_factor == 1:
             self._has_scale = False
         else:
             self._has_scale = True
-        self._scale_factor = scale
 
     def scale_display(self, scale: float) -> None:
         """
