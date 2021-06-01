@@ -26,7 +26,7 @@ from phoenyx import *
 import random as rd
 
 renderer: Renderer = Renderer(600, 600, "collision")
-sandbox: SandBox = SandBox(renderer, 300, 300)
+sandbox: SandBox = SandBox(renderer)
 
 count = 0
 fall = True
@@ -102,6 +102,7 @@ Migrating to the pymunk library for better physics (and complete support of chap
 <details>
     <summary> v0.3.2:  caching error (click to expand) </summary>
 
+* new method for Slider to get the value of the slider if it has been modified (evaluates as None otherwise)
 * fixed error when tried to cache result of non static vectors
 * removed iter method for vectors (be carefull when slicing vectors)
 * new example file, Ramer–Douglas–Peucker line simpification algorithm
@@ -109,7 +110,8 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * new example file, L-system fractal trees
 * fixed drawing method for buttons
 * made the translate and rotate methods (renderer) additive as they are in Processing and P5
-* the translate function takes rotation into account (rotate before translating to see the effet, translating before rotating won't have the same effect now)
+* the translate function takes rotation and into account (rotate before translating to see the effet, translating before rotating won't have the same effect now, same with scaling)
+* removed wrap method for SandBox since it is not relevent with bodies positions
 
 </details>
 
