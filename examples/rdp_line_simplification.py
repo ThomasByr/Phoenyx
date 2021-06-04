@@ -17,7 +17,7 @@ def scalar_projection(p: Vector, a: Vector, b: Vector) -> Vector:
     ap = p - a
     ab = b - a
     ab.normalize()
-    ab *= ap.dot(ab)
+    ab *= ap @ ab
     normal_point = a + ab
     return normal_point
 
