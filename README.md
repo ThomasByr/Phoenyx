@@ -1,4 +1,4 @@
-# Phoenyx - Pygame Engine v0.3.2
+# Phoenyx - Pygame Engine v0.3.3
 
 Some simple classes in **python** that could make your life much simplier. Relies on pygame, numpy and pymunk, based on the idea of the Processing language.
 
@@ -15,7 +15,7 @@ Some simple classes in **python** that could make your life much simplier. Relie
 
 This library allows you to create graphical components in **pygame** in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector and a SanBox wrapper class for **pymunk** suitable for physics engines and more mathematical drawings.
 
-Please go and check [pygame](https://github.com/pygame/pygame.git) and [pymunk](https://github.com/viblo/pymunk.git) for their amazing work ! Additionnal kudos to Daniel Shiffman.
+Please go and check [pygame](https://github.com/pygame/pygame.git) and [pymunk](https://github.com/viblo/pymunk.git) for their amazing work ! additional kudos to Daniel Shiffman.
 
 ## How to ?
 
@@ -97,21 +97,17 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 Please refer to [the changelog file](changelog.md) for the full history.
 
-Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Circles, Segments and Polygons have been implemented (either dynamic or static ones). Pin joints, slide joints and segment extension have followed. Some fixes have been made to the Renderer. More example files.
+Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Circles, Segments and Polygons have been implemented (either dynamic or static ones). Pin joints, slide joints and segment extension have followed. Some fixes have been added to the Renderer as well as support for images manipulation.
 
 <details>
-    <summary> v0.3.2:  caching error (click to expand) </summary>
+    <summary> v0.3.3: do a barrel roll (click to expand) </summary>
 
-* new method for Slider to get the value of the slider if it has been modified (evaluates as None otherwise)
-* fixed error when tried to cache result of non static vectors
-* removed iter method for vectors (be carefull when slicing vectors)
-* new example file, Ramer–Douglas–Peucker line simpification algorithm
-* new example file, convex hull by Chan algorithm (see Graham scan and Jarvis march)
-* new example file, L-system fractal trees
-* fixed drawing method for buttons
-* made the translate and rotate methods (renderer) additive as they are in Processing and P5
-* the translate function takes rotation and into account (rotate before translating to see the effet, translating before rotating won't have the same effect now, same with scaling)
-* removed wrap method for SandBox since it is not relevent with bodies positions
+* you can get rid of a SandBox shape if you want to
+* new methods for the Renderer to handle images
+* new ScrollBar thing (type ``help(phoenyx.scrollbar.ScrollBar)`` to learn more)
+* ScrollBar affects the Renderer view field of the main window
+* actual animation for the ScrollBar item
+* huge typo fix accross the entire repo
 
 </details>
 
@@ -120,7 +116,7 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * ~~option to hide buttons and sliders or to draw them only when needed~~
 * ~~option of alts drawing methods for buttons~~
 * ~~keyboard integration~~
-* scrollbars ~~and side menus~~
+* ~~scrollbars and side menus~~
 * ~~interractive drawing~~
 * ~~physics Sandbox~~
 * ~~more physics happening for bodies~~
