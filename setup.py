@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf-8") as f:
 
 setuptools.setup(
     name="phoenyx",
-    version="0.3.2",
+    version="0.3.3",
     author="Thomas Byr",
     author_email="thomas-c2000@outlook.fr",
     description="A drawing and physics engine for Pygame",
