@@ -11,7 +11,7 @@
     * efficiency improvement because frames are parts of success
 3.  *v0.0.a3* now comes the big stuff
     * wait... [Buttons](phonyx/button.py) ? (type ``help(phoenyx.button.Button)`` to learn more)
-    * buttons have better click response (hold or choose the number of frames to pass while uncliked to be able to trigger the button again)
+    * buttons have better click response (hold or choose the number of frames to pass while un-clicked to be able to trigger the button again)
 4.  *v0.0.a4* I need to port html5
     * [Sliders](phonyx/slider.py) now ? (type ``help(phoenyx.slider.Slider)`` to learn more)
     * sliders have their name on the left, minimum and maximum value on respective sides
@@ -44,7 +44,7 @@
     * better color check especially when passing a string as a parameter
     * trying to comply with MS VS Code docstring "support"
     * added new 2D, 3D, and 4D [Open Simplex Noise](phoenyx/opensimplexnoise.py) algorithm
-    * added new n dimensionnal [Perlin Noise](phoenyx/perlinnoise.py) algorith
+    * added new n dimensional [Perlin Noise](phoenyx/perlinnoise.py) algorithm
     * first step trough interractive drawing
     * adding exhaustive [Documentation](helpme.md) slowly
     * first try of [Menu](phoenyx/menu.py) implementation (type ``help(phoenyx.menu.Menu)`` to learn more)
@@ -59,7 +59,7 @@
     * displaying menus name when drawing them
     * removed python sys import when unnecessary
 13. *v0.1.8* are performances a real thing in python ?
-    * added additionnal type import when importing phoenyx
+    * added additional type import when importing phoenyx
     * messed with generator type in Perlin Noise
     * Noise library now work in all said dimensions
     * adding callable was not a good idea and now it's gone
@@ -71,8 +71,8 @@
 15. *v0.1.10* slm 14 b c
     * created this file because the README was starting to look like my homeworks list
     * short description of the changelog is added in the README
-    * added additionnal documentation, lots of it
-    * menu bodys won't disapear anymore when closing menus
+    * added additional documentation, lots of it
+    * menu bodies won't disappear anymore when closing menus
     * fixed drawing coordinates for menu background
     * menu background can either be transparent, from a specific color, or match the window background color
     * the length of menu finally does something
@@ -80,7 +80,7 @@
 16. *v0.1.11* a frame is a frame
     * replaced some draw stuff with native pygame to gain little performance
     * translation does not apply on sliders, buttons and menus anymore
-    * added a option to reset translation state completly when needed
+    * added a option to reset translation state completely when needed
     * you can now effectively quit the sketch when dynamically drawing on window (using IDLE for eg)
     * new methods for basic drawing
     * menu text size is now configurable
@@ -90,8 +90,8 @@
     * first try of rotation, you can rotate the screen, but it is not recommended...
     * note that rotation unlike Processing only affect what has been drawn and not what will be drawn (this might change in the future)
     * also rotating is relative to the center, because pygame does not allow for much native customization
-    * first try of scale, you can scale the sceen
-    * scale is relative to the center, should you rotate and scale, scale first and then rotate to eliminate pixels artefacts (costs a lot of computer performances)
+    * first try of scale, you can scale the screen
+    * scale is relative to the center, should you rotate and scale, scale first and then rotate to eliminate pixels artifacts (costs a lot of computer performances)
     * drawing method fix for lines
     * added squared distance calculation (also added casting) for Vectors
     * new methods for Vectors that does not modify the current object
@@ -105,9 +105,9 @@
     * added a new ``begin_shape`` and ``end_shape`` method along side with ``vertex`` to draw lines between points
     * real rotation this time ! you can rotate what will be drawn around the axis origin, previous method is still available
     * changed the draw method for squares and rectangles to allow for rotation of the vertexes ; rotation only apply for the center point for circles and ellipses
-    * more type hints using Union, working type hints for operations between Vectors and Vectors or scallars
+    * more type hints using Union, working type hints for operations between Vectors and Vectors or scalars
     * you can get the state of the mouse for each 3 buttons
-    * error handler does no longuer initialise on its own, so you are able not to use it ; note that ``error_handler_load()`` will initialise the error handler when needed
+    * error handler does no longer initialize on its own, so you are able not to use it ; note that ``error_handler_load()`` will initialize the error handler when needed
     * first try of physics ``SandBox``, for now, only simple shapes and basic physic
     * new classes ``SandBox`` and ``Body`` (type ``help(phoenyx.sanbox.SandBox)`` or ``help(phoenyx.body.Body)`` to learn more)
     * note that physics is happening based on the frame rate of the Renderer and is only following the first Newton's law of motion : ``mass * acceleration = force`` for now
@@ -134,16 +134,23 @@
     * new dynamic convex ``polygons`` (why is the body so far away)
     * bodies that are out of the drawing window are not immediately deleted (to counter that strange offset)
     * you can now extend segments and create static pin or slide joints
-    * functionnal iter method for vectors
+    * functional iter method for vectors
     * new method for Slider to check if they are active (i.e. if their value has been modified in the last few frames, this can be set when creating with the count keyword)
 24. *v0.3.2* caching error
     * new method for Slider to get the value of the slider if it has been modified (evaluates as None otherwise)
     * fixed error when tried to cache result of non static vectors
     * removed iter method for vectors (be carefull when slicing vectors)
-    * new example file, Ramer–Douglas–Peucker line simpification algorithm
+    * new example file, Ramer–Douglas–Peucker line simplification algorithm
     * new example file, convex hull by Chan algorithm (see Graham scan and Jarvis march)
     * new example file, L-system fractal trees
     * fixed drawing method for buttons
     * made the translate and rotate methods (renderer) additive as they are in Processing and P5
-    * the translate function takes rotation and scale into account (rotate before translating to see the effet, translating before rotating won't have the same effect now, same with scaling)
+    * the translate function takes rotation and scale into account (rotate before translating to see the effect, translating before rotating won't have the same effect now, same with scaling)
     * removed wrap method for SandBox since it is not relevent with bodies positions
+25. *v0.3.3* do a barrel roll
+    * you can get rid of a SandBox shape if you want to
+    * new methods for the Renderer to handle images
+    * new ScrollBar thing (type ``help(phoenyx.scrollbar.ScrollBar)`` to learn more)
+    * ScrollBar affects the Renderer view field of the main window
+    * actual animation for the ScrollBar item
+    * huge typo fix accross the entire repo
