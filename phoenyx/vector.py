@@ -222,7 +222,7 @@ class Vector(np.ndarray):
 
     def round(self, ndigits: int = 0) -> None:
         """
-        Modofies the Vector and rounds its coordinates\\
+        Modifies the Vector and rounds its coordinates\\
         Does not return anything
 
         Parameters
@@ -255,7 +255,7 @@ class Vector(np.ndarray):
 
     def catch_inf(self) -> None:
         """
-        Modifies the Vector and change inf corrdinates to 0
+        Modifies the Vector and change inf coordinates to 0
         """
         def catch(x: float) -> float:
             return (0, x)[bool(x < np.inf)]

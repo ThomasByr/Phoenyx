@@ -11,7 +11,7 @@ Provides
  6. Fast 2D, 3D, and 4D Noise algorithms (Open Simplex and Perlin) for smooth randomness
  7. A physics sandbox for basic simulation
 
-Initialisation
+Initialization
 --------------
 >>> # from now on we will assume Renderer and Vector are imported as followed
 ... from phoenyx import *
@@ -47,7 +47,7 @@ You can also create sliders with
 ... # with a minimum value of 0, a maximum value of 10
 ... # starts at the value 5
 ... # have a floating point precision of 0 decimals
-... # with an additionnal argument which makes its length 200
+... # with an additional argument which makes its length 200
 
 All sliders can return their value based on their name (which should be unique)
 and the update of their value is done automatically. You must however take their
@@ -59,14 +59,14 @@ Menus
 You now can create side menus with
 >>> renderer.create_menu("menu", test1=lambda: print("test1"), test2=lambda: print("test2"))
 ... # creates a new menu on the right of the screen
-... # wich has 2 buttons when expanded
+... # which has 2 buttons when expanded
 ... # the first one printing "test1" in the console
 ... # and the second printing "test2"
 
 It is worth noting that you can only create 2 side menus, the first one being
 on the right of the screen (default side) and the second being on the left. Also
 note that extensive actions list might not show up properly depending on the
-size of the window. The menu backgound will show up on the top of all other
+size of the window. The menu background will show up on the top of all other
 drawings and will be the same color as the window background unless otherwise
 specified.
 
@@ -96,7 +96,7 @@ dimensional evaluation and integrated to Phoenyx.
 Based on a modified Simplex Noise algorithm, Open Simplex Noise by Curt Spencer.
 Simplex Noise is a beautification of the Perlin Noise algorithm.
 
-Initialisation is using a permutation array generated from a 64-bit seed number.
+Initialization is using a permutation array generated from a 64-bit seed number.
 
 Perlin Noise
 ------------
@@ -149,7 +149,7 @@ from .vector import *
 from .renderer import *
 from .sandbox import *
 
-# additionnal types
+# additional types
 from .slider import Slider
 from .button import Button
 from .menu import Menu

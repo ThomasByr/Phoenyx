@@ -7,7 +7,7 @@ P3D = "P3D"
 CENTER = "CENTER"
 CORNER = "CORNER"
 
-# translation and rotation behaviour
+# translation and rotation behavior
 RESET = "RESET"
 KEEP = "KEEP"
 
@@ -19,7 +19,7 @@ PLUS = "PLUS"
 CIRCLE = "CIRCLE"
 SQUARE = "SQUARE"
 
-# keys behaviour
+# keys behavior
 PRESSED = "PRESSED"
 RELEASED = "RELEASED"
 HOLD = "HOLD"

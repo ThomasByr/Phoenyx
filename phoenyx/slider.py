@@ -81,7 +81,7 @@ class Slider:
         """
         self.has_error = False
         if not (min_val <= value < max_val or min_val < value <= max_val):
-            warn(f"ERROR [slider {self._name}] : wrong values initialisation, slider was not created")
+            warn(f"ERROR [slider {self._name}] : wrong values Initialization, slider was not created")
             self.has_error = True
         if thickness <= 0:
             warn(f"ERROR [slider {self._name}] : bad thickness value, slider was not created")
@@ -170,7 +170,7 @@ class Slider:
             click_count : int
                 new click_count
         """
-        warn(f"INFO [slider {self._name}] : attempting to modify click behaviour")
+        warn(f"INFO [slider {self._name}] : attempting to modify click behavior")
         if click_count < 0:
             warn(f"ERROR [slider {self._name}] : bad click_count, nothing changed")
             return
@@ -203,7 +203,7 @@ class Slider:
 
     def get_new_value(self) -> Union[float, None]:
         """
-        value of slider if slider was activated then idle\\
+        value of slider if slider was activated and then idle\\
         will be ``None`` most of the time
         """
         if self._prev_state and not self.is_active():
@@ -214,7 +214,7 @@ class Slider:
 
     def _redo_rect(self) -> None:
         """
-        sets correct corrdinates to cursor
+        sets correct coordinates to cursor
         """
         x = self._x + int(self._pad * (self.value - self._min_val)) - self._radius
         self.rect = x + self._radius, self._y
@@ -552,7 +552,7 @@ class Slider:
         """
         sets the slider bar length\\
         does nothing is length is less than 3 times the diameter\\
-        depracated : do not use
+        deprecated : do not use
 
         Parameters
         ----------
@@ -583,7 +583,7 @@ class Slider:
 
     def collide(self, pos: tuple) -> bool:
         """
-        collisiont check
+        collision check
 
         Parameters
         ----------

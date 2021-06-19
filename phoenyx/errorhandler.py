@@ -63,7 +63,7 @@ err: ErrorHandler  # default for Phoenyx
 
 def load_soft() -> None:
     """
-    initialises Error Handeler\\
+    initializes Error Handeler\\
     very usefull for debuging
     """
     global err
@@ -91,7 +91,7 @@ def set_soft(flush: bool) -> None:
 def warn(msg: str) -> None:
     """
     warns the user\\
-    does not repeat previous warnings if error handler has been initialised
+    does not repeat previous warnings if error handler has been initialized
 
     Parameters
     ----------

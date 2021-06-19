@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Any, Callable, Union
 from phoenyx.errorhandler import *
 
 from phoenyx.constants import *
@@ -54,7 +54,7 @@ class Menu:
                 draw a background when expanded
                 defaults to True
             length : int, (optional)
-                lenght of the menu (its height)
+                length of the menu (its height)
                 by default the menu height will on auto
                 defaults to None
             color : tuple | int | str, (optional)
@@ -145,7 +145,7 @@ class Menu:
 
         self._text_size = _constrain(text_size, 1, 25)
         self._all_items = []
-        self._all_actions = []
+        self._all_actions: list[Callable[[], None]] = []
         for k, v in kwargs.items():
             self._all_items.append(k)
             self._all_actions.append(v)

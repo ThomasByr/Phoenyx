@@ -73,7 +73,7 @@ class OpenSimplexNoise:
     Based on a modified Simplex Noise algorithm, Open Simplex Noise by Curt Spencer.
     Simplex Noise is a beautification of the Perlin Noise algorithm.
 
-    Exemples
+    Examples
     --------
     >>> from phoenyx import OpenSimplexNoise
     >>> noise = OpenSimplexNoise(seed=...)
@@ -128,7 +128,7 @@ class OpenSimplexNoise:
     def __call__(self, *args) -> float:
         """
         Gets the value of the Open Simplex Noise space at a given point\\
-        Added support for 1 dimensionnal evaluation.
+        Added support for 1 dimensional evaluation.
 
         Result float is between -1. and 1.
         """

@@ -40,7 +40,7 @@ class Point:
     @property
     def pos(self) -> Vector:
         """
-        gets current Point position as a 3 dimentional Vector
+        gets current Point position as a 3 dimensional Vector
         """
         return self._pos
 
@@ -100,7 +100,7 @@ class Boundary:
     @property
     def pos(self) -> Vector:
         """
-        gets current Boundary position as a 3 dimentional Vector\\
+        gets current Boundary position as a 3 dimensional Vector\\
         ``x`` and ``y`` must not be modified
         """
         return self._pos
@@ -275,7 +275,7 @@ class QuadTree:
     """
     Quadtree
     ========
-    recursuve quadtree structure
+    recursive quadtree structure
 
     Quadtree has :
      * a ``boundary``

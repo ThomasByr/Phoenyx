@@ -39,7 +39,7 @@ class Button:
             name : str
                 the name of the button (must be unique !)
             count : int, (optional)
-                number of frames to pass while unclicked to be able to trigger the button again
+                number of frames to pass while un-clicked to be able to trigger the button again
                 defaults to 1
             action : python function, (optional)
                 function to trigger when pressed
@@ -146,7 +146,7 @@ class Button:
             click_count : int
                 new click_count
         """
-        warn(f"INFO [button {self._name}] : attempting to modify click behaviour")
+        warn(f"INFO [button {self._name}] : attempting to modify click behavior")
         if click_count < 0:
             warn(f"ERROR [button {self._name}] : bad click_count, nothing changed")
             return

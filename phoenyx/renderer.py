@@ -14,6 +14,7 @@ from phoenyx.constants import *
 from phoenyx.button import *
 from phoenyx.slider import *
 from phoenyx.menu import *
+from phoenyx.scrollbar import *
 from phoenyx.keys import *
 
 
@@ -28,7 +29,7 @@ class Renderer:
 
     Please go through exemples, in-file docstrings and methods, and tests files.
 
-    Initialisation
+    Initialization
     --------------
     >>> # from now on we will assume Renderer is imported as followed
     ... from renderer import Renderer
@@ -63,7 +64,7 @@ class Renderer:
     ... # with a minimum value of 0, a maximum value of 10
     ... # starts at the value 5
     ... # have a floating point precision of 0 decimals
-    ... # with an additionnal argument which makes its length 200
+    ... # with an additional argument which makes its length 200
 
     All sliders can returns their value based on their name (which should be unique)
     and the update of their value is done automatically. You must however take their
@@ -75,15 +76,16 @@ class Renderer:
     You now can create side menus with
     >>> renderer.create_menu("menu", test1=lambda: print("test1"), test2=lambda: print("test2"))
     ... # creates a new menu on the right of the screen
-    ... # wich has 2 buttons when expanded
+    ... # which has 2 buttons when expanded
     ... # the first one printing "test1" in the console
     ... # and the second printing "test2"
 
     It is worth noting that you can only create 2 side menus, the first one being
     on the right of the screen (default side) and the second being on the left. Also
     note that extensive actions list might not show up properly depending on the
-    size of the window. The menu backgound will show up on the top of all other
-    drawings and will be the same color as the window background.
+    size of the window. The menu background will show up on the top of all other
+    drawings and will be the same color as the window background unless otherwise
+    specified.
 
     Please note
     -----------
@@ -93,7 +95,7 @@ class Renderer:
     Also both buttons and sliders currently have unsupported methods for the Renderer
     such as moving them on the screen, resizing them, changing their attributes...
     Finally, ERROR and WARNING do not cause a 'real' ``python error`` but throw some
-    pieces of information in the console. May turn into spam.
+    pieces of information in the console.
     """
     FONT = pygame.font.SysFont("comicsans", 11)
 
@@ -112,7 +114,7 @@ class Renderer:
                 defaults to None
         """
         # window management
-        self._window = pygame.display.set_mode((width, height))
+        self._window: pygame.Surface = pygame.display.set_mode((width, height))
         self._width = width
         self._height = height
         self._title = (title, "Pygame Engine with Python")[title is None]
@@ -130,17 +132,17 @@ class Renderer:
         self._has_translation = False
         self._x_offset = 0
         self._y_offset = 0
-        self._translation_behaviour = RESET
+        self._translation_behavior = RESET
 
         # angles
         self._has_rotation = False
         self._rot_angle = 0
-        self._rotation_behaviour = RESET
+        self._rotation_behavior = RESET
 
         # scale
         self._has_scale = False
         self._scale_factor = 1
-        self._scale_behaviour = RESET
+        self._scale_behavior = RESET
 
         # background
         self._has_auto_bg = False
@@ -162,10 +164,14 @@ class Renderer:
         self._has_sliders = False
         self._all_sliders: set[Slider] = set()
 
-        # menus managmement
+        # menus management
         self._has_left_menu = False
         self._has_right_menu = False
         self._all_menus: set[Menu] = set()
+
+        # scrollbar management
+        self._has_scrollbar = False
+        self._scrollbar: ScrollBar = None
 
         # fps
         self._fps = 60
@@ -180,7 +186,7 @@ class Renderer:
         # keys
         self._key_binding: dict[int, int] = {}
         self._actions: list[Callable[[], None]] = []
-        self._keys_behaviour: list[str] = []
+        self._keys_behavior: list[str] = []
         self._pressed: dict[int, bool] = {}
         self.keys = Keys()
 
@@ -202,6 +208,13 @@ class Renderer:
         self._title = title
         pygame.display.set_caption(self._title)
 
+    def set_icon(self, path: str) -> None:
+        """
+        sets the icon of the app
+        """
+        surface = pygame.image.load(path)
+        pygame.display.set_icon(surface)
+
     @property
     def win_width(self) -> int:
         """
@@ -217,7 +230,7 @@ class Renderer:
         return self._height
 
     @property
-    def win_bg(self) -> tuple:
+    def win_bg(self) -> tuple[int, int, int]:
         """
         gets current window filling background color\\
         might be wrong if the ``background`` method was never called
@@ -392,7 +405,7 @@ class Renderer:
                 defaults to CENTER
         """
         if mode not in (CENTER, CORNER):
-            warn(f"ERROR [renderer] : {mode} is not a valid mode for tect_mode, nothing happened")
+            warn(f"ERROR [renderer] : {mode} is not a valid mode for rect_mode, nothing happened")
             return
         self._rect_mode = mode
 
@@ -452,7 +465,7 @@ class Renderer:
     def begin_shape(self) -> None:
         """
         begins drawing shape\\
-        use ``end_shape`` with additionnal args to end drawing shape
+        use ``end_shape`` with additional args to end drawing shape
         """
         if self._is_drawing_shape:
             warn(f"ERROR [renderer] : already drawing a shape, nothing happened")
@@ -467,7 +480,7 @@ class Renderer:
         Parameters
         ----------
             filled : bool, (optional)
-                if sape is filled (will not enable filling)
+                if shape is filled (will not enable filling)
                 defaults to False
             closed : bool, (optional)
                 if first point connected to last
@@ -489,7 +502,7 @@ class Renderer:
 
     def vertex(self, point: Union[tuple, list, Vector]):
         """
-        draws shapes with given vertixes
+        draws shapes with given vertexes
 
         Parameters
         ----------
@@ -603,7 +616,7 @@ class Renderer:
         Parameters
         ----------
             points : tuples | lists | Vectors
-                each additionnal arg is a point
+                each additional arg is a point
             closed : bool, (optional)
                 last point connected to first
                 defaults to True
@@ -628,7 +641,7 @@ class Renderer:
         Parameters
         ----------
             points : tuples | lists | Vectors
-                each additionnal arg is a point
+                each additional arg is a point
         """
         self._debug_enabled_drawing_methods()
         points: list[list[float, float]] = [list(p[:2]) for p in points]
@@ -656,7 +669,7 @@ class Renderer:
             point : tuple | list | Vector
                 base point of the rectangle
             width : int
-                the widdth of the rectangle
+                the width of the rectangle
             height : int
                 the height of the rectangle
         """
@@ -750,7 +763,7 @@ class Renderer:
             point : tuple | list | Vector
                 base point of the rectangle for the ellipse
             width : int
-                the widdth of the rectangle for the ellipse
+                the width of the rectangle for the ellipse
             height : int
                 the height of the rectangle for the ellipse
         """
@@ -814,7 +827,7 @@ class Renderer:
             point : tuple | list | Vector
                 base point of the rectangle for the arc
             width : int
-                the widdth of the rectangle for the arc
+                the width of the rectangle for the arc
             height : int
                 the height of the rectangle for the arc
             start : float
@@ -877,6 +890,46 @@ class Renderer:
         """
         group.draw(self._window)
 
+    def load_image(self, path: str) -> pygame.Surface:
+        """
+        loads an image
+        """
+        image = pygame.image.load(path)
+        return image
+
+    def transform_image(self, image: pygame.Surface, scale: float = 1, angle: float = 0) -> pygame.Surface:
+        """
+        applies scale and / or rotation on a image and returns a new image\\
+        does not modify the original image
+        """
+        new_image = pygame.transform.rotozoom(image, angle, scale)
+        return new_image
+
+    def get_image_size(self, image: pygame.Surface) -> tuple[int, int]:
+        """
+        gets width, height of an image
+        """
+        return image.get_width(), image.get_height()
+
+    def draw_image(self, x: int, y: int, image: pygame.Surface) -> None:
+        """
+        displays an image on the screen
+
+        Parameters
+        ----------
+            x : int
+                x-coordinate
+            y : int
+                y-coordinate
+            image : pygame.Surface
+                loaded image
+        """
+        if self.rect_mode == CENTER:
+            dx, dy = self.get_image_size()
+            x -= dx / 2
+            y -= dy / 2
+        self._window.blit(image, (x, y))
+
     def text(self, x: int, y: int, text: str) -> None:
         """
         displays some text on the screen\\
@@ -925,15 +978,15 @@ class Renderer:
         self._bg = color
         self._window.fill(color)
 
-    def translate(self, x: int = 0, y: int = 0) -> None:
+    def translate(self, x: float = 0, y: float = 0) -> None:
         """
         translates the axes origin, additive
 
         Parameters
         ----------
-            x : int
+            x : float
                 translation for x-axis
-            y : int
+            y : float
                 translation for y-axis
         """
         if self._has_scale:
@@ -1022,9 +1075,9 @@ class Renderer:
         self._reset_rotation()
         self._reset_scale()
         self.rect_mode = CORNER
-        self.translation_behaviour = RESET
-        self.rotation_behaviour = RESET
-        self.scale_behaviour = RESET
+        self.translation_behavior = RESET
+        self.rotation_behavior = RESET
+        self.scale_behavior = RESET
 
     def _reset_translation(self) -> None:
         """
@@ -1049,70 +1102,70 @@ class Renderer:
         self._scale_factor = 1
 
     @property
-    def translation_behaviour(self) -> str:
+    def translation_behavior(self) -> str:
         """
-        gets the current translation behaviour
+        gets the current translation behavior
         """
-        return self._translation_behaviour
+        return self._translation_behavior
 
-    @translation_behaviour.setter
-    def translation_behaviour(self, behaviour: str) -> None:
+    @translation_behavior.setter
+    def translation_behavior(self, behavior: str) -> None:
         """
-        sets the global translation behavious
+        sets the global translation behavior
 
         Parameters
         ----------
-            behaviour : str
+            behavior : str
                 KEEP | RESET
         """
-        if behaviour not in ("RESET", "KEEP"):
-            warn(f"WARNING [renderer] : {behaviour} is not a valid translation behaviour, nothing happened")
+        if behavior not in ("RESET", "KEEP"):
+            warn(f"WARNING [renderer] : {behavior} is not a valid translation behavior, nothing happened")
             return
-        self._translation_behaviour = behaviour
+        self._translation_behavior = behavior
 
     @property
-    def rotation_behaviour(self) -> str:
+    def rotation_behavior(self) -> str:
         """
-        gets the current rotation behaviour
+        gets the current rotation behavior
         """
-        return self._rotation_behaviour
+        return self._rotation_behavior
 
-    @rotation_behaviour.setter
-    def rotation_behaviour(self, behaviour: str) -> None:
+    @rotation_behavior.setter
+    def rotation_behavior(self, behavior: str) -> None:
         """
-        sets the global rotation behavious
+        sets the global rotation behavior
 
         Parameters
         ----------
-            behaviour : str
+            behavior : str
                 KEEP | RESET
         """
-        if behaviour not in ("RESET", "KEEP"):
-            warn(f"WARNING [renderer] : {behaviour} is not a valid rotation behaviour, nothing happened")
+        if behavior not in ("RESET", "KEEP"):
+            warn(f"WARNING [renderer] : {behavior} is not a valid rotation behavior, nothing happened")
             return
-        self._rotation_behaviour = behaviour
+        self._rotation_behavior = behavior
 
     @property
-    def scale_behaviour(self) -> str:
+    def scale_behavior(self) -> str:
         """
-        gets the global scale behaviour
+        gets the global scale behavior
         """
-        return self._scale_behaviour
+        return self._scale_behavior
 
-    @scale_behaviour.setter
-    def scale_behaviour(self, behaviour: str) -> None:
+    @scale_behavior.setter
+    def scale_behavior(self, behavior: str) -> None:
         """
-        sets the global scale behavious
+        sets the global scale behavior
 
         Parameters
         ----------
-            behaviour : str
+            behavior : str
                 KEEP | RESET
         """
-        if behaviour not in ("RESET", "KEEP"):
-            warn(f"WARNING [renderer] : {behaviour} is not a valid scale behaviour, nothing happened")
+        if behavior not in ("RESET", "KEEP"):
+            warn(f"WARNING [renderer] : {behavior} is not a valid scale behavior, nothing happened")
             return
-        self._scale_behaviour = behaviour
+        self._scale_behavior = behavior
 
     def _add_button(self, button: Button) -> None:
         """
@@ -1141,7 +1194,7 @@ class Renderer:
         Options
         -------
             count : int
-                number of frames to pass while unclicked to be able to trigger the button again
+                number of frames to pass while un-clicked to be able to trigger the button again
             action : python function
                 the action to trigger when pressed
             height : int
@@ -1293,7 +1346,7 @@ class Renderer:
             value : float
                 current value
             incr : int
-                rounding (may not be effective depending on the lenght of the slider)
+                rounding (may not be effective depending on the length of the slider)
 
         Options
         -------
@@ -1469,7 +1522,7 @@ class Renderer:
                 side of the window to display the menu
                 LEFT | RIGHT
             length : int
-                lenght of the menu (its height)
+                length of the menu (its height)
                 by default the menu height will be on auto
             background : None | bool | tuple | int | str
                 draw a background when expanded
@@ -1607,7 +1660,7 @@ class Renderer:
 
     def _quit_check(self) -> None:
         """
-        loop trougth events and look for the QUIT event\\
+        loop trough events and look for the QUIT event\\
         does nothing if found\\
         must not be called if Renderer._events() is called before
         """
@@ -1644,8 +1697,8 @@ class Renderer:
         self._save.append([
             self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,
             self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self._has_scale,
-            self._scale_factor, self.rect_mode, self.translation_behaviour, self.rotation_behaviour,
-            self.scale_behaviour, self.text_color, self.text_size
+            self._scale_factor, self.rect_mode, self.translation_behavior, self.rotation_behavior,
+            self.scale_behavior, self.text_color, self.text_size
         ])
         self._has_save = True
 
@@ -1658,7 +1711,7 @@ class Renderer:
         if not self._has_save:
             warn("WARNING [renderer] : no save was found, nothing changed")
             return
-        self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self._has_scale, self._scale_factor,self.rect_mode, self.translation_behaviour, self.rotation_behaviour, self.scale_behaviour, self.text_color, self.text_size =\
+        self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self._has_scale, self._scale_factor,self.rect_mode, self.translation_behavior, self.rotation_behavior, self.scale_behavior, self.text_color, self.text_size =\
             self._save.pop()
         self._has_save = len(self._save) >= 1
 
@@ -1671,7 +1724,7 @@ class Renderer:
         """
         return self._key_binding
 
-    def new_keypress(self, key: int, action: Callable[[], None], behaviour: str = PRESSED) -> None:
+    def new_keypress(self, key: int, action: Callable[[], None], behavior: str = PRESSED) -> None:
         """
         adds a new key and its corresponding action\\
         please use ``Renderer.keys.`` to find keys
@@ -1679,25 +1732,25 @@ class Renderer:
         Parameters
         ----------
             key : int
-                keyboard key indentifier
+                keyboard key identifier
             action : python function
                 action to perform each time the key is pressed
-            behaviour : str, (optional)
-                key behaviour
+            behavior : str, (optional)
+                key behavior
                 PRESSED | RELEASED | HOLD
                 defaults to PRESSED
         """
         if key in self.key_binding:
             warn(f"ERROR [renderer] : {key} is already assigned to a function, try update_key instead")
             return
-        if behaviour not in (PRESSED, RELEASED, HOLD):
-            warn(f"ERROR [renderer] : {behaviour} is not a valid key behaviour, nothing happened")
+        if behavior not in (PRESSED, RELEASED, HOLD):
+            warn(f"ERROR [renderer] : {behavior} is not a valid key behavior, nothing happened")
             return
         self._actions.append(action)
-        self._keys_behaviour.append(behaviour)
+        self._keys_behavior.append(behavior)
         self._key_binding[key] = len(self._actions) - 1
 
-    def update_keypress(self, key: int, action: Callable[[], None], behaviour: str = None) -> None:
+    def update_keypress(self, key: int, action: Callable[[], None], behavior: str = None) -> None:
         """
         updates the action of a given key\\
         please use ``Renderer.keys.`` to find keys
@@ -1708,21 +1761,21 @@ class Renderer:
                 keyboard key identifier
             action : python function
                 new action
-            behaviour : str, (optional)
-                key behaviour (if not specified, will keep previous)
+            behavior : str, (optional)
+                key behavior (if not specified, will keep previous)
                 PRESSED | RELEASED | HOLD
                 defaults to None
         """
         if key not in self.key_binding:
             warn(f"ERROR [renderer] : {key} is not assigned to an existing function, try new_key instead")
             return
-        if behaviour is not None and behaviour not in (PRESSED, RELEASED, HOLD):
-            warn(f"ERROR [renderer] : {behaviour} is not a valid key behaviour, nothing changed")
+        if behavior is not None and behavior not in (PRESSED, RELEASED, HOLD):
+            warn(f"ERROR [renderer] : {behavior} is not a valid key behavior, nothing changed")
             return
         i = self._key_binding[key]
         self._actions[i] = action
-        if behaviour is not None:
-            self._keys_behaviour[i] = behaviour
+        if behavior is not None:
+            self._keys_behavior[i] = behavior
 
     def kill_keypress(self, key: int) -> None:
         """
@@ -1863,11 +1916,11 @@ class Renderer:
             draw()
 
             # translation, rotation, scale management
-            if self.translation_behaviour == RESET:
+            if self.translation_behavior == RESET:
                 self._reset_translation()
-            if self.rotation_behaviour == RESET:
+            if self.rotation_behavior == RESET:
                 self._reset_rotation()
-            if self.scale_behaviour == RESET:
+            if self.scale_behavior == RESET:
                 self._reset_scale()
 
             # bench mode
@@ -1920,6 +1973,10 @@ class Renderer:
                                 menu.trigger(i)
                             menu.reinit_click()
 
+                if self._has_scrollbar:
+                    scrollbar = self._scrollbar
+                    # todo: update state and trigger
+
             else:
                 if self._has_buttons:
                     for button in self._all_buttons:
@@ -1940,18 +1997,18 @@ class Renderer:
                     if (k := event.key) in self.key_binding:
                         i = self._key_binding[k]
 
-                        if self._keys_behaviour[i] == RELEASED:
+                        if self._keys_behavior[i] == RELEASED:
                             self._actions[i]()
-                        elif self._keys_behaviour[i] == HOLD:
+                        elif self._keys_behavior[i] == HOLD:
                             self._pressed[k] = False
 
                 elif event.type == pygame.KEYDOWN:
                     if (k := event.key) in self.key_binding:
                         i = self._key_binding[k]
 
-                        if self._keys_behaviour[i] == PRESSED:
+                        if self._keys_behavior[i] == PRESSED:
                             self._actions[i]()
-                        elif self._keys_behaviour[i] == HOLD:
+                        elif self._keys_behavior[i] == HOLD:
                             self._pressed[k] = True
 
                 for k in self._pressed:

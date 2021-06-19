@@ -102,11 +102,18 @@ class SandBox:
         return self._height
 
     @property
-    def bodies(self) -> set[pymunk.Body]:
+    def bodies(self) -> list[pymunk.Body]:
         """
         gets current living bodies
         """
-        return self._all_bods
+        return self._space.bodies
+
+    @property
+    def shapes(self) -> list[pymunk.Shape]:
+        """
+        gets current living shapes
+        """
+        return self._space.shapes
 
     def _add_borders(self) -> None:
         o = -self._buffer
@@ -430,7 +437,7 @@ class SandBox:
                 the shape to attach to\\
                 can be Circle, Segment and Poly
             limit : Union[float, tuple[float, float]]
-                 max distance limit, optionnal lower limit
+                 max distance limit, optional lower limit
         """
         pos = pos[0], pos[1]
         rotation_limit_body = pymunk.Body(body_type=pymunk.Body.STATIC)
@@ -456,6 +463,21 @@ class SandBox:
         for e in to_remove:
             self._space.remove(e)
             self._all_shapes.discard(e)
+
+    def discard(self, shape: pymunk.Shape) -> None:
+        """
+        removes a shape and its body from the space\\
+        won't raise any errors, hopefully
+        """
+        try:
+            self._space.remove(shape)
+        except AssertionError:
+            pass
+        try:
+            self._space.remove(shape.body)
+        except AssertionError:
+            pass
+        self._all_shapes.discard(shape)
 
     def step(self, fps: int = 60, iter: int = 10) -> None:
         """
