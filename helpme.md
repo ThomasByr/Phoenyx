@@ -4,8 +4,10 @@
    1. [drawing basics](#drawing-basics)
    2. [drawing attribute manipulation](#drawing-attribute-manipulation)
    3. [other attributes](#other-attributes)
-   4. [some interractive drawing](#some-interractive-drawing)
-   5. [extern class creation and manipulation](#extern-class-creation-and-manipulation)
+   4. [some image handling](#some-image-handling)
+   5. [some interractive drawing](#some-interractive-drawing)
+   6. [extern class creation and manipulation](#extern-class-creation-and-manipulation)
+   7. [scrollbar integration](#scrollbar-integration)
 2. [The ``Button`` class](#the-button-class)
    1. [creation](#creation)
    2. [manipulation](#manipulation)
@@ -48,18 +50,18 @@ def draw() -> None:
 
 Great now what we want to to is to setup things inside our ``setup`` function if needed, for example make the text appear thicker or change its color, such things that only need to be done once.
 
-Inside of the ``draw`` function, we want to put things that will be repeated over and over until we trigger the ``QUIT`` event of pygame : click the close button. We will call this function the ``draw`` loop because, you guessed it : this is our main loop. So we can apply some background color, draw shapes, move things around, interract with Sliders, Buttons, Menus and the Keyboard in that loop. Such exciting things will be discussed in detail in the commings subsections of this documentation.
+Inside of the ``draw`` function, we want to put things that will be repeated over and over until we trigger the ``QUIT`` event of pygame : click the close button. We will call this function the ``draw`` loop because, you guessed it : this is our main loop. So we can apply some background color, draw shapes, move things around, interract with Sliders, Buttons, Menus and the Keyboard in that loop. Such exciting things will be discussed in detail in the comings subsections of this documentation.
 
-Then we need to call the ``run`` method for our ``renderer``, optionnaly providing it with the ``draw`` function and the optional ``setup`` (if your draw and setup functions are named properly you don't need to pass them inside of the run method ; you still can name them to your likings but will need to put them as parameters for the run method). This should look like this :
+Then we need to call the ``run`` method for our ``renderer``, optionally providing it with the ``draw`` function and the optional ``setup`` (if your draw and setup functions are named properly you don't need to pass them inside of the run method ; you still can name them to your likings but will need to put them as parameters for the run method). This should look like this :
 
 ```py
 if __name__ == "__main__":
     renderer.run()
 ```
 
-Now lets focus on some methods you can call in the ``draw`` loop. The signature and docstring of the methods will follow their quick meaning. Filling and strocking will be discussed in more detail in the next subsection but for now all you need to know is that is tells the ``Renderer`` what color to use to draw shapes and / or fill them. For methods that will draw fillable shapes, we first make sure that either stroking or filling is enabled, and if not, we arbitrary activate one of them. Note that code below is part of a class and thus what you will see are methods that are part of the ``Renderer`` class.
+Now lets focus on some methods you can call in the ``draw`` loop. The signature and docstring of the methods will follow their quick meaning. Filling and stroking will be discussed in more detail in the next subsection but for now all you need to know is that is tells the ``Renderer`` what color to use to draw shapes and / or fill them. For methods that will draw fillable shapes, we first make sure that either stroking or filling is enabled, and if not, we arbitrary activate one of them. Note that code below is part of a class and thus what you will see are methods that are part of the ``Renderer`` class.
 
-* ``renderer.background(color)`` will fill the background with the given ``color`` (color range of possibilies as a parameter is discussed in the next subsection, but notice it can be an integer, 3 integers or a string)
+* ``renderer.background(color)`` will fill the background with the given ``color`` (color range of possibilities as a parameter is discussed in the next subsection, but notice it can be an integer, 3 integers or a string)
 
 ```py
 def background(self, *color: Union[int, str]) -> None:
@@ -116,7 +118,7 @@ def lines(self, *points, closed: bool = True) -> None:
     Parameters
     ----------
         points : tuples | lists | Vectors
-            each additionnal arg is a point
+            each additional arg is a point
         closed : bool, (optional)
             last point connected to first
             defaults to True
@@ -134,7 +136,7 @@ def polygon(self, *points) -> None:
     Parameters
     ----------
         points : tuples | lists | Vectors
-            each additionnal arg is a point
+            each additional arg is a point
     """
 ```
 
@@ -151,7 +153,7 @@ def rect(self, point: Union[tuple, list, Vector], width: int, height: int) -> No
         point : tuple | list | Vector
             base point of the rectangle
         width : int
-            the widdth of the rectangle
+            the width of the rectangle
         height : int
             the height of the rectangle
     """
@@ -187,7 +189,7 @@ def ellipse(self, point: Union[tuple, list, Vector], width: int, height: int) ->
         point : tuple | list | Vector
             base point of the rectangle for the ellipse
         width : int
-            the widdth of the rectangle for the ellipse
+            the width of the rectangle for the ellipse
         height : int
             the height of the rectangle for the ellipse
     """
@@ -247,7 +249,7 @@ def arc(self, point: Union[tuple, list, Vector], width: int, height: int, start:
         point : tuple | list | Vector
             base point of the rectangle for the arc
         width : int
-            the widdth of the rectangle for the arc
+            the width of the rectangle for the arc
         height : int
             the height of the rectangle for the arc
         start : float
@@ -263,7 +265,7 @@ def arc(self, point: Union[tuple, list, Vector], width: int, height: int, start:
 def begin_shape(self) -> None:
     """
     begins drawing shape
-    use ``end_shape`` with additionnal args to end drawing shape
+    use ``end_shape`` with additional args to end drawing shape
     """
 ```
 
@@ -278,7 +280,7 @@ def end_shape(self, filled: bool = False, closed: bool = False) -> None:
     Parameters
     ----------
         filled : bool, (optional)
-            if sape is filled (will not enable filling)
+            if shape is filled (will not enable filling)
             defaults to False
         closed : bool, (optional)
             if first point connected to last
@@ -291,7 +293,7 @@ def end_shape(self, filled: bool = False, closed: bool = False) -> None:
 ```py
 def vertex(self, point: tuple):
     """
-    draws shapes with given vertixes
+    draws shapes with given vertexes
 
     Parameters
     ----------
@@ -418,7 +420,7 @@ def text_size(self, size: int) -> None:
     """
 ```
 
-* ``renderer.set_background(color)`` will set the background color to ``color`` and will apply the background layer every time through ``draw``, so the math to get the right color can only be done once in ``etup`` ; setting this to ``None`` will disable the auto background feature
+* ``renderer.set_background(color)`` will set the background color to ``color`` and will apply the background layer every time through ``draw``, so the math to get the right color can only be done once in ``setup`` ; setting this to ``None`` will disable the auto background feature
 
 ```py
 def set_background(self, *color: Union[None, int, str]) -> None:
@@ -478,15 +480,15 @@ def pop(self) -> None:
 * ``renderer.translate(x, y)`` will translate the axis origin to ``(x, y)`` ; also texts are always rendered based on the window axis and thus do not experience any tanslations
 
 ```py
-def translate(self, x: int = 0, y: int = 0) -> None:
+def translate(self, x: float = 0, y: float = 0) -> None:
     """
-    translates the axes origins, additive
+    translates the axes origin, additive
 
     Parameters
     ----------
-        x : int
+        x : float
             translation for x-axis
-        y : int
+        y : float
             translation for y-axis
     """
 ```
@@ -520,7 +522,7 @@ def scale(self, scale: float) -> None:
     """
 ```
 
-* ``renderer.reset_matrix()`` will reset the translation and drawing modes of the renderer ; reset the translation, the rect mode and the translation behaviour
+* ``renderer.reset_matrix()`` will reset the translation and drawing modes of the renderer ; reset the translation, the rect mode and the translation behavior
 
 ```py
 def reset_matrix(self) -> None:
@@ -531,47 +533,47 @@ def reset_matrix(self) -> None:
     """
 ```
 
-* ``renderer.translation_behaviour = "RESET"`` will reset the axis origin back every time trough ``draw``, setting this to ``"KEEP"`` allows you to only set the translation once in ``setup``
+* ``renderer.translation_behavior = "RESET"`` will reset the axis origin back every time trough ``draw``, setting this to ``"KEEP"`` allows you to only set the translation once in ``setup``
 
 ```py
-@translation_behaviour.setter
-def translation_behaviour(self, behaviour: str) -> None:
+@translation_behavior.setter
+def translation_behavior(self, behavior: str) -> None:
     """
-    sets the global translation behavious
+    sets the global translation behavior
 
     Parameters
     ----------
-        behaviour : str
+        behavior : str
             KEEP | RESET
     """
 ```
 
-* ``renderer.rotation_behaviour = "RESET"`` will reset the axis rotation back every time trough ``draw``, setting this to ``"KEEP"`` allows you to only set the rotation once in ``setup``
+* ``renderer.rotation_behavior = "RESET"`` will reset the axis rotation back every time trough ``draw``, setting this to ``"KEEP"`` allows you to only set the rotation once in ``setup``
 
 ```py
-@rotation_behaviour.setter
-def rotation_behaviour(self, behaviour: str) -> None:
+@rotation_behavior.setter
+def rotation_behavior(self, behavior: str) -> None:
     """
-    sets the global rotation behavious
+    sets the global rotation behavior
 
     Parameters
     ----------
-        behaviour : str
+        behavior : str
             KEEP | RESET
     """
 ```
 
-* ``renderer.scale_behaviour = "RESET"`` will reset the scaling to 1 every time trough ``draw``, setting this to ``"KEEP"`` allows you to only set the scaling once in ``setup``
+* ``renderer.scale_behavior = "RESET"`` will reset the scaling to 1 every time trough ``draw``, setting this to ``"KEEP"`` allows you to only set the scaling once in ``setup``
 
 ```py
-@scale_behaviour.setter
-def scale_behaviour(self, behaviour: str) -> None:
+@scale_behavior.setter
+def scale_behavior(self, behavior: str) -> None:
     """
-    sets the global scale behavious
+    sets the global scale behavior
 
     Parameters
     ----------
-        behaviour : str
+        behavior : str
             KEEP | RESET
     """
 ```
@@ -637,10 +639,19 @@ def set_title(self, title: str) -> None:
     """
 ```
 
+* ``renderer.set_icon("images/app.ico")`` will set the icon of the window the the specified file
+
+```py
+def set_icon(self, path: str) -> None:
+    """
+    sets the icon of the app
+    """
+```
+
 * ``renderer.new_keypress(renderer.keys.K_SPACE, lambda: print("space"))`` will allow the user to press the space bar to print "space" in the terminal, does nothing if the given key already has an action
 
 ```py
-def new_keypress(self, key: int, action, behaviour: str = PRESSED) -> None:
+def new_keypress(self, key: int, action, behavior: str = PRESSED) -> None:
     """
     adds a new key and its corresponding action
     please use ``Renderer.keys.`` to find keys
@@ -648,20 +659,20 @@ def new_keypress(self, key: int, action, behaviour: str = PRESSED) -> None:
     Parameters
     ----------
         key : int
-            keyboard key indentifier
+            keyboard key identifier
         action : python function
             action to perform each time the key is pressed
-        behaviour : str, (optional)
-            key behaviour
+        behavior : str, (optional)
+            key behavior
             PRESSED | RELEASED | HOLD
             defaults to PRESSED
     """
 ```
 
-* ``renderer.update_keypress(renderer.keys.K_SPACE, lambda: print("space !"), behaviour=HOLD)`` will now allow the user to hold the space bar to print "space !"s in the terminal, does nothing if the given key does not exist
+* ``renderer.update_keypress(renderer.keys.K_SPACE, lambda: print("space !"), behavior=HOLD)`` will now allow the user to hold the space bar to print "space !"s in the terminal, does nothing if the given key does not exist
 
 ```py
-def update_keypress(self, key: int, action, behaviour: str = None) -> None:
+def update_keypress(self, key: int, action, behavior: str = None) -> None:
     """
     updates the action of a given key
     please use ``Renderer.keys.`` to find keys
@@ -672,8 +683,8 @@ def update_keypress(self, key: int, action, behaviour: str = None) -> None:
             keyboard key identifier
         action : python function
             new action
-        behaviour : str, (optional)
-            key behaviour (if not specified, will keep previous)
+        behavior : str, (optional)
+            key behavior (if not specified, will keep previous)
             PRESSED | RELEASED | HOLD
             defaults to None
     """
@@ -728,13 +739,63 @@ def mouse_y(self) -> int:
     """
 ```
 
+### some image handling
+
+Phoenyx lets you display and manipulate images (either .jpg or .png work the best). Images are displayed at a certain position (top right corner by default unless rect_mode tells otherwise). You can also rotate and scale images, note that rotating images will create a bigger axis aligned image with your rotated image inside, so the image rectangle will be modified.
+
+* ``image = renderer.load_image(images/kitten.png)`` will load an image as a Surface
+
+```py
+def load_image(self, path: str) -> pygame.Surface:
+    """
+    loads an image
+    """
+```
+
+* ``new_image = renderer.transform image(image, scale=.5, angle=0)`` will scale the image and return a new one
+
+```py
+def transform_image(self, image: pygame.Surface, scale: float = 1, angle: float = 0) -> pygame.Surface:
+    """
+    applies scale and / or rotation on a image and returns a new image
+    does not modify the original image
+    """
+```
+
+* ``renderer.get_image_size(image)`` will return the image rectangle size in a tuple
+
+```py
+def get_image_size(self, image: pygame.Surface) -> tuple[int, int]:
+    """
+    gets width, height of an image
+    """
+```
+
+* ``renderer.draw_image(image, (0 ,0))`` will draw the image in the top right corner of the screen
+
+```py
+def draw_image(self, x: int, y: int, image: pygame.Surface) -> None:
+    """
+    displays an image on the screen
+
+    Parameters
+    ----------
+        x : int
+            x-coordinate
+        y : int
+            y-coordinate
+        image : pygame.Surface
+            loaded image
+    """
+```
+
 ### some interractive drawing
 
-Phoenyx allows you to type instructions in IDLE for eg and see things happening in the window. It is worth noting that since the following instence of Renderer will not run its main loop, only basic drawing stuff will be available. The following snippet should be typed one line at a time.
+Phoenyx allows you to type instructions in IDLE for eg and see things happening in the window. It is worth noting that since the following instance of Renderer will not run its main loop, only basic drawing stuff will be available. The following code snip should be typed one line at a time.
 
 ```py
 from phoenyx import *
-r = Renderer(400, 400, "test")  # new instence of Renderer
+r = Renderer(400, 400, "test")  # new instance of Renderer
 
 r.background(51)
 r.stroke = "forest green"
@@ -772,7 +833,7 @@ def quit(self) -> None:
 
 Phoenyx actually have button, slider and menu integration. Some of the following methods might have extensive parameter list and docstrings so fasten your seatbelt.
 
-* ``renderer.create_button(x, y, name, **kwargs)`` will create a button at ``(x, y)`` named whatever is inside of ``name`` with some additionnal keyword arguments (see Options below)
+* ``renderer.create_button(x, y, name, **kwargs)`` will create a button at ``(x, y)`` named whatever is inside of ``name`` with some additional keyword arguments (see Options below)
 
 ```py
 def create_button(self, x: int, y: int, name: str, **kwargs) -> Button:
@@ -791,7 +852,7 @@ def create_button(self, x: int, y: int, name: str, **kwargs) -> Button:
     Options
     -------
         count : int
-            number of frames to pass while unclicked to be able to trigger the button again
+            number of frames to pass while un-clicked to be able to trigger the button again
         action : python function
             the action to trigger when pressed
         height : int
@@ -815,7 +876,7 @@ def create_button(self, x: int, y: int, name: str, **kwargs) -> Button:
     """
 ```
 
-* ``renderer.create_slider(x, y, name, min, max, value, incr, **kwargs)`` will create a slider at ``(x, y)``, named ``name``, having a value range between ``(min, max)`` (inclusive), an initial value of ``value`` and setting values with ``incr`` decimals, comes with additionnal keyword arguments
+* ``renderer.create_slider(x, y, name, min, max, value, incr, **kwargs)`` will create a slider at ``(x, y)``, named ``name``, having a value range between ``(min, max)`` (inclusive), an initial value of ``value`` and setting values with ``incr`` decimals, comes with additional keyword arguments
 
 ```py
 def create_slider(self, x: int, y: int, name: str, min: float, max: float, value: float, incr: int,
@@ -838,7 +899,7 @@ def create_slider(self, x: int, y: int, name: str, min: float, max: float, value
         value : float
             current value
         incr : int
-            rounding (may not be effective depending on the lenght of the slider)
+            rounding (may not be effective depending on the length of the slider)
 
     Options
     -------
@@ -864,7 +925,7 @@ def create_slider(self, x: int, y: int, name: str, min: float, max: float, value
     """
 ```
 
-* ``renderer.create_menu(name, **kwargs)`` will create a menu named ``name`` with additionnal options and keyword arguments
+* ``renderer.create_menu(name, **kwargs)`` will create a menu named ``name`` with additional options and keyword arguments
 
 ```py
 def create_menu(self, name: str, **kwargs) -> Menu:
@@ -882,7 +943,7 @@ def create_menu(self, name: str, **kwargs) -> Menu:
             side of the window to display the menu
             LEFT | RIGHT
         length : int
-            lenght of the menu (its height)
+            length of the menu (its height)
             by default the menu height will be on auto
         background : None | bool | tuple | int | str
             draw a background when expanded
@@ -907,7 +968,7 @@ def create_menu(self, name: str, **kwargs) -> Menu:
 
 Please not that following methods are generic and that ``[sprite]`` is methods identifiers can be replaced with ``button``, ``slider`` or ``menu``
 
-* ``renderer.get_[sprite](name)`` will returns the matiching [sprite] based on the name of the [sprite]
+* ``renderer.get_[sprite](name)`` will returns the matching [sprite] based on the name of the [sprite]
 
 ```py
 def get_[sprite](self, name: str) -> [Sprite]:
@@ -926,7 +987,7 @@ def get_[sprite](self, name: str) -> [Sprite]:
     """
 ```
 
-* ``renderer.kill_[sprite](name)`` will supress the matching [sprite]
+* ``renderer.kill_[sprite](name)`` will suppress the matching [sprite]
 
 ```py
 def kill_[sprite](self, name: str) -> None:
@@ -942,7 +1003,7 @@ def kill_[sprite](self, name: str) -> None:
     """
 ```
 
-* ``renderer.pop_[sprite](name)`` will supress and return the matching [sprite]
+* ``renderer.pop_[sprite](name)`` will suppress and return the matching [sprite]
 
 ```py
 def pop_[sprite](self, name: str) -> [Sprite]:
@@ -961,6 +1022,8 @@ def pop_[sprite](self, name: str) -> [Sprite]:
         [Sprite] | None : matched [sprite] if found
     """
 ```
+
+### scrollbar integration
 
 ## The ``Button`` class
 
@@ -998,7 +1061,7 @@ def __init__(self,
         name : str
             the name of the button (must be unique !)
         count : int, (optional)
-            number of frames to pass while unclicked to be able to trigger the button again
+            number of frames to pass while un-clicked to be able to trigger the button again
             defaults to 1
         action : python function, (optional)
             function to trigger when pressed
@@ -1101,6 +1164,50 @@ def __init__(self,
 
 ### manipulation
 
+We will assume now that we have ``slider = renderer.create_slider(*args, **kwargs)``
+
+* ``slider.hide()`` will hide the slider and make it unavailable for user interraction, it could be usefull regarding performances
+
+```py
+def hide(self) -> None:
+    """
+    hides the slider (does not display it automatically on the screen)
+    slider value setting becomes unaccessible
+    opposite method is ``reveal``
+    """
+```
+
+* ``slider.reveal()`` is the opposite method
+
+```py
+def reveal(self) -> None:
+    """
+    reveals the slider back (displays it on the screen)
+    slider value setting becomes accessible again
+    opposite method is ``hide``
+    """
+```
+
+* ``slider.value`` is the current value of the slider
+
+```py
+@property
+def value(self) -> float:
+    """
+    gets current slider value
+    """
+```
+
+* ``slider.get_new_value()`` will return the value of the slider if and only if the slider was recently activated
+
+```py
+def get_new_value(self) -> Union[float, None]:
+    """
+    value of slider if slider was activated and then idle
+    will be ``None`` most of the time
+    """
+```
+
 ## The ``Menu`` class
 
 This section will focus more on the Menu class. It is worth noting that menus are automatically drawn on the screen (even if they have a draw method) and automatically updated. When closed, menus are only drawn as 3 lines, when expanded, menus will act as buttons and perform a small animation.
@@ -1137,7 +1244,7 @@ def __init__(self,
             draw a background when expanded
             defaults to True
         length : int, (optional)
-            lenght of the menu (its height)
+            length of the menu (its height)
             by default the menu height will on auto
             defaults to None
         color : tuple | int | str, (optional)
@@ -1165,7 +1272,7 @@ Phoenyx implements small data structure usefull to handle noises algorithm. Thes
 
 ### ``OpenSimplexNoise`` class
 
-Lets actually have a noise object. OpenSimplex is a specific algorithm that aims to beautify the Perlin Noise algorithm but because I implemented OpenSimplex before Perlin Noise, lets look at this one before. This noise object support 1 to 4 dimensionnal evaluation.
+Lets actually have a noise object. OpenSimplex is a specific algorithm that aims to beautify the Perlin Noise algorithm but because I implemented OpenSimplex before Perlin Noise, lets look at this one before. This noise object support 1 to 4 dimensional evaluation.
 
 ```py
 noise = OpenSimplexNoise()
@@ -1264,7 +1371,7 @@ def __call__(self, *args) -> float:
 
 ### ``PerlinNoise`` class
 
-Perlin Noise is the basic noise algorithm. It supports n dimensionnal evaluation.
+Perlin Noise is the basic noise algorithm. It supports n dimensional evaluation.
 
 ```py
 noise = PerlinNoise(dim, unbias=True)
@@ -1501,7 +1608,7 @@ def add_poly(self,
     """
 ```
 
-* ``sandbox.extend_segment(segment, (600, 600), 0, 100, 2, 5)`` will extend our previously created segment (assuming we stored the result of add_segment in segment) with a segment of lenght 100, mass 2 and radius 5 which makes an angle of 0 with the x-axis
+* ``sandbox.extend_segment(segment, (600, 600), 0, 100, 2, 5)`` will extend our previously created segment (assuming we stored the result of add_segment in segment) with a segment of length 100, mass 2 and radius 5 which makes an angle of 0 with the x-axis
 
 ```py
  def extend_segment(self,
@@ -1578,6 +1685,6 @@ def add_slide_joint(self, pos: Union[tuple[float, float], Vector], shape: pymunk
             the shape to attach to
             can be Circle, Segment and Poly
         limit : Union[float, tuple[float, float]]
-                max distance limit, optionnal lower limit
+                max distance limit, optional lower limit
     """
 ```
