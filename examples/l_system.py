@@ -75,7 +75,7 @@ def setup() -> None:
         color=51,
         stroke=255,
         weight=1,
-        shape=ELLIPSE,
+        shape=RECTANGLE,
         action=generate,
     )
     turtle()

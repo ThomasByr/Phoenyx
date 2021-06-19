@@ -91,7 +91,7 @@ class Segment:
 
     def show(self) -> None:
         """
-        calls draw methods from Renerer
+        calls draw methods from Renderer
         """
         self._renderer.stroke = 255
         self._renderer.no_fill()
@@ -120,7 +120,7 @@ class Tentacle:
     based on the ``Renderer`` renderer in python and ``Vector`` class\\
     uses ``Segment``
 
-    Tencacle has:
+    Tentacle has:
      * a ``size`` for the number of Segments
      * the length of all its segments ``seg_length``
      * a ``base``
@@ -137,7 +137,7 @@ class Tentacle:
         Parameters
         ----------
             renderer : Renderer
-                main Renerer
+                main Renderer
             win : tuple
                 size of windows
             size : int
@@ -232,7 +232,7 @@ class Ball:
 
     def show(self) -> None:
         """
-        calls draw methods from Renerer
+        calls draw methods from Renderer
         """
         self._renderer.fill = 100, 255, 0
         self._renderer.no_stroke()
