@@ -581,7 +581,7 @@ class Slider:
             val = _map(x_rel, 0, self.length, self.min_val, self.max_val)
             self.value = round(val, self._incr)
 
-    def collide(self, pos: tuple) -> bool:
+    def collide(self, pos: tuple[int, int]) -> bool:
         """
         collision check
 

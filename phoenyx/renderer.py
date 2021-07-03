@@ -172,6 +172,7 @@ class Renderer:
         # scrollbar management
         self._has_scrollbar = False
         self._scrollbar: ScrollBar = None
+        self._ps_value = 0
 
         # fps
         self._fps = 60
@@ -1651,6 +1652,83 @@ class Renderer:
         self._remove_menu(sprite)
         return sprite
 
+    def _add_scrollbar(self, scrollbar: ScrollBar) -> None:
+        """
+        sets a new scrollbar
+
+        Parameters
+        ----------
+            scrollbar : ScrollBar
+                new scrollbar
+        """
+        self._scrollbar = scrollbar
+
+    def create_scrollbar(self, mn: int, mx: int, **kwargs) -> ScrollBar:
+        """
+        creates a scrollbar and adds it to the renderer
+
+        Parameters
+        ----------
+            mn : int
+                minimum y view point
+            mx : int
+                maximum y view point
+
+        Options
+        -------
+            color1 : Union[tuple[int, int, int], int, str], (optional)
+                color of the scrollbar item
+            color2 : Union[tuple[int, int, int], int, str], (optional)
+                color of the background when activated
+        """
+        scrollbar = ScrollBar(self, (mn, mx), **kwargs)
+        if scrollbar.has_error:
+            return
+        if self._has_scrollbar:
+            warn(f"ERROR [renderer] : already have a scrollbar, nothing happened")
+            return
+        self._add_scrollbar(scrollbar)
+        self._has_scrollbar = True
+        return scrollbar
+
+    def _remove_scrollbar(self) -> None:
+        """
+        kills the living sprite\\
+        removes it but still can be accessed
+        """
+        if self._scrollbar is not None:
+            self._scrollbar = None
+            self._has_scrollbar = False
+
+    def get_scrollbar(self) -> ScrollBar:
+        """
+        gets active scrollbar
+
+        Returns
+        -------
+            ScrollBar : unique scrollbar if found
+        """
+        return self._scrollbar
+
+    def kill_scrollbar(self) -> None:
+        """
+        kills living scrollbar\\
+        does not return anything
+        """
+        self._remove_scrollbar()
+
+    def pop_scrollbar(self) -> ScrollBar:
+        """
+        kills living scrollbar
+
+        Returns
+        -------
+            ScrollBar | None : unique scrollbar
+        """
+        sprite = self._scrollbar
+        self._remove_scrollbar()
+        return sprite
+
     @staticmethod
     def _events() -> list:
         """
@@ -1947,10 +2025,25 @@ class Renderer:
             # menu management
             if self._has_left_menu or self._has_right_menu:
                 for menu in self._all_menus:
-                    menu.draw()
+                    if not menu.is_hidden:
+                        menu.draw()
+
+            # scrollbar management
+            if self._has_scrollbar:
+                scrollbar = self._scrollbar
+                if not scrollbar.is_hidden:
+                    scrollbar.draw()
+                    self._has_translation = True
+                    value = scrollbar.value
+                    if self.translation_behavior == RESET:
+                        self._y_offset -= value
+                    elif self.translation_behavior == KEEP:
+                        self._y_offset += self._ps_value
+                        self._y_offset -= value
+                    self._ps_value = value
 
             # trigerring buttons, sliders and menus
-            pos = pygame.mouse.get_pos()
+            pos: tuple[int, int] = pygame.mouse.get_pos()
             if pygame.mouse.get_pressed()[0] != 0:
 
                 if self._has_buttons:
@@ -1975,7 +2068,11 @@ class Renderer:
 
                 if self._has_scrollbar:
                     scrollbar = self._scrollbar
-                    # todo: update state and trigger
+                    if not scrollbar.is_hidden and scrollbar.collide(pos):
+                        if not scrollbar.is_pinned():
+                            scrollbar.set_pin(pos)
+                        else:
+                            scrollbar.set_value_by_y(pos[1] - scrollbar.get_pin())
 
             else:
                 if self._has_buttons:
@@ -1987,11 +2084,23 @@ class Renderer:
                 if self._has_left_menu or self._has_right_menu:
                     for menu in self._all_menus:
                         menu.click()
+                if self._has_scrollbar:
+                    scrollbar = self._scrollbar
+                    scrollbar.update_state(pos)
+                    scrollbar.unpin()
 
             # quit event and keys
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self._is_running = False
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self._has_scrollbar:
+                        scrollbar = self._scrollbar
+                        if event.button == 4:
+                            scrollbar.scroll_up()
+                        if event.button == 5:
+                            scrollbar.scroll_down()
 
                 if event.type == pygame.KEYUP:
                     if (k := event.key) in self.key_binding:

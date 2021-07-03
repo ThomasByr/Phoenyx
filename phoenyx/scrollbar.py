@@ -28,20 +28,40 @@ class ScrollBar:
                  yrange: tuple[int, int],
                  color1: Union[tuple[int, int, int], int, str] = None,
                  color2: Union[tuple[int, int, int], int, str] = None) -> None:
+        """
+        new ScrollBar instance
+        
+        Parameters
+        ----------
+            renderer : Renderer
+                main renderer
+            yrange : tuple[int, int]
+                minimum and maximum y view point
+            color1 : Union[tuple[int, int, int], int, str], (optional)
+                color of the scrollbar item
+                defaults to None
+            color2 : Union[tuple[int, int, int], int, str], (optional)
+                color of the background when activated
+                defaults to None
+        """
         self.has_error = False
         self._renderer = renderer
 
         self._min_val = min(yrange)
         self._max_val = max(yrange)
         self._value = self._min_val
-        if self._max_val - self._min_val <= self._renderer.win_height:
-            warn(
-                f"ERROR [active scrollbar] : yrange must exceed the window height, scrollbar was not created")
-            self.has_error = True
+
+        self._y_pin = 0
+        self._pinned = False
+
+        # if self._max_val - self._min_val <= self._renderer.win_height:
+        #     warn(
+        #         f"ERROR [active scrollbar] : yrange must exceed the window height, scrollbar was not created")
+        #     self.has_error = True
 
         h = self._renderer.win_height
         r = self._max_val - self._min_val
-        self._height = 10 + (h-10) / m.sqrt(1 + r - h)
+        self._height = 30 + (h-30) / m.sqrt(r + 1)
 
         color1 = 155 if color1 is None else color1
         if isinstance(color1, tuple) and len(color1) == 3:
@@ -138,6 +158,20 @@ class ScrollBar:
         return self._is_playing
 
     @property
+    def is_hidden(self) -> bool:
+        """
+        gets current display state of the scrollbar
+        """
+        return self._is_hidden
+
+    @is_hidden.setter
+    def is_hidden(self, value: bool) -> None:
+        """
+        forces the display state of the scrollbar
+        """
+        self._is_hidden = value
+
+    @property
     def color1(self) -> tuple[int, int, int]:
         """
         gets current color1
@@ -222,6 +256,41 @@ class ScrollBar:
         fps = self._renderer.fps
         self._max_ticks = round(fps * sec)
 
+    def collide(self, pos: tuple[int, int]) -> bool:
+        """
+        if mouse is inside
+        """
+        if self._pinned:
+            return True
+        return (self._renderer.win_width - 15 <= pos[0] <= self._renderer.win_width)\
+               and (self.ypos <= pos[1] <= self.ypos + self.height)
+
+    def get_pin(self) -> float:
+        """
+        pin y position
+        """
+        return self._y_pin
+
+    def is_pinned(self) -> bool:
+        """
+        if the scrollbar has been pinned
+        """
+        return self._pinned
+
+    def set_pin(self, pos: tuple[int, int]) -> None:
+        """
+        set the pin
+        """
+        self._pinned = True
+        self._y_pin = pos[1] - self.ypos
+
+    def unpin(self) -> None:
+        """
+        unpin the scrollbar
+        """
+        self._pinned = False
+        self._y_pin = 0
+
     def animate(self) -> None:
         """
         go trough animation when hoovering\\
@@ -266,6 +335,10 @@ class ScrollBar:
         """
         v = _map(ypos, 0, self._renderer.win_height - self.height, self.min_val, self.max_val)
         self._value = v
+        if self._value < self.min_val:
+            self._value = self._min_val
+        if self._value > self.max_val:
+            self._value = self.max_val
 
     def scroll_up(self, amount: float = .05) -> None:
         """
@@ -323,7 +396,7 @@ class ScrollBar:
         if self.is_active:
             if not self.is_playing:
                 pygame.draw.rect(window, self.color2, ((width - 15, 0), (15, height)), 0)
-                pygame.draw_rect(window, self.color1, ((width - 15, self.ypos), (15, self.height)), 0)
+                pygame.draw.rect(window, self.color1, ((width - 15, self.ypos), (15, self.height)), 0)
 
             else:
                 w = _map(self._tick_count, 0, self._max_ticks, 15, 5)
@@ -332,7 +405,7 @@ class ScrollBar:
                 b = _map(self._tick_count, 0, self._max_ticks, self.color2[2], bg[2])
 
                 pygame.draw.rect(window, (r, g, b), ((width - 15, 0), (15, height)), 0)
-                pygame.draw_rect(window, self.color1, ((width - w, self.ypos), (w, self.height)), 0)
+                pygame.draw.rect(window, self.color1, ((width - w, self.ypos), (w, self.height)), 0)
 
             self.animate()
 
@@ -353,6 +426,6 @@ class ScrollBar:
                 b = _map(self._tick_count, self._max_ticks, 0, self.color2[2], bg[2])
 
                 pygame.draw.rect(window, (r, g, b), ((width - 15, 0), (15, height)), 0)
-                pygame.draw_rect(window, self.color1, ((width - w, self.ypos), (w, self.height)), 0)
+                pygame.draw.rect(window, self.color1, ((width - w, self.ypos), (w, self.height)), 0)
 
             self.animate()

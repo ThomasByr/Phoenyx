@@ -796,7 +796,7 @@ class Menu:
             self.tick_count = 1
             self.is_playing = False
 
-    def collide(self, pos: tuple) -> int:
+    def collide(self, pos: tuple[int, int]) -> int:
         """
         gets index of item under pos\\
         might be None

@@ -427,7 +427,7 @@ class Button:
         warn(f"INFO [button {self._name}] : action changed")
         self._action = action
 
-    def collide(self, pos) -> bool:
+    def collide(self, pos: tuple[int, int]) -> bool:
         """
         collision check
         """
