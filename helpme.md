@@ -1064,7 +1064,6 @@ def get_scrollbar(self) -> ScrollBar:
     -------
         ScrollBar : unique scrollbar if found
     """
-    return self._scrollbar
 ```
 
 * ``renderer.kill_scrollbar()`` will suppress the scrollbar
@@ -1075,7 +1074,6 @@ def kill_scrollbar(self) -> None:
     kills living scrollbar
     does not return anything
     """
-    self._remove_scrollbar()
 ```
 
 * ``renderer.kill_scrollbar()`` will suppress and return the scrollbar
@@ -1089,9 +1087,6 @@ def pop_scrollbar(self) -> ScrollBar:
     -------
         ScrollBar | None : unique scrollbar
     """
-    sprite = self._scrollbar
-    self._remove_scrollbar()
-    return sprite
 ```
 
 ## The ``Button`` class
@@ -1335,9 +1330,61 @@ def __init__(self,
 
 ### manipulation
 
+* ``menu.hide()`` will hide the menu and make it unavailable for user interraction, it could be usefull regarding performances
+
+```py
+def hide(self) -> None:
+    """
+    hides the menu (does not display it automatically on the screen)
+    menu actions become unaccessible
+    opposite method is ``reveal``
+    """
+```
+
+* ``menu.reveal()`` is the opposite method
+
+```py
+def reveal(self) -> None:
+    """
+    reveals the menu back (displays it on the screen)
+    menu actions become accessible again
+    opposite method is ``hide``
+    """
+```
+
+* ``menu.new_items(**dict_of_items_and_functions)`` will add all items / functions binding to the menu
+
+```py
+def new_items(self, **kwargs) -> None:
+    """
+    adds items inside the menu
+
+    Keywords Arguments
+    ------------------
+        * : str
+            name of the buttons on the menu, in order
+            must be linked to a python function
+    """
+```
+
+* ``menu.new_items(**dict_of_items_and_functions)`` will modify all functions linked to the items
+
+```py
+def update_items(self, **kwargs) -> None:
+    """
+    modifies items inside the menu
+
+    Keywords Arguments
+    ------------------
+        * : str
+            name of the buttons on the menu, in order
+            must be linked to a python function
+    """
+```
+
 ## The ``ScrollBar`` class
 
-This section will focus more on the ScrollBar class. It is worth noting that scrollbars are automatically drawn on the screen (even if they have a draw method) and automatically updated. All they do is enabling translation, and translate the y axis by some ammount, while dealing with translation behavior.
+This section will focus more on the ScrollBar class. It is worth noting that scrollbars are automatically drawn on the screen (even if they have a draw method) and automatically updated. All they do is enabling translation, and translate the y axis by some ammount, while dealing with translation behavior. Please note that not all that you are drawing will be translated (shapes will translate along the y axis, but neither the text nor items will).
 
 ### creation
 
@@ -1370,6 +1417,28 @@ def __init__(self,
 Pretty strait forward isn't it ? Well, there is not much going on here, as a vertical scrollbar does not do anything crazy but translating and animating.
 
 ### manipulation
+
+* ``scrollbar.hide()`` will hide the scrollbar and make it unavailable for user interraction, it could be usefull regarding performances
+
+```py
+def hide(self) -> None:
+    """
+    hides the scrollbar (does not display it automatically on the screen)
+    scrollbar actions become unaccessible
+    opposite method is ``reveal``
+    """
+```
+
+* ``scrollbar.reveal()`` is the opposite method
+
+```py
+def reveal(self) -> None:
+    """
+    reveals the scrollbar back (displays it on the screen)
+    scrollbar actions become accessible again
+    opposite method is ``hide``
+    """
+```
 
 ## Noise algorithms
 
@@ -1580,8 +1649,8 @@ def __init__(self,
 
     Note
     ----
-        The center of the SandBox is the center of the Renderer window ;\\
-        The default size of the SandBox is set to fill the Renderer window ;\\
+        The center of the SandBox is the center of the Renderer window ;
+        The default size of the SandBox is set to fill the Renderer window ;
         The default gravitational constant is set to 900 downwards.
     """
 ```
