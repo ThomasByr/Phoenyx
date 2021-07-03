@@ -17,10 +17,13 @@
 4. [The ``Menu`` class](#the-menu-class)
    1. [creation](#creation-2)
    2. [manipulation](#manipulation-2)
-5. [Noise algorithms](#noise-algorithms)
+5. [The ``ScrollBar`` class](#the-scrollbar-class)
+   1. [creation](#creation-3)
+   2. [manipulation](#manipulation-3)
+6. [Noise algorithms](#noise-algorithms)
    1. [``OpenSimplexNoise`` class](#opensimplexnoise-class)
    2. [``PerlinNoise`` class](#perlinnoise-class)
-6. [``SandBox`` physics engine](#sandbox-physics-engine)
+7. [``SandBox`` physics engine](#sandbox-physics-engine)
 
 ## The ``Renderer`` class
 
@@ -1025,6 +1028,72 @@ def pop_[sprite](self, name: str) -> [Sprite]:
 
 ### scrollbar integration
 
+Since v0.3.3, users can create a unique scrollbar (appears on the right of the main window). Its methods are the same as buttons' sliders' or menus' but since it is a unique item, it has its own section. Note that you can only have one scrollbar at a time, and that it responds at either scrolling with the mouse of dragging.
+
+* ``renderer.create_scrollbar(-100, 100)`` will create a scrollbar item if no scrollbar is living, allowing the user to see an additionnal 100 pixels on both edges
+
+```py
+def create_scrollbar(self, mn: int, mx: int, **kwargs) -> ScrollBar:
+    """
+    creates a scrollbar and adds it to the renderer
+
+    Parameters
+    ----------
+        mn : int
+            minimum y view point
+        mx : int
+            maximum y view point
+
+    Options
+    -------
+        color1 : Union[tuple[int, int, int], int, str], (optional)
+            color of the scrollbar item
+        color2 : Union[tuple[int, int, int], int, str], (optional)
+            color of the background when activated
+    """
+```
+
+* ``renderer.get_scrollbar()`` will return the unique scrollbar if any
+
+```py
+def get_scrollbar(self) -> ScrollBar:
+    """
+    gets active scrollbar
+
+    Returns
+    -------
+        ScrollBar : unique scrollbar if found
+    """
+    return self._scrollbar
+```
+
+* ``renderer.kill_scrollbar()`` will suppress the scrollbar
+
+```py
+def kill_scrollbar(self) -> None:
+    """
+    kills living scrollbar
+    does not return anything
+    """
+    self._remove_scrollbar()
+```
+
+* ``renderer.kill_scrollbar()`` will suppress and return the scrollbar
+
+```py
+def pop_scrollbar(self) -> ScrollBar:
+    """
+    kills living scrollbar
+
+    Returns
+    -------
+        ScrollBar | None : unique scrollbar
+    """
+    sprite = self._scrollbar
+    self._remove_scrollbar()
+    return sprite
+```
+
 ## The ``Button`` class
 
 This section will focus more on the Button class. It is worth noting that button are automatically drawn on the screen (even if they have a draw method) and automatically checked for collision with mouse. Their action will be automatically performed when clicked.
@@ -1263,6 +1332,42 @@ def __init__(self,
             must be linked to a python function
     """
 ```
+
+### manipulation
+
+## The ``ScrollBar`` class
+
+This section will focus more on the ScrollBar class. It is worth noting that scrollbars are automatically drawn on the screen (even if they have a draw method) and automatically updated. All they do is enabling translation, and translate the y axis by some ammount, while dealing with translation behavior.
+
+### creation
+
+ScrollBar is created by the renderer (see [scrollbar integration](#scrollbar-integration) subsection). Here we will assume that we are inside of the scrollbar class. Here is the ``__init__`` function :
+
+```py
+def __init__(self,
+                renderer,
+                yrange: tuple[int, int],
+                color1: Union[tuple[int, int, int], int, str] = None,
+                color2: Union[tuple[int, int, int], int, str] = None) -> None:
+    """
+    new ScrollBar instance
+    
+    Parameters
+    ----------
+        renderer : Renderer
+            main renderer
+        yrange : tuple[int, int]
+            minimum and maximum y view point
+        color1 : Union[tuple[int, int, int], int, str], (optional)
+            color of the scrollbar item
+            defaults to None
+        color2 : Union[tuple[int, int, int], int, str], (optional)
+            color of the background when activated
+            defaults to None
+    """
+```
+
+Pretty strait forward isn't it ? Well, there is not much going on here, as a vertical scrollbar does not do anything crazy but translating and animating.
 
 ### manipulation
 
