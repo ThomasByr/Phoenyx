@@ -445,7 +445,7 @@ class Button:
         renderer.no_fill()
         renderer.no_stroke()
 
-        name_label = renderer.FONT.render(self.name, True, (0, 0, 0))
+        name_label = renderer.font.render(self.name, True, (0, 0, 0))
 
         x = self._x + (self._width // 2)
         y = self._y + (self._height // 2)

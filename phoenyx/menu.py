@@ -554,7 +554,7 @@ class Menu:
 
         self._renderer.push()
         self._renderer.text_size = self.text_size
-        font = self._renderer.FONT
+        font = self._renderer.font
         for item in self._all_items:
             label = font.render(item, True, (0, 0, 0))
             width = label.get_width()

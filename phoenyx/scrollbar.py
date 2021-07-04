@@ -249,7 +249,7 @@ class ScrollBar:
             return
         self._is_hidden = False
 
-    def set_max_ticks(self, sec: float = .2) -> None:
+    def set_max_ticks(self, sec: float = .1) -> None:
         """
         sets max tick for animation base on fps
         """
@@ -399,10 +399,10 @@ class ScrollBar:
                 pygame.draw.rect(window, self.color1, ((width - 15, self.ypos), (15, self.height)), 0)
 
             else:
-                w = _map(self._tick_count, 0, self._max_ticks, 15, 5)
-                r = _map(self._tick_count, 0, self._max_ticks, self.color2[0], bg[0])
-                g = _map(self._tick_count, 0, self._max_ticks, self.color2[1], bg[1])
-                b = _map(self._tick_count, 0, self._max_ticks, self.color2[2], bg[2])
+                w = _map(self._tick_count, self._max_ticks, 0, 15, 5)
+                r = _map(self._tick_count, self._max_ticks, 0, self.color2[0], bg[0])
+                g = _map(self._tick_count, self._max_ticks, 0, self.color2[1], bg[1])
+                b = _map(self._tick_count, self._max_ticks, 0, self.color2[2], bg[2])
 
                 pygame.draw.rect(window, (r, g, b), ((width - 15, 0), (15, height)), 0)
                 pygame.draw.rect(window, self.color1, ((width - w, self.ypos), (w, self.height)), 0)
@@ -420,10 +420,10 @@ class ScrollBar:
                                      (width - 2 - i, self.ypos + self.height - i), 1)
 
             else:
-                w = _map(self._tick_count, self._max_ticks, 0, 15, 5)
-                r = _map(self._tick_count, self._max_ticks, 0, self.color2[0], bg[0])
-                g = _map(self._tick_count, self._max_ticks, 0, self.color2[1], bg[1])
-                b = _map(self._tick_count, self._max_ticks, 0, self.color2[2], bg[2])
+                w = _map(self._tick_count, 0, self._max_ticks, 15, 5)
+                r = _map(self._tick_count, 0, self._max_ticks, self.color2[0], bg[0])
+                g = _map(self._tick_count, 0, self._max_ticks, self.color2[1], bg[1])
+                b = _map(self._tick_count, 0, self._max_ticks, self.color2[2], bg[2])
 
                 pygame.draw.rect(window, (r, g, b), ((width - 15, 0), (15, height)), 0)
                 pygame.draw.rect(window, self.color1, ((width - w, self.ypos), (w, self.height)), 0)

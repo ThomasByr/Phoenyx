@@ -97,7 +97,8 @@ class Renderer:
     Finally, ERROR and WARNING do not cause a 'real' ``python error`` but throw some
     pieces of information in the console.
     """
-    FONT = pygame.font.SysFont("comicsans", 11)
+
+    # font = pygame.font.SysFont("comicsans", 11)
 
     def __init__(self, width: int, height: int, title: str = None) -> None:
         """
@@ -119,6 +120,10 @@ class Renderer:
         self._height = height
         self._title = (title, "Pygame Engine with Python")[title is None]
         pygame.display.set_caption(self._title)
+
+        self.font = pygame.font.SysFont("comicsans", 11)
+        self._ff_name = "comicsans"
+        self._ff_is_sys = True
 
         # drawing attributes management
         self._fill_color = (255, 255, 255)
@@ -428,7 +433,47 @@ class Renderer:
                 new text size
         """
         self._text_size = size
-        self.FONT = pygame.font.SysFont("comicsans", size)
+        if self._ff_is_sys:
+            self.font = pygame.font.SysFont(self._ff_name, size)
+        else:
+            self.font = pygame.font.Font(self._ff_name, size)
+
+    @property
+    def text_font(self) -> str:
+        """
+        name or path of the font in use
+        """
+        return self._ff_name
+
+    @text_font.setter
+    def text_font(self, font: str = None) -> None:
+        """
+        changes the font style
+
+        Parameters
+        ----------
+            font : str
+                name of the font if system path otherwise
+        """
+        name, path = None, None
+        if "/" in font or "\\" in font or "." in font or ".ttf" in font:
+            path = font
+        else:
+            name = font
+
+        if name is None and path is None:
+            warn(f"WARNING [renderer] : blank instruction at text_font setter, nothing changed")
+            return
+
+        size = self._text_size
+        if name is not None:
+            self._ff_name = name
+            self._ff_is_sys = True
+            self.font = pygame.font.SysFont(self._ff_name, size)
+        elif path is not None:
+            self._ff_name = path
+            self._ff_is_sys = False
+            self.font = pygame.font.Font(self._ff_name, size)
 
     @property
     def text_color(self) -> tuple[int, int, int]:
@@ -946,7 +991,7 @@ class Renderer:
                 the text to display
         """
         color = self.text_color
-        text_label = self.FONT.render(text, True, color)
+        text_label = self.font.render(text, True, color)
         self._window.blit(text_label, (x, y))
 
     def background(self, *color: Union[int, str]) -> None:

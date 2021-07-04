@@ -601,10 +601,10 @@ class Slider:
         renderer = self._renderer
         renderer.push()
 
-        name_label = renderer.FONT.render(self.name, True, (0, 0, 0))
-        min_label = renderer.FONT.render(str(round(self.min_val, self._incr)), True, (0, 0, 0))
-        max_label = renderer.FONT.render(str(round(self.max_val, self._incr)), True, (0, 0, 0))
-        val_label = renderer.FONT.render(str(self.value), True, (0, 0, 0))
+        name_label = renderer.font.render(self.name, True, (0, 0, 0))
+        min_label = renderer.font.render(str(round(self.min_val, self._incr)), True, (0, 0, 0))
+        max_label = renderer.font.render(str(round(self.max_val, self._incr)), True, (0, 0, 0))
+        val_label = renderer.font.render(str(self.value), True, (0, 0, 0))
 
         # renderer.stroke_weight = self.thickness
         # renderer.stroke = self.color
