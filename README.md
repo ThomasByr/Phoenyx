@@ -103,7 +103,7 @@ Migrating to the pymunk library for better physics (and complete support of chap
     <summary> v0.3.3: do a barrel roll (click to expand) </summary>
 
 * you can get rid of a SandBox shape if you want to
-* new methods for the Renderer to handle images
+* new methods for the Renderer to handle images and font changes
 * new ScrollBar thing (type ``help(phoenyx.scrollbar.ScrollBar)`` to learn more)
 * ScrollBar affects the Renderer view field of the main window
 * actual animation for the ScrollBar item
@@ -120,5 +120,8 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * ~~interractive drawing~~
 * ~~physics Sandbox~~
 * ~~more physics happening for bodies~~
+* forms and confirm boxes, events
 * integrate some utility functions (based on the example files)
+* 2d game oriented approach, player, compas, cells, map, ...
 * get rid of the renderer and sandbox objects and bring all methods into main scope (not guaranteed)
+* if, big if, there is a v2, 3D rendering
