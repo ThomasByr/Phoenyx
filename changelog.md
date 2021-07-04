@@ -149,7 +149,7 @@
     * removed wrap method for SandBox since it is not relevent with bodies positions
 25. *v0.3.3* do a barrel roll
     * you can get rid of a SandBox shape if you want to
-    * new methods for the Renderer to handle images
+    * new methods for the Renderer to handle images and font changes
     * new ScrollBar thing (type ``help(phoenyx.scrollbar.ScrollBar)`` to learn more)
     * ScrollBar affects the Renderer view field of the main window
     * actual animation for the ScrollBar item
