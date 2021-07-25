@@ -13,7 +13,7 @@ Some simple classes in **python** that could make your life much simplier. Relie
 
 ## What it does
 
-This library allows you to create graphical components in **pygame** in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector and a SanBox wrapper class for **pymunk** suitable for physics engines and more mathematical drawings.
+This library allows you to create graphical components in **pygame** in a very few lines of code. It handles all color management, stroke weights and filling for you. It also provides a Vector and a SandBox wrapper class for **pymunk** suitable for physics engines and more mathematical drawings.
 
 Please go and check [pygame](https://github.com/pygame/pygame.git) and [pymunk](https://github.com/viblo/pymunk.git) for their amazing work ! additional kudos to Daniel Shiffman.
 
