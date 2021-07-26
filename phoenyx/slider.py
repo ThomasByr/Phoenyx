@@ -31,8 +31,10 @@ class Slider:
                  radius: int = 7,
                  shape: str = CIRCLE,
                  thickness: int = 3,
-                 color: Union[tuple[int, int, int], int, str] = (155, 155, 155),
-                 fullcolor: Union[tuple[int, int, int], int, str] = (155, 70, 70),
+                 color: Union[tuple[int, int, int], int,
+                              str] = (155, 155, 155),
+                 fullcolor: Union[tuple[int, int, int], int,
+                                  str] = (155, 70, 70),
                  length: int = 100,
                  count: int = 30) -> None:
         """
@@ -81,16 +83,24 @@ class Slider:
         """
         self.has_error = False
         if not (min_val <= value < max_val or min_val < value <= max_val):
-            warn(f"ERROR [slider {self._name}] : wrong values Initialization, slider was not created")
+            warn(
+                f"ERROR [slider {self._name}] : wrong values Initialization, slider was not created"
+            )
             self.has_error = True
         if thickness <= 0:
-            warn(f"ERROR [slider {self._name}] : bad thickness value, slider was not created")
+            warn(
+                f"ERROR [slider {self._name}] : bad thickness value, slider was not created"
+            )
             self.has_error = True
         if radius < thickness:
-            warn(f"ERROR [slider {self._name}] : bad radius value, slider was not created")
+            warn(
+                f"ERROR [slider {self._name}] : bad radius value, slider was not created"
+            )
             self.has_error = True
         if length < 6 * radius:
-            warn(f"ERROR [slider {self._name}] : bad length value, slider was not created")
+            warn(
+                f"ERROR [slider {self._name}] : bad length value, slider was not created"
+            )
             self.has_error = True
 
         self._renderer = renderer
@@ -116,13 +126,18 @@ class Slider:
             try:
                 self._color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [slider {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         else:
-            warn(f"ERROR [slider {self._name}] : wrong color parameter, slider was not created")
+            warn(
+                f"ERROR [slider {self._name}] : wrong color parameter, slider was not created"
+            )
             self.has_error = True
 
         if isinstance(fullcolor, tuple) and len(fullcolor) == 3:
@@ -133,23 +148,31 @@ class Slider:
             try:
                 self._fullcolor = COLORS[fullcolor.lower()]
             except KeyError:
-                close = difflib.get_close_matches(fullcolor, COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(fullcolor,
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [slider {self._name}] : {fullcolor} is not a valid color name, using closest match {close} instead"
                 )
                 self._fullcolor = COLORS[close]
         else:
-            warn(f"ERROR [slider {self._name}] : wrong full color parameter, slider was not created")
+            warn(
+                f"ERROR [slider {self._name}] : wrong full color parameter, slider was not created"
+            )
             self.has_error = True
 
         if shape not in (SQUARE, CIRCLE, CROSS, PLUS):
-            warn(f"ERROR [slider {self._name}] : wrong shape parameter, slider was not created")
+            warn(
+                f"ERROR [slider {self._name}] : wrong shape parameter, slider was not created"
+            )
             self.has_error = True
         self._shape = shape
 
         self._length = length
         self._pad = self.length / (self.max_val - self.min_val)
-        x = self._x + int(self._pad * (self.value - self._min_val)) - self._radius
+        x = self._x + int(self._pad *
+                          (self.value - self._min_val)) - self._radius
         self.rect = x + self._radius, self._y
 
     @property
@@ -170,9 +193,13 @@ class Slider:
             click_count : int
                 new click_count
         """
-        warn(f"INFO [slider {self._name}] : attempting to modify click behavior")
+        warn(
+            f"INFO [slider {self._name}] : attempting to modify click behavior"
+        )
         if click_count < 0:
-            warn(f"ERROR [slider {self._name}] : bad click_count, nothing changed")
+            warn(
+                f"ERROR [slider {self._name}] : bad click_count, nothing changed"
+            )
             return
         self._click_count = click_count
 
@@ -216,7 +243,8 @@ class Slider:
         """
         sets correct coordinates to cursor
         """
-        x = self._x + int(self._pad * (self.value - self._min_val)) - self._radius
+        x = self._x + int(self._pad *
+                          (self.value - self._min_val)) - self._radius
         self.rect = x + self._radius, self._y
 
     def _redo_pad(self) -> None:
@@ -243,8 +271,11 @@ class Slider:
             value : float
                 new value
         """
-        if not (self._min_val <= value < self._max_val or self._min_val < value <= self._max_val):
-            warn(f"WARNING [slider {self._name}] : wrong value affectation, nothing happened")
+        if not (self._min_val <= value < self._max_val
+                or self._min_val < value <= self._max_val):
+            warn(
+                f"WARNING [slider {self._name}] : wrong value affectation, nothing happened"
+            )
             return
         self._value = value
         self._redo_rect()
@@ -268,9 +299,14 @@ class Slider:
             min_val : float
                 new minimum value
         """
-        warn(f"WARNING [slider {self._name}] : minimum value changing from {self._min_val} to {min_val}")
-        if not (min_val <= self._value < self._max_val or min_val < self._value <= self._max_val):
-            warn(f"WARNING [slider {self._name}] : wrong minimum value affectation, nothing happened")
+        warn(
+            f"WARNING [slider {self._name}] : minimum value changing from {self._min_val} to {min_val}"
+        )
+        if not (min_val <= self._value < self._max_val
+                or min_val < self._value <= self._max_val):
+            warn(
+                f"WARNING [slider {self._name}] : wrong minimum value affectation, nothing happened"
+            )
             return
         self._min_val = min_val
         self._redo_pad()
@@ -295,9 +331,14 @@ class Slider:
             max_val : float
                 new maximum value
         """
-        warn(f"WARNING [slider {self._name}] : maximum value changing from {self._max_val} to {max_val}")
-        if not (self._min_val <= self._value < max_val or self._min_val < self._value <= max_val):
-            warn(f"WARNING [slider {self._name}] : wrong maximum value affectation, nothing happened")
+        warn(
+            f"WARNING [slider {self._name}] : maximum value changing from {self._max_val} to {max_val}"
+        )
+        if not (self._min_val <= self._value < max_val
+                or self._min_val < self._value <= max_val):
+            warn(
+                f"WARNING [slider {self._name}] : wrong maximum value affectation, nothing happened"
+            )
             return
         self._max_val = max_val
         self._redo_pad()
@@ -324,7 +365,9 @@ class Slider:
         opposite method is ``reveal``
         """
         if self._is_hidden:
-            warn(f"WARNING [slider {self._name}] : slider is already hidden, nothing changed")
+            warn(
+                f"WARNING [slider {self._name}] : slider is already hidden, nothing changed"
+            )
             return
         self._is_hidden = True
 
@@ -335,7 +378,9 @@ class Slider:
         opposite method is ``hide``
         """
         if not self._is_hidden:
-            warn(f"WARNING [slider {self._name}] : slider is not hidden, nothing changed")
+            warn(
+                f"WARNING [slider {self._name}] : slider is not hidden, nothing changed"
+            )
             return
         self._is_hidden = False
 
@@ -411,9 +456,13 @@ class Slider:
             thickness : int
                 new thickness
         """
-        warn(f"INFO [slider {self._name}] : thickness changing from {self._thickness} to {thickness}")
+        warn(
+            f"INFO [slider {self._name}] : thickness changing from {self._thickness} to {thickness}"
+        )
         if thickness <= 0:
-            warn(f"ERROR [slider {self._name}] : bad thickness value, nothing changed")
+            warn(
+                f"ERROR [slider {self._name}] : bad thickness value, nothing changed"
+            )
             return
         self._thickness = thickness
 
@@ -436,7 +485,9 @@ class Slider:
             color : tuple | int | str
                 the new color
         """
-        warn(f"INFO [slider {self._name}] : color changing from {self._color} to {color}")
+        warn(
+            f"INFO [slider {self._name}] : color changing from {self._color} to {color}"
+        )
         if isinstance(color, tuple) and len(color) == 3:
             self._color = color
         elif isinstance(color, int):
@@ -445,13 +496,18 @@ class Slider:
             try:
                 self._color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [slider {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         else:
-            warn(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
+            warn(
+                f"ERROR [slider {self._name}] : wrong color parameter, nothing changed"
+            )
 
     @property
     def fullcolor(self) -> tuple:
@@ -461,7 +517,8 @@ class Slider:
         return self._fullcolor
 
     @fullcolor.setter
-    def fullcolor(self, fullcolor: Union[tuple[int, int, int], int, str]) -> None:
+    def fullcolor(self, fullcolor: Union[tuple[int, int, int], int,
+                                         str]) -> None:
         """
         sets the slider full line color\\
         does not throw error if color is not matched\\
@@ -472,7 +529,9 @@ class Slider:
             fullcolor : tuple | int | str
                 the new color
         """
-        warn(f"INFO : [slider {self._name}] color changing from {self._fullcolor} to {fullcolor}")
+        warn(
+            f"INFO : [slider {self._name}] color changing from {self._fullcolor} to {fullcolor}"
+        )
         if isinstance(fullcolor, tuple) and len(fullcolor) == 3:
             self._fullcolor = fullcolor
         elif isinstance(fullcolor, int):
@@ -481,13 +540,18 @@ class Slider:
             try:
                 self._fullcolor = COLORS[fullcolor.lower()]
             except KeyError:
-                close = difflib.get_close_matches(fullcolor, COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(fullcolor,
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [slider {self._name}] : {fullcolor} is not a valid color name, using closest match {close} instead"
                 )
                 self._fullcolor = COLORS[close]
         else:
-            warn(f"ERROR [slider {self._name}] : wrong color parameter, nothing changed")
+            warn(
+                f"ERROR [slider {self._name}] : wrong color parameter, nothing changed"
+            )
 
     @property
     def radius(self) -> int:
@@ -508,9 +572,13 @@ class Slider:
             radius : int
                 new radius
         """
-        warn(f"INFO [slider {self._name}] : radius changing from {self._radius} to {radius}")
+        warn(
+            f"INFO [slider {self._name}] : radius changing from {self._radius} to {radius}"
+        )
         if radius < self._thickness:
-            warn(f"ERROR [slider {self._name}] : bad radius value, nothing changed")
+            warn(
+                f"ERROR [slider {self._name}] : bad radius value, nothing changed"
+            )
             return
         self._radius = radius
         self._redo_rect()
@@ -536,7 +604,9 @@ class Slider:
         """
         warn(f"INFO [slider {self._name}] : attempting shape change")
         if shape not in (SQUARE, CIRCLE, CROSS, PLUS):
-            warn(f"ERROR [slider {self._name}] : {shape} is not a valid shape, nothing changed")
+            warn(
+                f"ERROR [slider {self._name}] : {shape} is not a valid shape, nothing changed"
+            )
             return
         self._shape = shape
 
@@ -559,7 +629,9 @@ class Slider:
             length : int
                 new length
         """
-        warn(f"INFO [slider {self._name}] : length changing from {self._length} to {length}")
+        warn(
+            f"INFO [slider {self._name}] : length changing from {self._length} to {length}"
+        )
         if length < 6 * self._radius:
             warn(f"ERROR [slider {self._name}] : bad length value")
             return
@@ -602,45 +674,54 @@ class Slider:
         renderer.push()
 
         name_label = renderer.font.render(self.name, True, (0, 0, 0))
-        min_label = renderer.font.render(str(round(self.min_val, self._incr)), True, (0, 0, 0))
-        max_label = renderer.font.render(str(round(self.max_val, self._incr)), True, (0, 0, 0))
+        min_label = renderer.font.render(str(round(self.min_val, self._incr)),
+                                         True, (0, 0, 0))
+        max_label = renderer.font.render(str(round(self.max_val, self._incr)),
+                                         True, (0, 0, 0))
         val_label = renderer.font.render(str(self.value), True, (0, 0, 0))
 
         # renderer.stroke_weight = self.thickness
         # renderer.stroke = self.color
-        pygame.draw.line(renderer._window, self.color, (self._x, self._y), (self._x + self.length, self._y),
-                         self.thickness)
+        pygame.draw.line(renderer._window, self.color, (self._x, self._y),
+                         (self._x + self.length, self._y), self.thickness)
         # renderer.line((self._x, self._y), (self._x + self.length, self._y))
 
         # renderer.stroke = self.fullcolor
         pad = self.length / (self.max_val - self.min_val)
         x = self._x + int(pad * (self.value - self._min_val))
-        pygame.draw.line(renderer._window, self.fullcolor, (self._x, self._y), (x, self._y), self.thickness)
+        pygame.draw.line(renderer._window, self.fullcolor, (self._x, self._y),
+                         (x, self._y), self.thickness)
         # renderer.line((self._x, self._y), (x, self._y))
 
         if self.shape == SQUARE:
             # renderer.fill = self.fullcolor
             # renderer.no_stroke()
             # renderer.rect_mode = CENTER
-            rect = self.rect[0] - self.radius, self.rect[1] - self.radius, 2 * self.radius, 2 * self.radius
+            rect = self.rect[0] - self.radius, self.rect[
+                1] - self.radius, 2 * self.radius, 2 * self.radius
             pygame.draw.rect(renderer._window, self.fullcolor, rect, 0)
             # renderer.rect(self.rect, 2 * self.radius, 2 * self.radius)
         elif self.shape == CIRCLE:
             # renderer.fill = self.fullcolor
             # renderer.no_stroke()
             # renderer.rect_mode = CENTER
-            pygame.draw.circle(renderer._window, self.fullcolor, self.rect, self.radius, 0)
+            pygame.draw.circle(renderer._window, self.fullcolor, self.rect,
+                               self.radius, 0)
             # renderer.circle(self.rect, self.radius)
         elif self.shape == CROSS:
             # renderer.no_fill()
             # renderer.stroke = self.fullcolor
             # renderer.stroke_weight = self.thickness
-            pygame.draw.line(renderer._window, self.fullcolor,
-                             (self.rect[0] - self.radius, self.rect[1] - self.radius),
-                             (self.rect[0] + self.radius, self.rect[1] + self.radius), self.thickness)
-            pygame.draw.line(renderer._window, self.fullcolor,
-                             (self.rect[0] - self.radius, self.rect[1] + self.radius),
-                             (self.rect[0] + self.radius, self.rect[1] - self.radius), self.thickness)
+            pygame.draw.line(
+                renderer._window, self.fullcolor,
+                (self.rect[0] - self.radius, self.rect[1] - self.radius),
+                (self.rect[0] + self.radius, self.rect[1] + self.radius),
+                self.thickness)
+            pygame.draw.line(
+                renderer._window, self.fullcolor,
+                (self.rect[0] - self.radius, self.rect[1] + self.radius),
+                (self.rect[0] + self.radius, self.rect[1] - self.radius),
+                self.thickness)
             # renderer.line((self.rect[0] - self.radius, self.rect[1] - self.radius),
             #               (self.rect[0] + self.radius, self.rect[1] + self.radius))
             # renderer.line((self.rect[0] - self.radius, self.rect[1] + self.radius),
@@ -649,22 +730,29 @@ class Slider:
             # renderer.no_fill()
             # renderer.stroke = self.fullcolor
             # renderer.stroke_weight = self.thickness
-            pygame.draw.line(renderer._window, self.fullcolor, (self.rect[0], self.rect[1] + self.radius),
-                             (self.rect[0], self.rect[1] - self.radius), self.thickness)
-            pygame.draw.line(renderer._window, self.fullcolor, (self.rect[0] - self.radius, self.rect[1]),
-                             (self.rect[0] + self.radius, self.rect[1]), self.thickness)
+            pygame.draw.line(renderer._window, self.fullcolor,
+                             (self.rect[0], self.rect[1] + self.radius),
+                             (self.rect[0], self.rect[1] - self.radius),
+                             self.thickness)
+            pygame.draw.line(renderer._window, self.fullcolor,
+                             (self.rect[0] - self.radius, self.rect[1]),
+                             (self.rect[0] + self.radius, self.rect[1]),
+                             self.thickness)
             # renderer.line((self.rect[0], self.rect[1] + self.radius),
             #               (self.rect[0], self.rect[1] - self.radius))
             # renderer.line((self.rect[0] - self.radius, self.rect[1]),
             #               (self.rect[0] + self.radius, self.rect[1]))
 
-        renderer.text(self._x - name_label.get_width() - 10, self._y - name_label.get_height() // 2,
-                      self.name)
-        renderer.text(self._x - min_label.get_width() // 2, self._y + self.thickness,
+        renderer.text(self._x - name_label.get_width() - 10,
+                      self._y - name_label.get_height() // 2, self.name)
+        renderer.text(self._x - min_label.get_width() // 2,
+                      self._y + self.thickness,
                       str(round(self.min_val, self._incr)))
-        renderer.text(self._x + self.length - max_label.get_width() // 2, self._y + self.thickness,
+        renderer.text(self._x + self.length - max_label.get_width() // 2,
+                      self._y + self.thickness,
                       str(round(self.max_val, self._incr)))
         renderer.text(self.rect[0] - val_label.get_width() // 2,
-                      self.rect[1] - self.radius - val_label.get_height(), str(self.value))
+                      self.rect[1] - self.radius - val_label.get_height(),
+                      str(self.value))
 
         renderer.pop()

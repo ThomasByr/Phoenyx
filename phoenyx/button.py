@@ -86,7 +86,10 @@ class Button:
             try:
                 self._color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [button {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
@@ -94,7 +97,9 @@ class Button:
         elif color is None:
             self._color = None
         else:
-            warn(f"ERROR [button {self._name}] : wrong color parameter, button was not created")
+            warn(
+                f"ERROR [button {self._name}] : wrong color parameter, button was not created"
+            )
             self.has_error = True
 
         if isinstance(stroke, tuple) and len(stroke) == 3:
@@ -105,7 +110,10 @@ class Button:
             try:
                 self._stroke = COLORS[stroke.lower()]
             except KeyError:
-                close = difflib.get_close_matches(stroke, COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(stroke,
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [button {self._name}] : {stroke} is not a valid color name, using closest match {close} instead"
                 )
@@ -113,11 +121,15 @@ class Button:
         elif stroke is None:
             self._stroke = None
         else:
-            warn(f"ERROR [button {self._name}] : wrong stroke parameter, button was not created")
+            warn(
+                f"ERROR [button {self._name}] : wrong stroke parameter, button was not created"
+            )
             self.has_error = True
 
         if shape not in (RECTANGLE, ELLIPSE):
-            warn(f"ERROR [button {self._name}] : wrong shape parameter, button was not created")
+            warn(
+                f"ERROR [button {self._name}] : wrong shape parameter, button was not created"
+            )
             self.has_error = True
         self._shape = shape
 
@@ -146,9 +158,13 @@ class Button:
             click_count : int
                 new click_count
         """
-        warn(f"INFO [button {self._name}] : attempting to modify click behavior")
+        warn(
+            f"INFO [button {self._name}] : attempting to modify click behavior"
+        )
         if click_count < 0:
-            warn(f"ERROR [button {self._name}] : bad click_count, nothing changed")
+            warn(
+                f"ERROR [button {self._name}] : bad click_count, nothing changed"
+            )
             return
         self._click_count = click_count
 
@@ -212,7 +228,9 @@ class Button:
         """
         warn(f"INFO [button {self._name}] : attempting shape change")
         if shape not in (RECTANGLE, ELLIPSE):
-            warn(f"ERROR [button {self._name}] : {shape} is not a valid shape, nothing changed")
+            warn(
+                f"ERROR [button {self._name}] : {shape} is not a valid shape, nothing changed"
+            )
             return
         self._shape = shape
 
@@ -245,7 +263,10 @@ class Button:
             try:
                 self._color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [button {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
@@ -258,7 +279,9 @@ class Button:
                 return
             self._color = None
         else:
-            warn(f"ERROR [button {self._name}] : {color} is not a valid color, nothing changed")
+            warn(
+                f"ERROR [button {self._name}] : {color} is not a valid color, nothing changed"
+            )
 
     @property
     def stroke(self) -> tuple[int, int, int]:
@@ -288,7 +311,10 @@ class Button:
             try:
                 self._stroke = COLORS[stroke.lower()]
             except KeyError:
-                close = difflib.get_close_matches(stroke, COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(stroke,
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [button {self._name}] : {stroke} is not a valid color name, using closest match {close} instead"
                 )
@@ -301,7 +327,9 @@ class Button:
                 return
             self._stroke = None
         else:
-            warn(f"ERROR [button {self._name}] : {stroke} is not a valid color, nothing changed")
+            warn(
+                f"ERROR [button {self._name}] : {stroke} is not a valid color, nothing changed"
+            )
 
     @property
     def weight(self) -> int:
@@ -335,7 +363,9 @@ class Button:
         opposite method is ``reveal``
         """
         if self._is_hidden:
-            warn(f"WARNING [button {self._name}] : button is already hidden, nothing changed")
+            warn(
+                f"WARNING [button {self._name}] : button is already hidden, nothing changed"
+            )
             return
         self._is_hidden = True
 
@@ -346,7 +376,9 @@ class Button:
         opposite method is ``hide``
         """
         if not self._is_hidden:
-            warn(f"WARNING [button {self._name}] : button is not hidden, nothing changed")
+            warn(
+                f"WARNING [button {self._name}] : button is not hidden, nothing changed"
+            )
             return
         self._is_hidden = False
 
@@ -380,7 +412,9 @@ class Button:
                 new height
         """
         if height <= 2 and width <= 2:
-            warn(f"ERROR [button {self._name}] : ({width}, {height}) is not a valid size, nothing changed")
+            warn(
+                f"ERROR [button {self._name}] : ({width}, {height}) is not a valid size, nothing changed"
+            )
             return
         self._height = height
         self._width = width
@@ -459,19 +493,23 @@ class Button:
 
         if self.shape == RECTANGLE:
             if self.color is not None:
-                pygame.draw.rect(renderer._window, self.color, (self._x, self._y, self._width, self._height),
+                pygame.draw.rect(renderer._window, self.color,
+                                 (self._x, self._y, self._width, self._height),
                                  0)
             if self.stroke is not None:
-                pygame.draw.rect(renderer._window, self.stroke, (self._x, self._y, self._width, self._height),
+                pygame.draw.rect(renderer._window, self.stroke,
+                                 (self._x, self._y, self._width, self._height),
                                  self.weight)
             # renderer.rect((x, y), self._width, self._height)
         elif self.shape == ELLIPSE:
             if self.color is not None:
-                pygame.draw.ellipse(renderer._window, self.color,
-                                    (self._x, self._y, self._width, self._height), 0)
+                pygame.draw.ellipse(
+                    renderer._window, self.color,
+                    (self._x, self._y, self._width, self._height), 0)
             if self.stroke is not None:
-                pygame.draw.ellipse(renderer._window, self.stroke,
-                                    (self._x, self._y, self._width, self._height), self.weight)
+                pygame.draw.ellipse(
+                    renderer._window, self.stroke,
+                    (self._x, self._y, self._width, self._height), self.weight)
             # renderer.ellipse((x, y), self._width, self._height)
 
         x -= name_label.get_width() // 2

@@ -35,7 +35,11 @@ class PerlinNoise:
     There is no limit to the coordinates used, new gradients are generated on
     the fly as necessary.
     """
-    def __init__(self, dimension: int, octaves: int = 1, tile: tuple[int] = (), unbias: bool = False) -> None:
+    def __init__(self,
+                 dimension: int,
+                 octaves: int = 1,
+                 tile: tuple[int] = (),
+                 unbias: bool = False) -> None:
         """
         Create a new Perlin noise factory in the given number of dimensions,
         which should be an integer and at least 1.
@@ -106,7 +110,8 @@ class PerlinNoise:
         either octaves or tiling.
         """
         if len(point) != self.dimension:
-            raise ValueError(f"Expected {self.dimension} values, got {len(point)}")
+            raise ValueError(
+                f"Expected {self.dimension} values, got {len(point)}")
 
         # Build a list of the (min, max) bounds in each dimension
         grid_coords = []

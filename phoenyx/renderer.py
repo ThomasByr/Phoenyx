@@ -2,6 +2,7 @@ from typing import Callable, Union
 import pygame
 import difflib
 import math as m
+
 pygame.init()
 
 __all__ = ["Renderer"]
@@ -315,13 +316,18 @@ class Renderer:
             try:
                 self._fill_color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._fill_color = COLORS[close]
         else:
-            warn(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
+            warn(
+                f"ERROR [renderer] : {color} not a valid color parameter, nothing changed"
+            )
 
     def no_stroke(self) -> None:
         """
@@ -359,13 +365,18 @@ class Renderer:
             try:
                 self._stroke_color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._stroke_color = COLORS[close]
         else:
-            warn(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
+            warn(
+                f"ERROR [renderer] : {color} not a valid color parameter, nothing changed"
+            )
 
     @property
     def stroke_weight(self) -> int:
@@ -411,7 +422,9 @@ class Renderer:
                 defaults to CENTER
         """
         if mode not in (CENTER, CORNER):
-            warn(f"ERROR [renderer] : {mode} is not a valid mode for rect_mode, nothing happened")
+            warn(
+                f"ERROR [renderer] : {mode} is not a valid mode for rect_mode, nothing happened"
+            )
             return
         self._rect_mode = mode
 
@@ -462,7 +475,9 @@ class Renderer:
             name = font
 
         if name is None and path is None:
-            warn(f"WARNING [renderer] : blank instruction at text_font setter, nothing changed")
+            warn(
+                f"WARNING [renderer] : blank instruction at text_font setter, nothing changed"
+            )
             return
 
         size = self._text_size
@@ -500,13 +515,18 @@ class Renderer:
             try:
                 self._text_color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._text_color = COLORS[close]
         else:
-            warn(f"ERROR [renderer] : {color} not a valid color parameter, nothing changed")
+            warn(
+                f"ERROR [renderer] : {color} not a valid color parameter, nothing changed"
+            )
 
     def begin_shape(self) -> None:
         """
@@ -514,7 +534,9 @@ class Renderer:
         use ``end_shape`` with additional args to end drawing shape
         """
         if self._is_drawing_shape:
-            warn(f"ERROR [renderer] : already drawing a shape, nothing happened")
+            warn(
+                f"ERROR [renderer] : already drawing a shape, nothing happened"
+            )
             return
         self._is_drawing_shape = True
 
@@ -566,10 +588,14 @@ class Renderer:
         Resets stroke weight back to 1 if needed as 0 fills all shapes
         """
         if (not self._stroke) and (not self._fill):
-            warn(f"ERROR [renderer] : stroking and filling both set to False, stroking is now enabled")
+            warn(
+                f"ERROR [renderer] : stroking and filling both set to False, stroking is now enabled"
+            )
             self._stroke = True
             if self.stroke_weight <= 0:
-                warn(f"ERROR [renderer] : stroke weight set to {self.stroke_weight}, stroke weight is now 1")
+                warn(
+                    f"ERROR [renderer] : stroke weight set to {self.stroke_weight}, stroke weight is now 1"
+                )
                 self.stroke_weight = 1
 
     def _offset_point(self, point: tuple) -> list[float, float]:
@@ -605,8 +631,10 @@ class Renderer:
         """
         point = list(point)
         new_point = [
-            point[0] * m.cos(self._rot_angle) - point[1] * m.sin(self._rot_angle),
-            point[0] * m.sin(self._rot_angle) + point[1] * m.cos(self._rot_angle)
+            point[0] * m.cos(self._rot_angle) -
+            point[1] * m.sin(self._rot_angle),
+            point[0] * m.sin(self._rot_angle) +
+            point[1] * m.cos(self._rot_angle)
         ]
         return new_point
 
@@ -625,10 +653,13 @@ class Renderer:
             list : transformed point
         """
         point = list(point)
-        new_point = [point[0] * self._scale_factor, point[1] * self._scale_factor]
+        new_point = [
+            point[0] * self._scale_factor, point[1] * self._scale_factor
+        ]
         return new_point
 
-    def line(self, point1: Union[tuple, list, Vector], point2: Union[tuple, list, Vector]) -> None:
+    def line(self, point1: Union[tuple, list, Vector],
+             point2: Union[tuple, list, Vector]) -> None:
         """
         draws a line on the screen\\
         uses the stroke color even if stroking is disabled
@@ -654,7 +685,9 @@ class Renderer:
         weight = self.stroke_weight
         pygame.draw.line(self._window, color, point1[:2], point2[:2], weight)
 
-    def lines(self, *points: Union[tuple, list, Vector], closed: bool = True) -> None:
+    def lines(self,
+              *points: Union[tuple, list, Vector],
+              closed: bool = True) -> None:
         """
         draws lines on the screen\\
         uses the stroke color even if stroking is disabled
@@ -703,9 +736,11 @@ class Renderer:
             pygame.draw.polygon(self._window, self.fill, points, 0)
         # stroke
         if self._stroke:
-            pygame.draw.polygon(self._window, self.stroke, points, self.stroke_weight)
+            pygame.draw.polygon(self._window, self.stroke, points,
+                                self.stroke_weight)
 
-    def rect(self, point: Union[tuple, list, Vector], width: int, height: int) -> None:
+    def rect(self, point: Union[tuple, list, Vector], width: int,
+             height: int) -> None:
         """
         draws a rectangle on the screen\\
         calls debug_enabled_drawing_methods first
@@ -730,7 +765,8 @@ class Renderer:
         #     point = self._offset_point(point)
 
         x, y = point[:2]
-        points = [(x, y), (x + width, y), (x + width, y + height), (x, y + height)]
+        points = [(x, y), (x + width, y), (x + width, y + height),
+                  (x, y + height)]
 
         if self._has_scale:
             points = list(map(self._scale_point, points))
@@ -751,7 +787,8 @@ class Renderer:
             pygame.draw.polygon(self._window, self.fill, points, 0)
         # stroke
         if self._stroke:
-            pygame.draw.polygon(self._window, self.stroke, points, self.stroke_weight)
+            pygame.draw.polygon(self._window, self.stroke, points,
+                                self.stroke_weight)
 
     def square(self, point: Union[tuple, list, Vector], size: int) -> None:
         """
@@ -797,9 +834,11 @@ class Renderer:
             pygame.draw.polygon(self._window, self.fill, points, 0)
         # stroke
         if self._stroke:
-            pygame.draw.polygon(self._window, self.stroke, points, self.stroke_weight)
+            pygame.draw.polygon(self._window, self.stroke, points,
+                                self.stroke_weight)
 
-    def ellipse(self, point: Union[tuple, list, Vector], width: int, height: int) -> None:
+    def ellipse(self, point: Union[tuple, list, Vector], width: int,
+                height: int) -> None:
         """
         draws an ellipse on the screen\\
         calls debug_enabled_drawing_methods first
@@ -829,10 +868,13 @@ class Renderer:
 
         # fill
         if self._fill:
-            pygame.draw.ellipse(self._window, self.fill, (point[:2], (width, height)), 0)
+            pygame.draw.ellipse(self._window, self.fill,
+                                (point[:2], (width, height)), 0)
         # stroke
         if self._stroke:
-            pygame.draw.ellipse(self._window, self.stroke, (point[:2], (width, height)), self.stroke_weight)
+            pygame.draw.ellipse(self._window, self.stroke,
+                                (point[:2], (width, height)),
+                                self.stroke_weight)
 
     def circle(self, center: Union[tuple, list, Vector], radius: int) -> None:
         """
@@ -860,10 +902,11 @@ class Renderer:
             pygame.draw.circle(self._window, self.fill, center[:2], radius, 0)
         # stroke
         if self._stroke:
-            pygame.draw.circle(self._window, self.stroke, center[:2], radius, self._stroke_weight)
+            pygame.draw.circle(self._window, self.stroke, center[:2], radius,
+                               self._stroke_weight)
 
-    def arc(self, point: Union[tuple, list, Vector], width: int, height: int, start: float,
-            stop: float) -> None:
+    def arc(self, point: Union[tuple, list, Vector], width: int, height: int,
+            start: float, stop: float) -> None:
         """
         draws an arc on the screen\\
         calls debug_enabled_drawing_methods first
@@ -899,10 +942,12 @@ class Renderer:
 
         # fill
         if self._fill:
-            pygame.draw.ellipse(self._window, self.fill, (point[:2], (width, height)), start, stop, 0)
+            pygame.draw.ellipse(self._window, self.fill,
+                                (point[:2], (width, height)), start, stop, 0)
         # stroke
         if self._stroke:
-            pygame.draw.ellipse(self._window, self.stroke, (point[:2], (width, height)), start, stop,
+            pygame.draw.ellipse(self._window, self.stroke,
+                                (point[:2], (width, height)), start, stop,
                                 self.stroke_weight)
 
     def point(self, point: Union[tuple, list, Vector]) -> None:
@@ -922,7 +967,8 @@ class Renderer:
         if self._has_translation:
             point = self._offset_point(point)
 
-        pygame.draw.circle(self._window, self.stroke, point[:2], self._stroke_weight, 0)
+        pygame.draw.circle(self._window, self.stroke, point[:2],
+                           self._stroke_weight, 0)
 
     def sprites(self, group: pygame.sprite.Group) -> None:
         """
@@ -943,7 +989,10 @@ class Renderer:
         image = pygame.image.load(path)
         return image
 
-    def transform_image(self, image: pygame.Surface, scale: float = 1, angle: float = 0) -> pygame.Surface:
+    def transform_image(self,
+                        image: pygame.Surface,
+                        scale: float = 1,
+                        angle: float = 0) -> pygame.Surface:
         """
         applies scale and / or rotation on a image and returns a new image\\
         does not modify the original image
@@ -1013,13 +1062,18 @@ class Renderer:
             try:
                 color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 color = COLORS[close]
         else:
-            warn(f"ERROR [renderer] : {color} not a valid color parameter, applaying default dark background")
+            warn(
+                f"ERROR [renderer] : {color} not a valid color parameter, applaying default dark background"
+            )
             color = 51, 51, 51
         self._bg = color
         self._window.fill(color)
@@ -1088,7 +1142,9 @@ class Renderer:
                 scale factor, must be greater than 0
         """
         if scale <= 0:
-            warn(f"WARNING [renderer] : scale of {scale} is not allowed, nothing happened")
+            warn(
+                f"WARNING [renderer] : scale of {scale} is not allowed, nothing happened"
+            )
             return
         self._scale_factor *= scale
         if self._scale_factor == 1:
@@ -1165,7 +1221,9 @@ class Renderer:
                 KEEP | RESET
         """
         if behavior not in ("RESET", "KEEP"):
-            warn(f"WARNING [renderer] : {behavior} is not a valid translation behavior, nothing happened")
+            warn(
+                f"WARNING [renderer] : {behavior} is not a valid translation behavior, nothing happened"
+            )
             return
         self._translation_behavior = behavior
 
@@ -1187,7 +1245,9 @@ class Renderer:
                 KEEP | RESET
         """
         if behavior not in ("RESET", "KEEP"):
-            warn(f"WARNING [renderer] : {behavior} is not a valid rotation behavior, nothing happened")
+            warn(
+                f"WARNING [renderer] : {behavior} is not a valid rotation behavior, nothing happened"
+            )
             return
         self._rotation_behavior = behavior
 
@@ -1209,7 +1269,9 @@ class Renderer:
                 KEEP | RESET
         """
         if behavior not in ("RESET", "KEEP"):
-            warn(f"WARNING [renderer] : {behavior} is not a valid scale behavior, nothing happened")
+            warn(
+                f"WARNING [renderer] : {behavior} is not a valid scale behavior, nothing happened"
+            )
             return
         self._scale_behavior = behavior
 
@@ -1307,7 +1369,9 @@ class Renderer:
         if found == 0:
             warn("WARNING [renderer] : no matching button")
         elif found >= 2:
-            warn("WARNING [renderer] : to many matches - considering last found")
+            warn(
+                "WARNING [renderer] : to many matches - considering last found"
+            )
         return sprite
 
     def kill_button(self, name: str) -> None:
@@ -1330,7 +1394,9 @@ class Renderer:
         if found == 0:
             warn("WARNING [renderer] : no matching button")
         elif found >= 2:
-            warn("WARNING [renderer] : to many matches - considering last found")
+            warn(
+                "WARNING [renderer] : to many matches - considering last found"
+            )
         self._remove_button(sprite)
 
     def pop_button(self, name: str) -> Button:
@@ -1357,7 +1423,9 @@ class Renderer:
         if found == 0:
             warn("WARNING [renderer] : no matching button")
         elif found >= 2:
-            warn("WARNING [renderer] : to many matches - considering last found")
+            warn(
+                "WARNING [renderer] : to many matches - considering last found"
+            )
         self._remove_button(sprite)
         return sprite
 
@@ -1372,8 +1440,8 @@ class Renderer:
         """
         self._all_sliders.add(slider)
 
-    def create_slider(self, x: int, y: int, name: str, min: float, max: float, value: float, incr: int,
-                      **kwargs) -> Slider:
+    def create_slider(self, x: int, y: int, name: str, min: float, max: float,
+                      value: float, incr: int, **kwargs) -> Slider:
         """
         creates a new slider and adds it to the sprite group
 
@@ -1461,7 +1529,9 @@ class Renderer:
         if found == 0:
             warn("WARNING [renderer] : no matching slider")
         elif found >= 2:
-            warn("WARNING [renderer] : to many matches - considering last found")
+            warn(
+                "WARNING [renderer] : to many matches - considering last found"
+            )
         return sprite
 
     def kill_slider(self, name: str) -> None:
@@ -1484,7 +1554,9 @@ class Renderer:
         if found == 0:
             warn("WARNING [renderer] : no matching slider")
         elif found >= 2:
-            warn("WARNING [renderer] : to many matches - considering last found")
+            warn(
+                "WARNING [renderer] : to many matches - considering last found"
+            )
         self._remove_slider(sprite)
 
     def pop_slider(self, name: str) -> Button:
@@ -1511,7 +1583,9 @@ class Renderer:
         if found == 0:
             warn("WARNING [renderer] : no matching slider")
         elif found >= 2:
-            warn("WARNING [renderer] : to many matches - considering last found")
+            warn(
+                "WARNING [renderer] : to many matches - considering last found"
+            )
         self._remove_slider(sprite)
         return sprite
 
@@ -1539,7 +1613,9 @@ class Renderer:
             warn("WARNING [renderer] : no matching slider")
             return
         if found >= 2:
-            warn("WARNING [renderer] : to many matches - considering last found")
+            warn(
+                "WARNING [renderer] : to many matches - considering last found"
+            )
         return sprite.value
 
     def _add_menu(self, menu: Menu) -> None:
@@ -1592,8 +1668,12 @@ class Renderer:
         menu = Menu(self, name, **kwargs)
         if menu.has_error:
             return
-        if (menu.side == LEFT and self._has_left_menu) or (menu.side == RIGHT and self._has_right_menu):
-            warn(f"ERROR [renderer] : already have a {menu.side} menu, try again by changing side")
+        if (menu.side == LEFT
+                and self._has_left_menu) or (menu.side == RIGHT
+                                             and self._has_right_menu):
+            warn(
+                f"ERROR [renderer] : already have a {menu.side} menu, try again by changing side"
+            )
             return
         self._add_menu(menu)
         if menu.side == LEFT:
@@ -1643,7 +1723,9 @@ class Renderer:
         if found == 0:
             warn(f"WARNING [renderer] : no matching menu")
         elif found >= 2:
-            warn(f"WARNING [renderer] : to many matches - considering last found")
+            warn(
+                f"WARNING [renderer] : to many matches - considering last found"
+            )
         return sprite
 
     def kill_menu(self, name: str) -> None:
@@ -1666,7 +1748,9 @@ class Renderer:
         if found == 0:
             warn(f"WARNING [renderer] : no matching menu")
         elif found >= 2:
-            warn(f"WARNING [renderer] : to many matches - considering last found")
+            warn(
+                f"WARNING [renderer] : to many matches - considering last found"
+            )
         self._remove_menu(sprite)
 
     def pop_menu(self, name: str) -> Menu:
@@ -1693,7 +1777,9 @@ class Renderer:
         if found == 0:
             warn(f"WARNING [renderer] : no matching menu")
         elif found >= 2:
-            warn(f"WARNING [renderer] : to many matches - considering last found")
+            warn(
+                f"WARNING [renderer] : to many matches - considering last found"
+            )
         self._remove_menu(sprite)
         return sprite
 
@@ -1730,7 +1816,9 @@ class Renderer:
         if scrollbar.has_error:
             return
         if self._has_scrollbar:
-            warn(f"ERROR [renderer] : already have a scrollbar, nothing happened")
+            warn(
+                f"ERROR [renderer] : already have a scrollbar, nothing happened"
+            )
             return
         self._add_scrollbar(scrollbar)
         self._has_scrollbar = True
@@ -1818,9 +1906,11 @@ class Renderer:
         use ``pop`` to reset the state
         """
         self._save.append([
-            self.fill, self._fill, self.stroke, self.stroke_weight, self._stroke, self._has_translation,
-            self._x_offset, self._y_offset, self._has_rotation, self._rot_angle, self._has_scale,
-            self._scale_factor, self.rect_mode, self.translation_behavior, self.rotation_behavior,
+            self.fill, self._fill, self.stroke, self.stroke_weight,
+            self._stroke, self._has_translation, self._x_offset,
+            self._y_offset, self._has_rotation, self._rot_angle,
+            self._has_scale, self._scale_factor, self.rect_mode,
+            self.translation_behavior, self.rotation_behavior,
             self.scale_behavior, self.text_color, self.text_size
         ])
         self._has_save = True
@@ -1847,7 +1937,10 @@ class Renderer:
         """
         return self._key_binding
 
-    def new_keypress(self, key: int, action: Callable[[], None], behavior: str = PRESSED) -> None:
+    def new_keypress(self,
+                     key: int,
+                     action: Callable[[], None],
+                     behavior: str = PRESSED) -> None:
         """
         adds a new key and its corresponding action\\
         please use ``Renderer.keys.`` to find keys
@@ -1864,16 +1957,23 @@ class Renderer:
                 defaults to PRESSED
         """
         if key in self.key_binding:
-            warn(f"ERROR [renderer] : {key} is already assigned to a function, try update_key instead")
+            warn(
+                f"ERROR [renderer] : {key} is already assigned to a function, try update_key instead"
+            )
             return
         if behavior not in (PRESSED, RELEASED, HOLD):
-            warn(f"ERROR [renderer] : {behavior} is not a valid key behavior, nothing happened")
+            warn(
+                f"ERROR [renderer] : {behavior} is not a valid key behavior, nothing happened"
+            )
             return
         self._actions.append(action)
         self._keys_behavior.append(behavior)
         self._key_binding[key] = len(self._actions) - 1
 
-    def update_keypress(self, key: int, action: Callable[[], None], behavior: str = None) -> None:
+    def update_keypress(self,
+                        key: int,
+                        action: Callable[[], None],
+                        behavior: str = None) -> None:
         """
         updates the action of a given key\\
         please use ``Renderer.keys.`` to find keys
@@ -1890,10 +1990,14 @@ class Renderer:
                 defaults to None
         """
         if key not in self.key_binding:
-            warn(f"ERROR [renderer] : {key} is not assigned to an existing function, try new_key instead")
+            warn(
+                f"ERROR [renderer] : {key} is not assigned to an existing function, try new_key instead"
+            )
             return
         if behavior is not None and behavior not in (PRESSED, RELEASED, HOLD):
-            warn(f"ERROR [renderer] : {behavior} is not a valid key behavior, nothing changed")
+            warn(
+                f"ERROR [renderer] : {behavior} is not a valid key behavior, nothing changed"
+            )
             return
         i = self._key_binding[key]
         self._actions[i] = action
@@ -1914,7 +2018,9 @@ class Renderer:
                 keyboard key identifier
         """
         if key not in self.key_binding:
-            warn(f"ERROR [renderer] : {key} is not assigned to an existing function, can not kill")
+            warn(
+                f"ERROR [renderer] : {key} is not assigned to an existing function, can not kill"
+            )
             return
         i = self._key_binding[key]
         self._actions[i] = lambda: None
@@ -1958,7 +2064,9 @@ class Renderer:
                 True to not bother check for subclasses instances
         """
         if bench == self._benchmark:
-            warn(f"WARNING [renderer] : bench mode is already at {bench}, nothing changed")
+            warn(
+                f"WARNING [renderer] : bench mode is already at {bench}, nothing changed"
+            )
             return
         self._benchmark = bench
 
@@ -1988,17 +2096,24 @@ class Renderer:
             try:
                 color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [renderer] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 color = COLORS[close]
         else:
-            warn(f"ERROR [renderer] : {color} not a valid color parameter, applaying default dark background")
+            warn(
+                f"ERROR [renderer] : {color} not a valid color parameter, applaying default dark background"
+            )
             color = 51, 51, 51
         self._bg = color
 
-    def run(self, draw: Callable[[], None] = None, setup: Callable[[], None] = None) -> None:
+    def run(self,
+            draw: Callable[[], None] = None,
+            setup: Callable[[], None] = None) -> None:
         """
         the main loop of the program\\
         will call draw over and over until ``QUIT`` event is triggered
@@ -2029,7 +2144,8 @@ class Renderer:
                 draw = __main__.draw
             else:
                 raise NameError(
-                    "ERROR [renderer] : draw function was not provided and was not found in the main file")
+                    "ERROR [renderer] : draw function was not provided and was not found in the main file"
+                )
         setup()
 
         while self._is_running:
@@ -2093,7 +2209,8 @@ class Renderer:
 
                 if self._has_buttons:
                     for button in self._all_buttons:
-                        if not button.is_hidden and button.collide(pos) and button.check_click():
+                        if not button.is_hidden and button.collide(
+                                pos) and button.check_click():
                             button.on_press()
                             button.reinit_click()
 
@@ -2117,7 +2234,8 @@ class Renderer:
                         if not scrollbar.is_pinned():
                             scrollbar.set_pin(pos)
                         else:
-                            scrollbar.set_value_by_y(pos[1] - scrollbar.get_pin())
+                            scrollbar.set_value_by_y(pos[1] -
+                                                     scrollbar.get_pin())
 
             else:
                 if self._has_buttons:

@@ -150,9 +150,13 @@ class SandBox:
             bounce : bool
                 if bodies bounce on the edges of the world
         """
-        warn(f"WARNING [sandbox] : change in bodies bouncing behavior, may alter simulation")
+        warn(
+            f"WARNING [sandbox] : change in bodies bouncing behavior, may alter simulation"
+        )
         if self._wrap and bounce:
-            warn(f"ERROR [sandbox] : bouncing and wraping can not be both active, nothing changed")
+            warn(
+                f"ERROR [sandbox] : bouncing and wraping can not be both active, nothing changed"
+            )
             return
         self._bounce = bounce
 
@@ -233,7 +237,10 @@ class SandBox:
         """
         inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
 
-        opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
+        opt = {
+            "body_type":
+            pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC
+        }
         body = pymunk.Body(mass, inertia, **opt)
         body.position = x, y
 
@@ -280,7 +287,10 @@ class SandBox:
         b = p2[0], p2[1]
 
         inertia = pymunk.moment_for_segment(mass, a, b, radius)
-        opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
+        opt = {
+            "body_type":
+            pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC
+        }
         body = pymunk.Body(mass, inertia, **opt)
 
         shape = pymunk.Segment(body, a, b, radius)
@@ -330,7 +340,10 @@ class SandBox:
         points = [(p[0], p[1]) for p in points]
 
         inertia = pymunk.moment_for_poly(mass, points, radius=radius)
-        opt = {"body_type": pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC}
+        opt = {
+            "body_type":
+            pymunk.Body.STATIC if is_static else pymunk.Body.DYNAMIC
+        }
         body = pymunk.Body(mass, inertia, **opt)
 
         shape = pymunk.Poly(body, points, radius=radius)
@@ -401,7 +414,8 @@ class SandBox:
         self._all_shapes.add(seg)
         return seg
 
-    def add_pin_joint(self, pos: Union[tuple[float, float], Vector], shape: pymunk.Shape) -> pymunk.PinJoint:
+    def add_pin_joint(self, pos: Union[tuple[float, float], Vector],
+                      shape: pymunk.Shape) -> pymunk.PinJoint:
         """
         new static pin joint
 
@@ -419,13 +433,15 @@ class SandBox:
         body = shape.body
         # body.position = pos
 
-        rotation_center_joint = pymunk.PinJoint(body, rotation_center_body, pos, (0, 0))
+        rotation_center_joint = pymunk.PinJoint(body, rotation_center_body,
+                                                pos, (0, 0))
         rotation_center_joint.distance = 0
         self._space.add(rotation_center_joint)
         return rotation_center_joint
 
-    def add_slide_joint(self, pos: Union[tuple[float, float], Vector], shape: pymunk.Shape,
-                        limit: Union[float, tuple[float, float]]) -> pymunk.SlideJoint:
+    def add_slide_joint(
+            self, pos: Union[tuple[float, float], Vector], shape: pymunk.Shape,
+            limit: Union[float, tuple[float, float]]) -> pymunk.SlideJoint:
         """
         new static slide joint
 
@@ -446,7 +462,8 @@ class SandBox:
 
         up = limit if isinstance(limit, (float, int)) else max(limit)
         low = 0 if isinstance(limit, (float, int)) else min(limit)
-        rotation_limit_joint = pymunk.SlideJoint(body, rotation_limit_body, pos, (0, 0), low, up)
+        rotation_limit_joint = pymunk.SlideJoint(body, rotation_limit_body,
+                                                 pos, (0, 0), low, up)
         self._space.add(rotation_limit_joint)
         return rotation_limit_joint
 

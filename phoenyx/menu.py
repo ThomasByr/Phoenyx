@@ -31,10 +31,13 @@ class Menu:
                  renderer,
                  name: str,
                  side: str = RIGHT,
-                 background: Union[bool, tuple[int, int, int], int, str] = True,
+                 background: Union[bool, tuple[int, int, int], int,
+                                   str] = True,
                  length: int = None,
-                 color: Union[tuple[int, int, int], int, str] = (155, 155, 155),
-                 text_color: Union[tuple[int, int, int], int, str] = (255, 255, 255),
+                 color: Union[tuple[int, int, int], int,
+                              str] = (155, 155, 155),
+                 text_color: Union[tuple[int, int, int], int,
+                                   str] = (255, 255, 255),
                  text_size: int = 15,
                  **kwargs: Callable[[], None]) -> None:
         """
@@ -99,14 +102,19 @@ class Menu:
                 self._background = COLORS[background.lower()]
                 self._has_background = True
             except KeyError:
-                close = difflib.get_close_matches(background.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(background.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
                 )
                 self._background = COLORS[close]
                 self._has_background = True
         else:
-            warn(f"ERROR [menu {self._name}] : wrong background parameter, menu was not created")
+            warn(
+                f"ERROR [menu {self._name}] : wrong background parameter, menu was not created"
+            )
             self.has_error = True
 
         if isinstance(color, tuple) and len(color) == 3:
@@ -117,13 +125,18 @@ class Menu:
             try:
                 self._color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [menu {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         else:
-            warn(f"ERROR [menu {self._name}] : wrong color parameter, menu was not created")
+            warn(
+                f"ERROR [menu {self._name}] : wrong color parameter, menu was not created"
+            )
             self.has_error = True
 
         if isinstance(text_color, tuple) and len(text_color) == 3:
@@ -134,13 +147,18 @@ class Menu:
             try:
                 self._text_color = COLORS[text_color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(text_color, COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(text_color,
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [menu {self._name}] : {text_color} is not a valid color name, using closest match {close} instead"
                 )
                 self._text_color = COLORS[close]
         else:
-            warn(f"ERROR [slider {self._name}] : wrong text color parameter, menu was not created")
+            warn(
+                f"ERROR [slider {self._name}] : wrong text color parameter, menu was not created"
+            )
             self.has_error = True
 
         self._text_size = _constrain(text_size, 1, 25)
@@ -200,7 +218,9 @@ class Menu:
         opposite method is ``reveal``
         """
         if self._is_hidden:
-            warn(f"WARNING [menu {self._name}] : menu is already hidden, nothing changed")
+            warn(
+                f"WARNING [menu {self._name}] : menu is already hidden, nothing changed"
+            )
             return
         self._is_hidden = True
 
@@ -211,7 +231,9 @@ class Menu:
         opposite method is ``hide``
         """
         if not self._is_hidden:
-            warn(f"WARNING [menu {self._name}] : menu is not hidden, nothing changed")
+            warn(
+                f"WARNING [menu {self._name}] : menu is not hidden, nothing changed"
+            )
             return
         self._is_hidden = False
 
@@ -226,7 +248,9 @@ class Menu:
                 LEFT | RIGHT
         """
         if side not in (LEFT, RIGHT):
-            warn(f"ERROR [menu {self._name}] : {side} is not a valid location, nothing changed")
+            warn(
+                f"ERROR [menu {self._name}] : {side} is not a valid location, nothing changed"
+            )
             return
         self._side = side
 
@@ -259,7 +283,9 @@ class Menu:
         return self._background
 
     @background.setter
-    def background(self, background: Union[tuple[int, int, int], int, str] = False) -> None:
+    def background(
+            self,
+            background: Union[tuple[int, int, int], int, str] = False) -> None:
         """
         sets current background drawing
 
@@ -284,7 +310,10 @@ class Menu:
                 self._background = COLORS[background.lower()]
                 self._has_background = True
             except KeyError:
-                close = difflib.get_close_matches(background.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(background.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
                 )
@@ -322,13 +351,18 @@ class Menu:
             try:
                 self._color = COLORS[color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [menu {self._name}] : {color} is not a valid color name, using closest match {close} instead"
                 )
                 self._color = COLORS[close]
         else:
-            warn(f"ERROR [menu {self._name}] : {color} is not a valid color, nothing changed")
+            warn(
+                f"ERROR [menu {self._name}] : {color} is not a valid color, nothing changed"
+            )
 
     @property
     def text_color(self) -> tuple:
@@ -338,7 +372,8 @@ class Menu:
         return self._text_color
 
     @text_color.setter
-    def text_color(self, text_color: Union[tuple[int, int, int], int, str]) -> None:
+    def text_color(self, text_color: Union[tuple[int, int, int], int,
+                                           str]) -> None:
         """
         sets menu text color\\
         deprecated : do not use
@@ -357,13 +392,18 @@ class Menu:
             try:
                 self._text_color = COLORS[text_color.lower()]
             except KeyError:
-                close = difflib.get_close_matches(text_color, COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(text_color,
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [menu {self._name}] : {text_color} is not a valid color name, using closest match {close} instead"
                 )
                 self._text_color = COLORS[close]
         else:
-            warn(f"ERROR [menu {self._name}] : {text_color} is not a valid color, nothing changed")
+            warn(
+                f"ERROR [menu {self._name}] : {text_color} is not a valid color, nothing changed"
+            )
 
     @property
     def side(self) -> str:
@@ -516,7 +556,9 @@ class Menu:
             )
             return
         if size < 1:
-            warn(f"ERROR [menu {self._name}] : text size is too small, min is 1")
+            warn(
+                f"ERROR [menu {self._name}] : text size is too small, min is 1"
+            )
             return
         self._text_size = size
         self.set_max_width()
@@ -648,7 +690,9 @@ class Menu:
                 index of item
         """
         if index >= len(self._all_items):
-            warn(f"ERROR [menu {self._name}] : index {index} does not correspond to a valid item")
+            warn(
+                f"ERROR [menu {self._name}] : index {index} does not correspond to a valid item"
+            )
             return
         return self._all_actions[index]()
 
@@ -668,7 +712,8 @@ class Menu:
             if x <= pos[0] <= x + 15 and y <= pos[1] <= y + 15:
                 self.unfold()
 
-        x, y = (5 + self.width, renderer.win_width - 20 - self.width)[self.side == RIGHT], 5
+        x, y = (5 + self.width,
+                renderer.win_width - 20 - self.width)[self.side == RIGHT], 5
         if x <= pos[0] <= x + 15 and y <= pos[1] <= y + 15:
             self.fold()
 
@@ -705,7 +750,8 @@ class Menu:
                     h = 15 + l*30
                     if self.length is not None:
                         h = self._length
-                    pygame.draw.rect(renderer._window, renderer.fill, (x0, y, self.width, h))
+                    pygame.draw.rect(renderer._window, renderer.fill,
+                                     (x0, y, self.width, h))
                     # renderer.rect((x0, y), self.width, h)
 
                 # renderer.no_fill()
@@ -717,7 +763,8 @@ class Menu:
                 renderer.text(xw, y, self.name)
                 for i, item in enumerate(self._all_items):
                     renderer.text(x0, y + 30 + (i*30), item)
-                    pygame.draw.line(renderer._window, self.color, (x0, y + 45 + (i*30)),
+                    pygame.draw.line(renderer._window, self.color,
+                                     (x0, y + 45 + (i*30)),
                                      (x0 + self.width, y + 45 + (i*30)), 1)
                     # renderer.line((x0, y + 45 + (i*30)), (x0 + self.width, y + 45 + (i*30)))
 
@@ -725,7 +772,8 @@ class Menu:
             # renderer.stroke = self.color
             # renderer.stroke_weight = 2
             for _ in range(3):
-                pygame.draw.line(renderer._window, self.color, (x, y), (x + 15, y), 2)
+                pygame.draw.line(renderer._window, self.color, (x, y),
+                                 (x + 15, y), 2)
                 # renderer.line((x, y), (x + 15, y))
                 y += 5
             renderer.pop()
@@ -737,7 +785,8 @@ class Menu:
         x0, xw = -1, -1
         if self.side == RIGHT:
             k = renderer.win_width - 20 - self.width
-            x = _map(self.tick_count, 0, self.max_ticks, renderer.win_width - 20, k)
+            x = _map(self.tick_count, 0, self.max_ticks,
+                     renderer.win_width - 20, k)
             x0 = x
             xw = x0 + 30
         elif self.side == LEFT:
@@ -758,7 +807,8 @@ class Menu:
             h = 15 + l*30
             if self.length is not None:
                 h = self._length
-            pygame.draw.rect(renderer._window, renderer.fill, (x0, y, self.width, h))
+            pygame.draw.rect(renderer._window, renderer.fill,
+                             (x0, y, self.width, h))
             # renderer.rect((x0, y), self.width, h)
 
         # renderer.no_fill()
@@ -767,8 +817,10 @@ class Menu:
         renderer.text_size = 15
         renderer.text_color = self.text_color
 
-        pygame.draw.line(renderer._window, self.color, (x, y), (x + 15, y + 15), 2)
-        pygame.draw.line(renderer._window, self.color, (x, y + 15), (x + 15, y), 2)
+        pygame.draw.line(renderer._window, self.color, (x, y),
+                         (x + 15, y + 15), 2)
+        pygame.draw.line(renderer._window, self.color, (x, y + 15),
+                         (x + 15, y), 2)
         # renderer.line((x, y), (x + 15, y + 15))
         # renderer.line((x, y + 15), (x + 15, y))
 
@@ -777,7 +829,8 @@ class Menu:
         renderer.text(xw, y, self.name)
         for i, item in enumerate(self._all_items):
             renderer.text(x0, y + 30 + (i*30), item)
-            pygame.draw.line(renderer._window, self.color, (x0, y + 45 + (i*30)),
+            pygame.draw.line(renderer._window, self.color,
+                             (x0, y + 45 + (i*30)),
                              (x0 + self.width, y + 45 + (i*30)), 1)
             # renderer.line((x0, y + 45 + (i*30)), (x0 + self.width, y + 45 + (i*30)))
         renderer.pop()

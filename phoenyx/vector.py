@@ -164,7 +164,10 @@ class Vector(np.ndarray):
         get = [e for e in get if e in keys]
         return np.array([self[l[e]] for e in get], dtype=np.float64)
 
-    def setCoord(self, x: float = None, y: float = None, z: float = None) -> None:
+    def setCoord(self,
+                 x: float = None,
+                 y: float = None,
+                 z: float = None) -> None:
         """
         Modifies the coordinates of the current Vector
 
@@ -218,7 +221,8 @@ class Vector(np.ndarray):
             Vector : new Vector
         """
         x, y, z = self
-        return self.__class__(round(x, ndigits), round(y, ndigits), round(z, ndigits))
+        return self.__class__(round(x, ndigits), round(y, ndigits),
+                              round(z, ndigits))
 
     def round(self, ndigits: int = 0) -> None:
         """
@@ -310,7 +314,11 @@ class Vector(np.ndarray):
         return np.dot(self, other)
 
     @classmethod
-    def random(cls, v1: float, v2: float, size: int = 3, dtype: Type[Union[float, int]] = float) -> "Vector":
+    def random(cls,
+               v1: float,
+               v2: float,
+               size: int = 3,
+               dtype: Type[Union[float, int]] = float) -> "Vector":
         """
         Creates a random generated Vector\\
         both ``v1`` and ``v2`` are included
@@ -535,7 +543,8 @@ class Vector(np.ndarray):
             >>> isclose(p.angle, pi/2)
             True
         """
-        assert not np.abs(self.z) > EPSILON, "can't compute angle for 3d vectors"
+        assert not np.abs(
+            self.z) > EPSILON, "can't compute angle for 3d vectors"
         return np.arctan2(self.y, self.x)
 
     @angle.setter
@@ -593,7 +602,8 @@ class Vector(np.ndarray):
         -------
             float : The angle between two given vectors (in radians)
         """
-        return np.arccos((np.dot(self, other)) / (self.magnitude * other.magnitude))
+        return np.arccos(
+            (np.dot(self, other)) / (self.magnitude * other.magnitude))
 
     @classmethod
     def from_angle(cls, angle: float) -> "Vector":

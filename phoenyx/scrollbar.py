@@ -72,13 +72,18 @@ class ScrollBar:
             try:
                 self._color1 = COLORS[color1.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color1.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color1.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [active scrollbar] : {color1} is not a valid color name, using closest match {close} instead"
                 )
                 self._color1 = COLORS[close]
         else:
-            warn(f"ERROR [active scrollbar] : wrong color1 parameter, scrollbar was not created")
+            warn(
+                f"ERROR [active scrollbar] : wrong color1 parameter, scrollbar was not created"
+            )
             self.has_error = True
 
         color2 = 50 if color2 is None else color2
@@ -90,13 +95,18 @@ class ScrollBar:
             try:
                 self._color2 = COLORS[color2.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color2.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color2.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [active scrollbar] : {color2} is not a valid color name, using closest match {close} instead"
                 )
                 self._color2 = COLORS[close]
         else:
-            warn(f"ERROR [active scrollbar] : wrong color2 parameter, scrollbar was not created")
+            warn(
+                f"ERROR [active scrollbar] : wrong color2 parameter, scrollbar was not created"
+            )
             self.has_error = True
 
         self._is_hidden = False
@@ -191,13 +201,18 @@ class ScrollBar:
             try:
                 self._color1 = COLORS[color1.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color1.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color1.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [active scrollbar] : {color1} is not a valid color name, using closest match {close} instead"
                 )
                 self._color1 = COLORS[close]
         else:
-            warn(f"ERROR [active scrollbar] : wrong color1 parameter, nothing changed")
+            warn(
+                f"ERROR [active scrollbar] : wrong color1 parameter, nothing changed"
+            )
 
     @property
     def color2(self) -> tuple[int, int, int]:
@@ -219,13 +234,18 @@ class ScrollBar:
             try:
                 self._color2 = COLORS[color2.lower()]
             except KeyError:
-                close = difflib.get_close_matches(color2.lower(), COLORS.keys(), n=1, cutoff=.5)[0]
+                close = difflib.get_close_matches(color2.lower(),
+                                                  COLORS.keys(),
+                                                  n=1,
+                                                  cutoff=.5)[0]
                 warn(
                     f"ERROR [active scrollbar] : {color2} is not a valid color name, using closest match {close} instead"
                 )
                 self._color2 = COLORS[close]
         else:
-            warn(f"ERROR [active scrollbar] : wrong color2 parameter, nothing changed")
+            warn(
+                f"ERROR [active scrollbar] : wrong color2 parameter, nothing changed"
+            )
 
     def hide(self) -> None:
         """
@@ -234,7 +254,9 @@ class ScrollBar:
         opposite method is ``reveal``
         """
         if self._is_hidden:
-            warn(f"WARNING [active scrollbar] : scrollbar is already hidden, nothing changed")
+            warn(
+                f"WARNING [active scrollbar] : scrollbar is already hidden, nothing changed"
+            )
             return
         self._is_hidden = True
 
@@ -245,7 +267,9 @@ class ScrollBar:
         opposite method is ``hide``
         """
         if not self._is_hidden:
-            warn(f"WARNING [active scrollbar] : scrollbar is not hidden, nothing changed")
+            warn(
+                f"WARNING [active scrollbar] : scrollbar is not hidden, nothing changed"
+            )
             return
         self._is_hidden = False
 
@@ -333,7 +357,8 @@ class ScrollBar:
         """
         sets the value of the scrollbar depending on a top y position
         """
-        v = _map(ypos, 0, self._renderer.win_height - self.height, self.min_val, self.max_val)
+        v = _map(ypos, 0, self._renderer.win_height - self.height,
+                 self.min_val, self.max_val)
         self._value = v
         if self._value < self.min_val:
             self._value = self._min_val
@@ -395,17 +420,25 @@ class ScrollBar:
 
         if self.is_active:
             if not self.is_playing:
-                pygame.draw.rect(window, self.color2, ((width - 15, 0), (15, height)), 0)
-                pygame.draw.rect(window, self.color1, ((width - 15, self.ypos), (15, self.height)), 0)
+                pygame.draw.rect(window, self.color2,
+                                 ((width - 15, 0), (15, height)), 0)
+                pygame.draw.rect(window, self.color1,
+                                 ((width - 15, self.ypos), (15, self.height)),
+                                 0)
 
             else:
                 w = _map(self._tick_count, self._max_ticks, 0, 15, 5)
-                r = _map(self._tick_count, self._max_ticks, 0, self.color2[0], bg[0])
-                g = _map(self._tick_count, self._max_ticks, 0, self.color2[1], bg[1])
-                b = _map(self._tick_count, self._max_ticks, 0, self.color2[2], bg[2])
+                r = _map(self._tick_count, self._max_ticks, 0, self.color2[0],
+                         bg[0])
+                g = _map(self._tick_count, self._max_ticks, 0, self.color2[1],
+                         bg[1])
+                b = _map(self._tick_count, self._max_ticks, 0, self.color2[2],
+                         bg[2])
 
-                pygame.draw.rect(window, (r, g, b), ((width - 15, 0), (15, height)), 0)
-                pygame.draw.rect(window, self.color1, ((width - w, self.ypos), (w, self.height)), 0)
+                pygame.draw.rect(window, (r, g, b),
+                                 ((width - 15, 0), (15, height)), 0)
+                pygame.draw.rect(window, self.color1,
+                                 ((width - w, self.ypos), (w, self.height)), 0)
 
             self.animate()
 
@@ -414,18 +447,25 @@ class ScrollBar:
                 pygame.draw.line(window, self.color1, (width - 2, self.ypos),
                                  (width - 2, self.ypos + self.height), 1)
                 for i in range(2):
-                    pygame.draw.line(window, self.color1, (width - 2 + i, self.ypos + i),
-                                     (width - 2 + i, self.ypos + self.height - i), 1)
-                    pygame.draw.line(window, self.color1, (width - 2 - i, self.ypos + i),
-                                     (width - 2 - i, self.ypos + self.height - i), 1)
+                    pygame.draw.line(
+                        window, self.color1, (width - 2 + i, self.ypos + i),
+                        (width - 2 + i, self.ypos + self.height - i), 1)
+                    pygame.draw.line(
+                        window, self.color1, (width - 2 - i, self.ypos + i),
+                        (width - 2 - i, self.ypos + self.height - i), 1)
 
             else:
                 w = _map(self._tick_count, 0, self._max_ticks, 15, 5)
-                r = _map(self._tick_count, 0, self._max_ticks, self.color2[0], bg[0])
-                g = _map(self._tick_count, 0, self._max_ticks, self.color2[1], bg[1])
-                b = _map(self._tick_count, 0, self._max_ticks, self.color2[2], bg[2])
+                r = _map(self._tick_count, 0, self._max_ticks, self.color2[0],
+                         bg[0])
+                g = _map(self._tick_count, 0, self._max_ticks, self.color2[1],
+                         bg[1])
+                b = _map(self._tick_count, 0, self._max_ticks, self.color2[2],
+                         bg[2])
 
-                pygame.draw.rect(window, (r, g, b), ((width - 15, 0), (15, height)), 0)
-                pygame.draw.rect(window, self.color1, ((width - w, self.ypos), (w, self.height)), 0)
+                pygame.draw.rect(window, (r, g, b),
+                                 ((width - 15, 0), (15, height)), 0)
+                pygame.draw.rect(window, self.color1,
+                                 ((width - w, self.ypos), (w, self.height)), 0)
 
             self.animate()

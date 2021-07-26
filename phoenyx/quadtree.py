@@ -71,7 +71,8 @@ class Boundary:
      * a ``position`` which points to the center of the Rect
      * a ``width`` and a ``height`` or a ``radius``
     """
-    def __init__(self, renderer: Renderer, x: int, y: int, width: int, height: int) -> None:
+    def __init__(self, renderer: Renderer, x: int, y: int, width: int,
+                 height: int) -> None:
         """
         new Boundary instance
 
@@ -138,7 +139,8 @@ class Rect(Boundary):
     """
     COLOR = (51, 61, 71)
 
-    def __init__(self, renderer: Renderer, x: int, y: int, width: int, height: int) -> None:
+    def __init__(self, renderer: Renderer, x: int, y: int, width: int,
+                 height: int) -> None:
         """
         new Rect instance
 
@@ -181,8 +183,10 @@ class Rect(Boundary):
         -------
             bool : if Point is in Rect
         """
-        return (point.x >= self.x - self.width and point.x <= self.x + self.width
-                and point.y >= self.y - self.height and point.y <= self.y + self.height)
+        return (point.x >= self.x - self.width
+                and point.x <= self.x + self.width
+                and point.y >= self.y - self.height
+                and point.y <= self.y + self.height)
 
     def intersects(self, other: Boundary) -> bool:
         """
@@ -197,7 +201,8 @@ class Rect(Boundary):
         -------
             bool : if Boundary intersects Rect
         """
-        return not (other.x - other.width > self.x + self.width or other.x + other.width < self.x - self.width
+        return not (other.x - other.width > self.x + self.width
+                    or other.x + other.width < self.x - self.width
                     or other.y - other.height > self.y + self.height
                     or other.y + other.height < self.y - self.height)
 
@@ -267,8 +272,10 @@ class Circle(Boundary):
         -------
             bool : if Boundary intersects Circle
         """
-        return not (other.x - other.width > self.x + self.r or other.x + other.width < self.x - self.r
-                    or other.y - other.height > self.y + self.r or other.y + other.height < self.y - self.r)
+        return not (other.x - other.width > self.x + self.r
+                    or other.x + other.width < self.x - self.r
+                    or other.y - other.height > self.y + self.r
+                    or other.y + other.height < self.y - self.r)
 
 
 class QuadTree:
@@ -321,10 +328,14 @@ class QuadTree:
         """
         x, y, w, h = self._boundary.x, self._boundary.y, self._boundary.width, self._boundary.height
 
-        self._northwest = QuadTree(Rect(self._renderer, x - w/2, y - h/2, w / 2, h / 2))
-        self._northeast = QuadTree(Rect(self._renderer, x + w/2, y - h/2, w / 2, h / 2))
-        self._southwest = QuadTree(Rect(self._renderer, x - w/2, y + h/2, w / 2, h / 2))
-        self._southeast = QuadTree(Rect(self._renderer, x + w/2, y + h/2, w / 2, h / 2))
+        self._northwest = QuadTree(
+            Rect(self._renderer, x - w/2, y - h/2, w / 2, h / 2))
+        self._northeast = QuadTree(
+            Rect(self._renderer, x + w/2, y - h/2, w / 2, h / 2))
+        self._southwest = QuadTree(
+            Rect(self._renderer, x - w/2, y + h/2, w / 2, h / 2))
+        self._southeast = QuadTree(
+            Rect(self._renderer, x + w/2, y + h/2, w / 2, h / 2))
 
         self._is_divided = True
 
