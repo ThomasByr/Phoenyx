@@ -107,7 +107,7 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * new ScrollBar thing (type ``help(phoenyx.scrollbar.ScrollBar)`` to learn more)
 * ScrollBar affects the Renderer view field of the main window
 * actual animation for the ScrollBar item
-* huge typo fix accross the entire repo
+* huge typo and format fix accross the entire repo
 
 </details>
 
