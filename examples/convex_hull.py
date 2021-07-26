@@ -71,7 +71,8 @@ def graham(nodes: list[Node]) -> list[Node]:
 
     def cmp2(n1: Node, n2: Node) -> float:
         x = (n1.pos - fst.pos).angle - (n2.pos - fst.pos).angle
-        return x if x != 0 else n1.pos.distance_sq(fst.pos) - n2.pos.distance_sq(fst.pos)
+        return x if x != 0 else n1.pos.distance_sq(
+            fst.pos) - n2.pos.distance_sq(fst.pos)
 
     points = nodes[::]
     fst = min(points, key=cmp_to_key(cmp1))
@@ -148,7 +149,9 @@ def chan(nodes: list[Node]) -> list[Node]:
 
 
 renderer: Renderer = Renderer(600, 600, "Convex hull")
-nodes: list[Node] = [Node(rd.randint(20, 580), rd.randint(20, 580), None) for _ in range(1_000)]
+nodes: list[Node] = [
+    Node(rd.randint(20, 580), rd.randint(20, 580), None) for _ in range(1_000)
+]
 hull = chan(nodes)
 points = list(map(lambda node: node.pos, hull))
 

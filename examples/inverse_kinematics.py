@@ -163,8 +163,8 @@ class Tentacle:
         setupX = (self.base.x, win[0])[base is None]
         setupY = (self.base.y, win[1])[base is None]
         self.array = [
-            Segment(self._renderer, setupX, setupY, self.seg_length, 0, _map(i, 0, self.size - 1, 1, 5))
-            for i in range(self.size)
+            Segment(self._renderer, setupX, setupY, self.seg_length, 0,
+                    _map(i, 0, self.size - 1, 1, 5)) for i in range(self.size)
         ]
 
     def show(self) -> None:
@@ -207,7 +207,8 @@ class Ball:
     RADIUS = 7
     VELOCITY = 4
 
-    def __init__(self, renderer: Renderer, x: float, y: float, win: tuple) -> None:
+    def __init__(self, renderer: Renderer, x: float, y: float,
+                 win: tuple) -> None:
         """
         new Ball instance
 
@@ -282,12 +283,20 @@ def setup() -> None:
     global tentacles, ball
     da = 2 * pi / N
 
-    renderer.create_menu("options", background=False, color=255, text_color=255, reset_ball=reset_ball)
+    renderer.create_menu("options",
+                         background=False,
+                         color=255,
+                         text_color=255,
+                         reset_ball=reset_ball)
 
     for a in arange(0, 2 * pi, step=da, dtype=float):
         x = WIDTH/2 + HEIGHT / 2 * cos(a)
         y = HEIGHT / 2 * (1 + sin(a))
-        tentacles.append(Tentacle(renderer, (WIDTH, HEIGHT), SIZE, seg_length=LENGTH, base=Vector(x, y)))
+        tentacles.append(
+            Tentacle(renderer, (WIDTH, HEIGHT),
+                     SIZE,
+                     seg_length=LENGTH,
+                     base=Vector(x, y)))
 
     ball = Ball(renderer, 100, 100, (WIDTH, HEIGHT))
 

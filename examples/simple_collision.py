@@ -21,7 +21,12 @@ def clear() -> None:
 def init() -> None:
     for i in range(11):
         for j in range(6):
-            sandbox.add_ball(60*i + 30 * (j%2), 100 + 60*j, 1, 15, elasticity=.99, is_static=True)
+            sandbox.add_ball(60*i + 30 * (j%2),
+                             100 + 60*j,
+                             1,
+                             15,
+                             elasticity=.99,
+                             is_static=True)
 
     sandbox.add_segment((0, 600), (600, 600), 1, 5, is_static=True)
     for i in range(11):
