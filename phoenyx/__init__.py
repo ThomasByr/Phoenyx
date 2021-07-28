@@ -143,7 +143,7 @@ pieces of information in the console.
 
 from .core import *
 from .data import *
-from .math import *
+from .pmath import *
 from .elements import *
 
 # Hello from Phoenyx

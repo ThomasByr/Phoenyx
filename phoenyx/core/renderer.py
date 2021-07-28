@@ -10,7 +10,7 @@ __all__ = ["Renderer"]
 import __main__  # type: ignore (pylance bad)
 from data.errorhandler import *
 
-from math.vector import *
+from pmath.vector import *
 from data.constants import *
 from elements.button import *
 from elements.slider import *

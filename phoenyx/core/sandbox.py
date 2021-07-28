@@ -10,8 +10,8 @@ __all__ = ["SandBox"]
 from data.errorhandler import *
 
 from data.constants import *
-from math.vector import *
-from math.quadtree import *
+from pmath.vector import *
+from pmath.quadtree import *
 
 
 def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:
