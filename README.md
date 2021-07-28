@@ -108,7 +108,7 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * ScrollBar affects the Renderer view field of the main window
 * actual animation for the ScrollBar item
 * huge typo and format fix accross the entire repo (pray for the reorganisation)
-* somehow reorganisation worked around the pymunk errors when closing window
+* somehow reorganisation worked around pymunk errors when closing main window
 
 </details>
 
