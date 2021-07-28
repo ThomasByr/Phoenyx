@@ -1,17 +1,15 @@
 from typing import Union
 
-from core.renderer import Renderer
+from . import Renderer
 
 import pymunk
 import pymunk.pygame_util
 
 __all__ = ["SandBox"]
 
-from data.errorhandler import *
-
-from data.constants import *
-from pmath.vector import *
-from pmath.quadtree import *
+from ..data import *
+from ..pmath import *
+from ..elements import *
 
 
 def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:

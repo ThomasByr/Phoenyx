@@ -1,11 +1,10 @@
 from typing import Union
-from data.errorhandler import *
+from ..data import *
 
 import math as m
 
 __all__ = ["ScrollBar"]
 
-from data.constants import *
 import difflib
 import pygame
 

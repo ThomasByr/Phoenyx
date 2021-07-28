@@ -1,9 +1,8 @@
 from typing import Union
-from data.errorhandler import *
+from ..data import *
 
 __all__ = ["Button"]
 
-from data.constants import *
 import difflib
 import pygame
 

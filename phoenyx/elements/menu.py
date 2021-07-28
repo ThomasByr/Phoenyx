@@ -1,9 +1,8 @@
 from typing import Any, Callable, Union
-from data.errorhandler import *
+from ..data import *
 
 __all__ = ["Menu"]
 
-from data.constants import *
 import difflib
 import pygame
 

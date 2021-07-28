@@ -8,15 +8,10 @@ pygame.init()
 __all__ = ["Renderer"]
 
 import __main__  # type: ignore (pylance bad)
-from data.errorhandler import *
 
-from pmath.vector import *
-from data.constants import *
-from elements.button import *
-from elements.slider import *
-from elements.menu import *
-from elements.scrollbar import *
-from data.keys import *
+from ..data import *
+from ..pmath import *
+from ..elements import *
 
 
 class Renderer:

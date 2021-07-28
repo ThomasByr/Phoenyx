@@ -1,4 +1,3 @@
-from data.constants import *
 import pygame
 
 
