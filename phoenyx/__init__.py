@@ -141,23 +141,17 @@ Finally, ERROR and WARNING do not cause a 'real' ``python error`` but throw some
 pieces of information in the console.
 """
 
-# main classes
-from .constants import *
-from .perlinnoise import *
-from .opensimplexnoise import *
-from .vector import *
-from .renderer import *
-from .sandbox import *
-
-# additional types
-from .slider import Slider
-from .button import Button
-from .menu import Menu
-# from pymunk import Circle, Segment, Poly, PinJoint, PivotJoint, Body
-
-# error handler
-from .errorhandler import set_soft as phoenyx_error_handler_set_soft
-from .errorhandler import load_soft as phoenyx_error_handler_load
+from .core import *
+from .data import *
+from .math import *
+from .elements import *
 
 # Hello from Phoenyx
 print(f"Hello from Phoenyx - please visit us on GitHub")
+
+from .__version__ import __title__
+from .__version__ import __description__
+from .__version__ import __url__
+from .__version__ import __version__
+from .__version__ import __author__
+from .__version__ import __license__

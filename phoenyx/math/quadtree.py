@@ -1,10 +1,10 @@
 from typing import Union
-from phoenyx.renderer import Renderer
+from core.renderer import Renderer
 
-from phoenyx.errorhandler import *
+from data.errorhandler import *
 
-from phoenyx.constants import *
-from phoenyx.vector import *
+from data.constants import *
+from math.vector import *
 
 
 class Point:

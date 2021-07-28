@@ -1,17 +1,17 @@
 from typing import Union
 
-from phoenyx.renderer import Renderer
+from core.renderer import Renderer
 
 import pymunk
 import pymunk.pygame_util
 
 __all__ = ["SandBox"]
 
-from phoenyx.errorhandler import *
+from data.errorhandler import *
 
-from phoenyx.constants import *
-from phoenyx.vector import *
-from phoenyx.quadtree import *
+from data.constants import *
+from math.vector import *
+from math.quadtree import *
 
 
 def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:

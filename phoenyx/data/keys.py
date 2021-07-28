@@ -1,4 +1,4 @@
-from phoenyx.constants import *
+from data.constants import *
 import pygame
 
 

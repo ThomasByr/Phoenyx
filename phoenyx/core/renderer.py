@@ -8,15 +8,15 @@ pygame.init()
 __all__ = ["Renderer"]
 
 import __main__  # type: ignore (pylance bad)
-from phoenyx.errorhandler import *
+from data.errorhandler import *
 
-from phoenyx.vector import *
-from phoenyx.constants import *
-from phoenyx.button import *
-from phoenyx.slider import *
-from phoenyx.menu import *
-from phoenyx.scrollbar import *
-from phoenyx.keys import *
+from math.vector import *
+from data.constants import *
+from elements.button import *
+from elements.slider import *
+from elements.menu import *
+from elements.scrollbar import *
+from data.keys import *
 
 
 class Renderer:

@@ -1,0 +1,8 @@
+__title__ = "phoenyx"
+__description__ = "A drawing and physics engine for Pygame"
+__url__ = "https://github.com/ThomasByr/Phoenyx"
+__version__ = "0.3.3"
+__author__ = "Thomas Byr"
+__author_email__ = "thomas-c2000@outlook.com"
+__license__ = "GNU GPLv3"
+# __copyright__ = "Copyright (c) 2021 Thomas Byr"

@@ -1,11 +1,11 @@
 from typing import Union
-from phoenyx.errorhandler import *
+from data.errorhandler import *
 
 import math as m
 
 __all__ = ["ScrollBar"]
 
-from phoenyx.constants import *
+from data.constants import *
 import difflib
 import pygame
 
