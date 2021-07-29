@@ -104,7 +104,7 @@ Migrating to the pymunk library for better physics (and complete support of chap
 
 * you can get rid of a SandBox shape if you want to
 * new methods for the Renderer to handle images and font changes
-* new ScrollBar thing (type ``help(phoenyx.scrollbar.ScrollBar)`` to learn more)
+* new ScrollBar thing (type ``help(phoenyx.ScrollBar)`` to learn more)
 * ScrollBar affects the Renderer view field of the main window
 * actual animation for the ScrollBar item
 * huge typo and format fix accross the entire repo (pray for the reorganisation)
