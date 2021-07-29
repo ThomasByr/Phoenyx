@@ -155,3 +155,5 @@
     * actual animation for the ScrollBar item
     * huge typo and format fix accross the entire repo (pray for the reorganisation)
     * somehow reorganisation worked around the pymunk errors when closing window
+    * new method to handle the Renderer pixel array
+    * new example file, water ripple (f slow)
