@@ -305,6 +305,26 @@ def vertex(self, point: tuple):
     """
 ```
 
+* ``renderer.load_pixels()`` will load the array pixel of the renderer and enables modification, you can then access it through ``renderer.pixels`` and assign each pixel with a rgb(a) value
+
+```py
+def load_pixels(self) -> None:
+    """
+    loads pixels from the screen
+    sets a pygame.PixelArray object accesible through property ``pixels``
+    """
+```
+
+* ``renderer.uodate_pixels()`` will tell the renderer you are done with modifiying pixels values and update the main window
+
+```py
+def update_pixels(self) -> None:
+    """
+    updates the pixel array
+    use ``.load_pixels()`` to access the array
+    """
+```
+
 * ``renderer.text(x, y, text)`` will display the ``text`` on the screen at ``(x, y)``
 
 ```py
@@ -755,7 +775,7 @@ def load_image(self, path: str) -> pygame.Surface:
     """
 ```
 
-* ``new_image = renderer.transform image(image, scale=.5, angle=0)`` will scale the image and return a new one
+* ``new_image = renderer.transform_image(image, scale=.5, angle=0)`` will scale the image and return a new one
 
 ```py
 def transform_image(self, image: pygame.Surface, scale: float = 1, angle: float = 0) -> pygame.Surface:
