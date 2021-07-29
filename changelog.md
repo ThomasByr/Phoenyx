@@ -10,10 +10,10 @@
     * name changing from pygame_engine to phoenyx (because the bird...)
     * efficiency improvement because frames are parts of success
 3.  *v0.0.a3* now comes the big stuff
-    * wait... [Buttons](phonyx/button.py) ? (type ``help(phoenyx.button.Button)`` to learn more)
+    * wait... [Buttons](phonyx/button.py) ? (type ``help(phoenyx.Button)`` to learn more)
     * buttons have better click response (hold or choose the number of frames to pass while un-clicked to be able to trigger the button again)
 4.  *v0.0.a4* I need to port html5
-    * [Sliders](phonyx/slider.py) now ? (type ``help(phoenyx.slider.Slider)`` to learn more)
+    * [Sliders](phonyx/slider.py) now ? (type ``help(phoenyx.Slider)`` to learn more)
     * sliders have their name on the left, minimum and maximum value on respective sides
     * added the current value on top of the cursor
 5.  *v0.1.0* how do I upload images on PyPI ?
@@ -47,7 +47,7 @@
     * added new n dimensional [Perlin Noise](phoenyx/perlinnoise.py) algorithm
     * first step trough interractive drawing
     * adding exhaustive [Documentation](helpme.md) slowly
-    * first try of [Menu](phoenyx/menu.py) implementation (type ``help(phoenyx.menu.Menu)`` to learn more)
+    * first try of [Menu](phoenyx/menu.py) implementation (type ``help(phoenyx.Menu)`` to learn more)
     * short animation when opening and closing menus
     * better spacing and drawing, animation ends properly and on the right side
     * menus appear before buttons and sliders
@@ -109,7 +109,7 @@
     * you can get the state of the mouse for each 3 buttons
     * error handler does no longer initialize on its own, so you are able not to use it ; note that ``error_handler_load()`` will initialize the error handler when needed
     * first try of physics ``SandBox``, for now, only simple shapes and basic physic
-    * new classes ``SandBox`` and ``Body`` (type ``help(phoenyx.sanbox.SandBox)`` or ``help(phoenyx.body.Body)`` to learn more)
+    * new classes ``SandBox`` and ``Body`` (type ``help(phoenyx.SandBox)`` to learn more)
     * note that physics is happening based on the frame rate of the Renderer and is only following the first Newton's law of motion : ``mass * acceleration = force`` for now
     * also note that bodies are not rotating for now, that you should not have too many of them, and that a lot of fixes will occur in future versions
     * new bench mode that forces the Renderer to not deal with subclasses (buttons, sliders, menus, ... will become hidden and all interractions will be turned down)
@@ -150,7 +150,7 @@
 25. *v0.3.3* do a barrel roll
     * you can get rid of a SandBox shape if you want to
     * new methods for the Renderer to handle images and font changes
-    * new ScrollBar thing (type ``help(phoenyx.scrollbar.ScrollBar)`` to learn more)
+    * new ScrollBar thing (type ``help(phoenyx.ScrollBar)`` to learn more)
     * ScrollBar affects the Renderer view field of the main window
     * actual animation for the ScrollBar item
     * huge typo and format fix accross the entire repo (pray for the reorganisation)
