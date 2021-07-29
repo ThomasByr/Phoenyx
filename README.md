@@ -109,6 +109,8 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * actual animation for the ScrollBar item
 * huge typo and format fix accross the entire repo (pray for the reorganisation)
 * somehow reorganisation worked around pymunk errors when closing main window
+* new method to handle the Renderer pixel array
+* new example file, water ripple (f slow)
 
 </details>
 
