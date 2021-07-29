@@ -993,7 +993,7 @@ Please not that following methods are generic and that ``[sprite]`` is methods i
 * ``renderer.get_[sprite](name)`` will returns the matching [sprite] based on the name of the [sprite]
 
 ```py
-def get_[sprite](self, name: str) -> Sprite:
+def get_sprite(self, name: str) -> Sprite:
     """
     gets a [sprite] based on its name
     does nothing if not matched
@@ -1012,7 +1012,7 @@ def get_[sprite](self, name: str) -> Sprite:
 * ``renderer.kill_[sprite](name)`` will suppress the matching [sprite]
 
 ```py
-def kill_[sprite](self, name: str) -> None:
+def kill_sprite(self, name: str) -> None:
     """
     kills a [sprite] based on its name
     does nothing if not matched
@@ -1028,7 +1028,7 @@ def kill_[sprite](self, name: str) -> None:
 * ``renderer.pop_[sprite](name)`` will suppress and return the matching [sprite]
 
 ```py
-def pop_[sprite](self, name: str) -> Sprite:
+def pop_sprite(self, name: str) -> Sprite:
     """
     kills a [sprite] based on its name
     returns None if not matched
