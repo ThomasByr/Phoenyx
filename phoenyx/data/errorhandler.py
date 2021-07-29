@@ -1,6 +1,6 @@
 import os
 
-__all__ = ["warn", "set_soft", "load_soft"]
+__all__ = ["warn", "error_console_set_soft", "error_console_load_soft"]
 
 
 def move(y, x):
@@ -61,7 +61,7 @@ class ErrorHandler:
 err: ErrorHandler  # default for Phoenyx
 
 
-def load_soft() -> None:
+def error_console_load_soft() -> None:
     """
     initializes Error Handeler\\
     very usefull for debuging
@@ -70,7 +70,7 @@ def load_soft() -> None:
     err = ErrorHandler()
 
 
-def set_soft(flush: bool) -> None:
+def error_console_set_soft(flush: bool) -> None:
     """
     sets wether or not the errors are displayed the "pretty" way
 

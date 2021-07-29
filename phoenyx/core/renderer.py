@@ -175,6 +175,10 @@ class Renderer:
         self._scrollbar: ScrollBar = None
         self._ps_value = 0
 
+        # pixels
+        self._pixels: pygame.PixelArray = None
+        self._is_p_loaded = False
+
         # fps
         self._fps = 60
         self._clock = pygame.time.Clock()
@@ -239,13 +243,10 @@ class Renderer:
         """
         return self._bg
 
-    def get_mouse_pos(self) -> tuple[int, int]:
+    @property
+    def mouse_pos(self) -> tuple[int, int]:
         """
-        gets current mouse position as a tuple
-
-        Returns
-        -------
-            tuple[int, int] : mouse pos
+        gets current mouse position as a [int, int] tuple
         """
         return pygame.mouse.get_pos()
 
@@ -254,14 +255,14 @@ class Renderer:
         """
         gets current position of the mouse cursor along the x-axis
         """
-        return self.get_mouse_pos()[0]
+        return self.mouse_pos()[0]
 
     @property
     def mouse_y(self) -> int:
         """
         gets current position of the mouse cursor along the y-axis
         """
-        return self.get_mouse_pos()[1]
+        return self.mouse_pos()[1]
 
     def mouse_is_down(self, button: int = 0) -> bool:
         """
@@ -273,7 +274,7 @@ class Renderer:
                 0 | 1 | 2 button of the mouse to check
                 defaults to 0
         """
-        return pygame.get_pressed(num_buttons=3)[button] != 0
+        return pygame.mouse.get_pressed(num_buttons=3)[button] != 0
 
     def no_fill(self) -> None:
         """
@@ -522,6 +523,13 @@ class Renderer:
             warn(
                 f"ERROR [renderer] : {color} not a valid color parameter, nothing changed"
             )
+
+    @property
+    def pixels(self) -> pygame.PixelArray:
+        """
+        gets the current pixel array
+        """
+        return self._pixels
 
     def begin_shape(self) -> None:
         """
@@ -2024,6 +2032,30 @@ class Renderer:
             self._pressed.pop(key)
         except KeyError:
             pass
+
+    def load_pixels(self) -> None:
+        """
+        loads pixels from the screen\\
+        sets a pygame.PixelArray object accesible through property ``pixels``
+        """
+        if self._is_p_loaded:
+            warn(
+                "WARNING [renderer] : pixels are already loaded, nothing changed"
+            )
+            return
+        self._is_p_loaded = True
+        self._pixels = pygame.PixelArray(self._window)
+
+    def update_pixels(self) -> None:
+        """
+        updates the pixel array\\
+        use ``.load_pixels()`` to access the array
+        """
+        if not self._is_p_loaded:
+            warn("WARNING [renderer] : pixels are not loaded, nothing changed")
+            return
+        self._is_p_loaded = False
+        self._pixels.close()
 
     def flip(self) -> None:
         """
