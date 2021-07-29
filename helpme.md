@@ -33,7 +33,7 @@ From now on we will assume Phoenyx is imported as followed :
 
 ```py
 from phoenyx import *
-renderer = Renderer(600, 600)  # arbitrary window size
+renderer: Renderer = Renderer(600, 600)  # arbitrary window size
 ```
 
 We now have a ``Renderer`` object that we will manipulate.
@@ -53,7 +53,7 @@ def draw() -> None:
 
 Great now what we want to to is to setup things inside our ``setup`` function if needed, for example make the text appear thicker or change its color, such things that only need to be done once.
 
-Inside of the ``draw`` function, we want to put things that will be repeated over and over until we trigger the ``QUIT`` event of pygame : click the close button. We will call this function the ``draw`` loop because, you guessed it : this is our main loop. So we can apply some background color, draw shapes, move things around, interract with Sliders, Buttons, Menus and the Keyboard in that loop. Such exciting things will be discussed in detail in the comings subsections of this documentation.
+Inside of the ``draw`` function, we want to put things that will be repeated over and over until we trigger the ``QUIT`` event of pygame : click the close button. We will call this function the ``draw`` loop because, you guessed it : this is our drawing main loop. So we can apply some background color, draw shapes, move things around, interract with Sliders, ScrollBars, Buttons, Menus and the Keyboard in that loop. Such exciting things will be discussed in detail in the comings subsections of this documentation.
 
 Then we need to call the ``run`` method for our ``renderer``, optionally providing it with the ``draw`` function and the optional ``setup`` (if your draw and setup functions are named properly you don't need to pass them inside of the run method ; you still can name them to your likings but will need to put them as parameters for the run method). This should look like this :
 
@@ -731,22 +731,20 @@ def kill_keypress(self, key: int) -> None:
     """
 ```
 
-* ``renderer.get_mouse_pos()`` will return a tuple representing the ``(x, y)`` position of the mouse on the main window
+* ``renderer.mouse_pos()`` will return a tuple representing the ``(x, y)`` position of the mouse on the main window
 
 ```py
-def get_mouse_pos(self) -> tuple[int, int]:
+@property
+def mouse_pos(self) -> tuple[int, int]:
     """
-    gets current mouse position as a tuple
-
-    Returns
-    -------
-        tuple[int, int] : mouse pos
+    gets current mouse position as [int, int] a tuple
     """
 ```
 
 * ``renderer.mouse_x`` will return the ``x`` component of the mouse position
 
 ```py
+@property
 def mouse_x(self) -> int:
     """
     gets current position of the mouse cursor along the x-axis
@@ -756,6 +754,7 @@ def mouse_x(self) -> int:
 * ``renderer.mouse_y`` will return the ``y`` component of the mouse position
 
 ```py
+@property
 def mouse_y(self) -> int:
     """
     gets current position of the mouse cursor along the y-axis
@@ -764,9 +763,9 @@ def mouse_y(self) -> int:
 
 ### some image handling
 
-Phoenyx lets you display and manipulate images (either .jpg or .png work the best). Images are displayed at a certain position (top right corner by default unless rect_mode tells otherwise). You can also rotate and scale images, note that rotating images will create a bigger axis aligned image with your rotated image inside, so the image rectangle will be modified.
+Phoenyx lets you display and manipulate images (either .jpg or .png work the best). Images are displayed at a certain position (top left corner by default unless rect_mode tells otherwise). You can also rotate and scale images, note that rotating images will create a bigger axis aligned image with your rotated image inside, so the image rectangle will be modified.
 
-* ``image = renderer.load_image(images/kitten.png)`` will load an image as a Surface
+* ``image = renderer.load_image("images/kitten.png")`` will load an image as a Surface
 
 ```py
 def load_image(self, path: str) -> pygame.Surface:
@@ -994,7 +993,7 @@ Please not that following methods are generic and that ``[sprite]`` is methods i
 * ``renderer.get_[sprite](name)`` will returns the matching [sprite] based on the name of the [sprite]
 
 ```py
-def get_[sprite](self, name: str) -> [Sprite]:
+def get_[sprite](self, name: str) -> Sprite:
     """
     gets a [sprite] based on its name
     does nothing if not matched
@@ -1006,7 +1005,7 @@ def get_[sprite](self, name: str) -> [Sprite]:
 
     Returns
     -------
-        [Sprite] : matching [sprite]
+        Sprite : matching [sprite]
     """
 ```
 
@@ -1029,7 +1028,7 @@ def kill_[sprite](self, name: str) -> None:
 * ``renderer.pop_[sprite](name)`` will suppress and return the matching [sprite]
 
 ```py
-def pop_[sprite](self, name: str) -> [Sprite]:
+def pop_[sprite](self, name: str) -> Sprite:
     """
     kills a [sprite] based on its name
     returns None if not matched
@@ -1042,7 +1041,7 @@ def pop_[sprite](self, name: str) -> [Sprite]:
 
     Returns
     -------
-        [Sprite] | None : matched [sprite] if found
+        Sprite | None : matched [sprite] if found
     """
 ```
 
