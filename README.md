@@ -1,6 +1,6 @@
 # Phoenyx - Pygame Engine v0.3.3
 
-Some simple classes in **python** that could make your life much simplier. Relies on pygame, numpy and pymunk, based on the idea of the Processing language.
+Some simple classes in **python** that could make your life much easier. Relies on pygame, numpy and pymunk, based on the idea of the Processing language.
 
 > Get the latest stable version using pip with ``pip install phoenyx``.
 
