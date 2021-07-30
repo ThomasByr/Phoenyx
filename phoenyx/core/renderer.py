@@ -2040,7 +2040,7 @@ class Renderer:
         """
         if self._is_p_loaded:
             warn(
-                "WARNING [renderer] : pixels are already loaded, nothing changed"
+                "WARNING [renderer] : pixels are already loaded, nothing happened"
             )
             return
         self._is_p_loaded = True
@@ -2052,7 +2052,8 @@ class Renderer:
         use ``.load_pixels()`` to access the array
         """
         if not self._is_p_loaded:
-            warn("WARNING [renderer] : pixels are not loaded, nothing changed")
+            warn(
+                "WARNING [renderer] : pixels are not loaded, nothing happened")
             return
         self._is_p_loaded = False
         self._pixels.close()
