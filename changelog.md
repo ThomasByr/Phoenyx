@@ -157,4 +157,4 @@
     * somehow reorganisation worked around the pymunk errors when closing window
     * new method to handle the Renderer pixel array
     * new example file, water ripple (f slow)
-    * finally worked around slicing vectors, functionnal getitem, setitem and delitem methods
+    * finally worked around slicing vectors, functionnal getitem setitem delitem methods
