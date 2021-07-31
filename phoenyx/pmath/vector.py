@@ -145,10 +145,8 @@ class Vector(np.ndarray):
     def z(self, value: float) -> None:
         self[2] = value
 
-    def __getitem__(
-            self,
-            key: Union[int,
-                       slice]) -> Union[int, float, list[Union[int, float]]]:
+    def __getitem__(self, key: Union[int,
+                                     slice]) -> Union[int, float, np.ndarray]:
 
         if isinstance(key, slice):
             return np.array([self[i] for i in range(*key.indices(len(self)))])
