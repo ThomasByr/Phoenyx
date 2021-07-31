@@ -145,6 +145,30 @@ class Vector(np.ndarray):
     def z(self, value: float) -> None:
         self[2] = value
 
+    def __getitem__(
+            self,
+            key: Union[int,
+                       slice]) -> Union[int, float, list[Union[int, float]]]:
+
+        if isinstance(key, slice):
+            return np.array([self[i] for i in range(*key.indices(len(self)))])
+        return super().__getitem__(key)
+
+    def __setitem__(self, key: Union[int, slice],
+                    value: Union[int, float, list[Union[int, float]]]) -> None:
+        if isinstance(key, slice):
+            for i, v in zip(range(*key.indices(len(self))), value):
+                self[i] = v
+        else:
+            super().__setitem__(key, value)
+
+    def __delitem__(self, key: Union[int, slice]) -> None:
+        if isinstance(key, slice):
+            for i in range(*key.indices(len(self))):
+                del self[i]
+        else:
+            super().__delitem__(key)
+
     def getCoord(self, get: str = "xyz") -> np.ndarray:
         """
         Returns the coordinates of a Vector in a numpy array
