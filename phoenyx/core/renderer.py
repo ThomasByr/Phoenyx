@@ -688,6 +688,33 @@ class Renderer:
         weight = self.stroke_weight
         pygame.draw.line(self._window, color, point1[:2], point2[:2], weight)
 
+    def aaline(self, point1: Union[tuple, list, Vector],
+               point2: Union[tuple, list, Vector]) -> None:
+        """
+        draws an anti-aliased line of thickness 1 on the screen\\
+        uses the stroke color even if stroking is disabled
+
+        Parameters
+        ----------
+            point1 : tuple | list | Vector
+                first point
+            point2 : tuple | list | Vector
+                second point
+        """
+        if self._has_scale:
+            point1 = self._scale_point(point1)
+            point2 = self._scale_point(point2)
+        if self._has_rotation:
+            point1 = self._rotate_point(point1)
+            point2 = self._rotate_point(point2)
+        if self._has_translation:
+            point1 = self._offset_point(point1)
+            point2 = self._offset_point(point2)
+
+        color = self.stroke
+        weight = self.stroke_weight
+        pygame.draw.aaline(self._window, color, point1[:2], point2[:2], weight)
+
     def lines(self,
               *points: Union[tuple, list, Vector],
               closed: bool = True) -> None:
@@ -712,8 +739,33 @@ class Renderer:
             points = list(map(self._offset_point, points))
 
         color = self.stroke
-        weight = self.stroke_weight
-        pygame.draw.lines(self._window, color, closed, points, weight)
+        pygame.draw.lines(self._window, color, closed, points)
+
+    def aalines(self,
+                *points: Union[tuple, list, Vector],
+                closed: bool = True) -> None:
+        """
+        draws anti-aliased lines of thickness 1 on the screen\\
+        uses the stroke color even if stroking is disabled
+
+        Parameters
+        ----------
+            points : tuples | lists | Vectors
+                each additional arg is a point
+            closed : bool, (optional)
+                last point connected to first
+                defaults to True
+        """
+        points: list[list[float, float]] = [list(p[:2]) for p in points]
+        if self._has_scale:
+            points = list(map(self._scale_point, points))
+        if self._has_rotation:
+            points = list(map(self._rotate_point, points))
+        if self._has_translation:
+            points = list(map(self._offset_point, points))
+
+        color = self.stroke
+        pygame.draw.aalines(self._window, color, closed, points)
 
     def polygon(self, *points: Union[tuple, list, Vector]) -> None:
         """
