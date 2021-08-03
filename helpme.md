@@ -110,6 +110,44 @@ def line(self, point1: Union[tuple, list, Vector], point2: Union[tuple, list, Ve
     """
 ```
 
+* ``renderer.aaline(point1, point2)`` will draw an anti-aliased line of thickness 1 from ``ponit1`` to ``point2``
+
+```py
+def aaline(self, point1: Union[tuple, list, Vector],
+           point2: Union[tuple, list, Vector]) -> None:
+    """
+    draws an anti-aliased line of thickness 1 on the screen\\
+    uses the stroke color even if stroking is disabled
+
+    Parameters
+    ----------
+        point1 : tuple | list | Vector
+            first point
+        point2 : tuple | list | Vector
+            second point
+    """
+```
+
+* ``renderer.aalines(point1, point2, point3, point4, closed=True)`` will draw anti-aliased lines of thickness 1 between ``point1`` and ``point2``, between ``point2`` and ``point3``, between ``point3`` and ``point4`` and between ``point4`` and ``point1``
+
+```py
+def aalines(self,
+            *points: Union[tuple, list, Vector],
+            closed: bool = True) -> None:
+    """
+    draws anti-aliased lines of thickness 1 on the screen\\
+    uses the stroke color even if stroking is disabled
+
+    Parameters
+    ----------
+        points : tuples | lists | Vectors
+            each additional arg is a point
+        closed : bool, (optional)
+            last point connected to first
+            defaults to True
+    """
+```
+
 * ``renderer.lines(point1, point2, point3, point4, closed=True)`` will draw a line between ``point1`` and ``point2``, between ``point2`` and ``point3``, between ``point3`` and ``point4`` and between ``point4`` and ``point1``
 
 ```py
