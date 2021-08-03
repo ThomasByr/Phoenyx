@@ -158,3 +158,4 @@
     * new method to handle the Renderer pixel array
     * new example file, water ripple (f slow)
     * finally worked around slicing vectors, functionnal getitem setitem delitem methods
+    * new methods for the Renderer to draw anti-aliased lines
