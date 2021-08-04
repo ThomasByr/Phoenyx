@@ -2110,6 +2110,14 @@ class Renderer:
         self._is_p_loaded = False
         self._pixels.close()
 
+    def set_at(self, x: int, y: int) -> None:
+        """
+        sets a pixel at a given position\\
+        uses stroke color even if stroking is disabled
+        """
+        color = self.stroke
+        self._window.set_at((x, y), color)
+
     def flip(self) -> None:
         """
         updates window\\
