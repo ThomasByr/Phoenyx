@@ -116,7 +116,7 @@ def line(self, point1: Union[tuple, list, Vector], point2: Union[tuple, list, Ve
 def aaline(self, point1: Union[tuple, list, Vector],
            point2: Union[tuple, list, Vector]) -> None:
     """
-    draws an anti-aliased line of thickness 1 on the screen\\
+    draws an anti-aliased line of thickness 1 on the screen
     uses the stroke color even if stroking is disabled
 
     Parameters
@@ -135,7 +135,7 @@ def aalines(self,
             *points: Union[tuple, list, Vector],
             closed: bool = True) -> None:
     """
-    draws anti-aliased lines of thickness 1 on the screen\\
+    draws anti-aliased lines of thickness 1 on the screen
     uses the stroke color even if stroking is disabled
 
     Parameters
@@ -360,6 +360,16 @@ def update_pixels(self) -> None:
     """
     updates the pixel array
     use ``.load_pixels()`` to access the array
+    """
+```
+
+* ``renderer.set_at(x, y)`` will draw a single pixel with the stroke color
+
+```py
+def set_at(self, x: int, y: int) -> None:
+    """
+    sets a pixel at a given position
+    uses stroke color even if stroking is disabled
     """
 ```
 
