@@ -1,4 +1,4 @@
-# Phoenyx - Pygame Engine v0.3.3
+# Phoenyx - Pygame Engine v0.3.4
 
 Some simple classes in **python** that could make your life much easier. Relies on pygame, numpy and pymunk, based on the idea of the Processing language.
 
@@ -97,22 +97,16 @@ Phoenyx is licensed under the GPLv3. See [LICENSE](LICENSE.txt) for more details
 
 Please refer to [the changelog file](changelog.md) for the full history.
 
-Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Circles, Segments and Polygons have been implemented (either dynamic or static ones). Pin joints, slide joints and segment extension have followed. Some fixes have been added to the Renderer as well as support for images manipulation.
+Migrating to the pymunk library for better physics (and complete support of chapes, joints and constraints). Circles, Segments and Polygons have been implemented (either dynamic or static ones). Pin joints, slide joints and segment extension have followed. More user oriented dialogue boxes and as always, some fixes have been implemented.
 
 <details>
-    <summary> v0.3.3: do a barrel roll (click to expand) </summary>
+    <summary> v0.3.4 : ask them eh (click to expand) </summary>
 
-* you can get rid of a SandBox shape if you want to
-* new methods for the Renderer to handle images and font changes
-* new ScrollBar thing (type ``help(phoenyx.ScrollBar)`` to learn more)
-* ScrollBar affects the Renderer view field of the main window
-* actual animation for the ScrollBar item
-* huge typo and format fix accross the entire repo (pray for the reorganisation)
-* somehow reorganisation worked around pymunk errors when closing main window
-* new method to handle the Renderer pixel array
-* new example file, water ripple (f slow)
-* finally worked around slicing vectors, functionnal getitem setitem delitem methods
-* new methods for the Renderer to draw anti-aliased lines
+* confirm boxes and new forms to ask things, get results in array / bool / dict / set
+* some animation as always for these new sprites
+* tryied to avoid bad naming through elements especially in errors messages
+* some event handling (result of confirm and form boxes)
+* stoped to commit directly to master (see dev branch for ongoing work)
 
 </details>
 
