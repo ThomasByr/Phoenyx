@@ -159,3 +159,9 @@
     * new example file, water ripple (f slow)
     * finally worked around slicing vectors, functionnal getitem setitem delitem methods
     * new methods for the Renderer to draw anti-aliased lines
+26. *v0.3.4* ask them eh
+    * confirm boxes and new forms to ask things, get results in array / bool / dict / set
+    * some animation as always for these new sprites
+    * tryied to avoid bad naming through elements especially in errors messages
+    * some event handling (result of confirm and form boxes)
+    * stoped to commit directly to master (see dev branch for ongoing work)
