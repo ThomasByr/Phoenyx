@@ -8,6 +8,7 @@
    5. [some interractive drawing](#some-interractive-drawing)
    6. [extern class creation and manipulation](#extern-class-creation-and-manipulation)
    7. [scrollbar integration](#scrollbar-integration)
+   8. [Confirm Boxes and Form Boxes](#confirm-boxes-and-form-boxes)
 2. [The ``Button`` class](#the-button-class)
    1. [creation](#creation)
    2. [manipulation](#manipulation)
@@ -360,6 +361,16 @@ def update_pixels(self) -> None:
     """
     updates the pixel array
     use ``.load_pixels()`` to access the array
+    """
+```
+
+* ``renderer.pixels[i, j] = c`` will set the desired pixel to the color c which needs to be a tuple of 3 integers
+
+```py
+@property
+def pixels(self) -> pygame.PixelArray:
+    """
+    gets the current pixel array as a 2d arrray
     """
 ```
 
@@ -1154,6 +1165,16 @@ def pop_scrollbar(self) -> ScrollBar:
     -------
         ScrollBar | None : unique scrollbar
     """
+```
+
+### Confirm Boxes and Form Boxes
+
+Since v0.3.4 users can now be asked either to confirm their actions or to fill forms. Results will often be in an array of boolean values but events integration is thouroughly thought about. Because it is a unique item meaning you can only have once of them two at a time it has its own subsection. Please note that it only responds to mouse input.
+
+* ``renderer.ask(text, yes, no)`` will ask the user for confirmation, text message will be displayes with an optionnal replacement for yes and no options
+
+```py
+
 ```
 
 ## The ``Button`` class
