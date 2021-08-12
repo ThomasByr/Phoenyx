@@ -19,7 +19,7 @@ def _map(x: float, x0: float, x1: float, y0: float, y1: float) -> float:
 class ScrollBar:
     """
     Pygame ScrollBar
-    =============
+    ================
     created by ``Renderer``
     """
     def __init__(self,

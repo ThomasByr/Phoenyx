@@ -108,7 +108,7 @@ class Menu:
                                                   n=1,
                                                   cutoff=.5)[0]
                 warn(
-                    f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
+                    f"ERROR [menu {self._name}] : {background} is not a valid color name, using closest match {close} instead"
                 )
                 self._background = COLORS[close]
                 self._has_background = True
@@ -158,12 +158,12 @@ class Menu:
                 self._text_color = COLORS[close]
         else:
             warn(
-                f"ERROR [slider {self._name}] : wrong text color parameter, menu was not created"
+                f"ERROR [menu {self._name}] : wrong text color parameter, menu was not created"
             )
             self.has_error = True
 
         self._text_size = _constrain(text_size, 1, 25)
-        self._all_items = []
+        self._all_items: list[str] = []
         self._all_actions: list[Callable[[], None]] = []
         for k, v in kwargs.items():
             self._all_items.append(k)
@@ -316,7 +316,7 @@ class Menu:
                                                   n=1,
                                                   cutoff=.5)[0]
                 warn(
-                    f"ERROR [menu {self._name} : {background} is not a valid color name, using closest match {close} instead"
+                    f"ERROR [menu {self._name}]: {background} is not a valid color name, using closest match {close} instead"
                 )
                 self._background = COLORS[close]
                 self._has_background = True
@@ -564,7 +564,7 @@ class Menu:
         self._text_size = size
         self.set_max_width()
 
-    def set_max_ticks(self, sec: float = 1.) -> None:
+    def set_max_ticks(self, sec: float = .5) -> None:
         """
         sets maximum ticks of animation depending of the duration of the animation
 
@@ -572,7 +572,7 @@ class Menu:
         ----------
             sec : float, (optional)
                 duration of the animation
-                defaults to 1
+                defaults to .5
         """
         fps = self._renderer.fps
         self.max_ticks = round(fps * sec)
@@ -680,7 +680,7 @@ class Menu:
             self._all_actions[i] = v
         self.set_max_width()
 
-    def trigger(self, index: int):
+    def trigger(self, index: int) -> None:
         """
         triggers action of designated index\\
         proper index can be found using ``collide``

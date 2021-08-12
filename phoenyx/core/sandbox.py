@@ -183,6 +183,9 @@ class SandBox:
         self._space.gravity = self._gravity.x, self._gravity.y
 
     def _is_out(self, position: tuple[float, float]) -> bool:
+        """
+        if point is outside SandBox scope
+        """
         x, y = position
         w = 10 * self.width + self._buffer
         h = 10 * self.height + self._buffer
@@ -191,7 +194,7 @@ class SandBox:
 
     def _get_center(self, *points: tuple[int, int]) -> tuple[int, int]:
         """
-        
+        barycenter of a list of points with equal weights
         """
         cx = 0
         cy = 0

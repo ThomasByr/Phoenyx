@@ -196,6 +196,13 @@ class Renderer:
         self._pressed: dict[int, bool] = {}
         self.keys = Keys()
 
+        # events
+        self._has_running_events = False
+        # {name: (unique_id, result)}
+        self._all_events: dict[str, tuple[int, Union[bool, int, float,
+                                                     str]]] = {}
+        self.events = Events(self)
+
         # bench mode
         self._benchmark = False
 
@@ -527,7 +534,7 @@ class Renderer:
     @property
     def pixels(self) -> pygame.PixelArray:
         """
-        gets the current pixel array
+        gets the current pixel array as a 2d arrray
         """
         return self._pixels
 
@@ -2144,7 +2151,7 @@ class Renderer:
         sets the bench mode of the Renderer\\
         setting this to True means nothing will be rendered except the basic drawings\\
         in other words, it skips all buttons, sliders, menus, ... management\\
-        plus the Renderer no longer struggles to comply with frame rate (which are no longer relevant)
+        plus the Renderer no longer struggles to comply with frame rate (which is no longer relevant)
 
         Parameters
         ----------
@@ -2153,7 +2160,7 @@ class Renderer:
         """
         if bench == self._benchmark:
             warn(
-                f"WARNING [renderer] : bench mode is already at {bench}, nothing changed"
+                f"WARNING [renderer] : bench mode is already {'on' if bench else 'off'}, nothing changed"
             )
             return
         self._benchmark = bench
