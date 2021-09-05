@@ -2,7 +2,11 @@
 
 Some simple classes in **python** that could make your life much easier. Relies on pygame, numpy and pymunk, based on the idea of the Processing language.
 
-> Get the latest stable version using pip with ``pip install phoenyx``.
+> Get the latest stable version using pip with
+>
+> ```py
+> pip install phoenyx
+> ```
 
 1. [What it does](#what-it-does)
 2. [How to ?](#how-to-)
@@ -106,7 +110,8 @@ Migrating to the pymunk library for better physics (and complete support of chap
 * some animation as always for these new sprites
 * tryied to avoid bad naming through elements especially in errors messages
 * some event handling (result of confirm and form boxes)
-* stoped to commit directly to master (see dev branch for ongoing work)
+* stoped commit directly to master (see dev branch for ongoing work)
+* some utility functions regarding primes
 
 </details>
 
