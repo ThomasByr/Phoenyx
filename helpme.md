@@ -25,6 +25,7 @@
    1. [``OpenSimplexNoise`` class](#opensimplexnoise-class)
    2. [``PerlinNoise`` class](#perlinnoise-class)
 7. [``SandBox`` physics engine](#sandbox-physics-engine)
+8. [Utility functions and classes](#utility-functions-and-classes)
 
 ## The ``Renderer`` class
 
@@ -1948,5 +1949,48 @@ def add_slide_joint(self, pos: Union[tuple[float, float], Vector], shape: pymunk
             can be Circle, Segment and Poly
         limit : Union[float, tuple[float, float]]
                 max distance limit, optional lower limit
+    """
+```
+
+## Utility functions and classes
+
+Since v0.3.4 you can use some pre-made functions that should be optimised (python-wise) that could make you gain some more time while coding.
+
+* ``primes(lim)`` will return a list of all primes that are less than or equal to lim
+  
+```py
+def primes(lim: int) -> list[int]:
+    """
+    Generate prime numbers up to ``lim``.
+    P.S. this is a modified version of the Sieve of Eratosthenes
+
+    Example
+    -------
+    >>> primes(10)
+    ... # for example
+    <<< [2, 3, 5, 7]
+    """
+```
+
+* ``def prime_factors(x, dtype)`` will either return a list or a dict of all prime factors of x
+
+```py
+def prime_factors(
+    x: int,
+    dtype: type[Union[list, dict]] = dict,
+) -> Union[list[int], dict[int, int]]:
+    """
+    a list of positive primes integers
+
+    Parameters
+    ----------
+        x : int
+            number to check
+        dtype : type
+            type of returned data
+
+    Returns
+    -------
+        list[int] | dict[int, int] : either a list of counted primes factors or a dict of primes factors and their counts
     """
 ```
