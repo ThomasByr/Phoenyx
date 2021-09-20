@@ -94,9 +94,9 @@ def draw() -> None:
         rdp_points = rdp(all_points, epsilon)
 
     renderer.stroke = 255, 55, 155
-    renderer.lines(*all_points, closed=False)
+    renderer.aalines(*all_points, closed=False)
     renderer.stroke = 255
-    renderer.lines(*rdp_points, closed=False)
+    renderer.aalines(*rdp_points, closed=False)
 
     renderer.text(50, 10, f"fps : {round(renderer.fps)}")
 

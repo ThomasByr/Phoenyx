@@ -46,7 +46,7 @@ def turtle() -> None:
         current = sentence[i]
 
         if current == "F":
-            renderer.line((0, 0), (0, -length))
+            renderer.aaline((0, 0), (0, -length))
             renderer.translate(0, -length)
         elif current == "+":
             renderer.rotate(angle)
