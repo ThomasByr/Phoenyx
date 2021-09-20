@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Callable, Union
 
 
 class Events:
@@ -23,15 +23,15 @@ class Events:
         -------
             Union[bool, int, float, str] : result
         """
-        events: dict[str, tuple[int, Union[bool, int, float,
+        events: dict[int, tuple[str, Union[bool, int, float,
                                            str]]] = self._renderer._all_events
         if isinstance(name, str):
-            for k, v in events.items():
-                if k == name:
-                    return v[1]
-        elif isinstance(name, int):
             for _, v in events.items():
                 if v[0] == name:
+                    return v[1]
+        elif isinstance(name, int):
+            for k, v in events.items():
+                if k == name:
                     return v[1]
 
     def get_id_by_name(self, name: str) -> int:
@@ -47,11 +47,11 @@ class Events:
         -------
             int : unique id
         """
-        events: dict[str, tuple[int, Union[bool, int, float,
+        events: dict[int, tuple[str, Union[bool, int, float,
                                            str]]] = self._renderer._all_events
         for k, v in events.items():
-            if k == name:
-                return v[0]
+            if v[0] == name:
+                return k
 
     def get_name_by_id(self, id: int) -> str:
         """
@@ -66,11 +66,11 @@ class Events:
         -------
             str : name of the event
         """
-        events: dict[str, tuple[int, Union[bool, int, float,
+        events: dict[int, tuple[str, Union[bool, int, float,
                                            str]]] = self._renderer._all_events
         for k, v in events.items():
-            if v[0] == id:
-                return k
+            if k == id:
+                return v[0]
 
     def list(self) -> list[tuple[str, int, str]]:
         """
@@ -84,7 +84,23 @@ class Events:
         events: dict[str, tuple[int, Union[bool, int, float,
                                            str]]] = self._renderer._all_events
         for k, v in events.items():
-            if k != "":
+            if v[0] != "":
                 state = "running" if v[1] is None else "done"
-                l.append((k, v[0], state))
+                l.append((v[0], k, state))
         return l
+
+    def new(self, name: str, act: Callable[[], None]) -> None:
+        """
+        new event handled by the user
+        
+        Parameters
+        ----------
+            name : str
+                name of the event
+            act : Callable[[], None]
+                activation/trigger function
+        """
+        self._renderer._last_event_id += 1
+        k = self._renderer._last_event_id
+        self._renderer._all_events[k] = (name, None)
+        self._renderer._events_act[k] = act

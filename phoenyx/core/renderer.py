@@ -198,9 +198,11 @@ class Renderer:
 
         # events
         self._has_running_events = False
-        # {name: (unique_id, result)}
-        self._all_events: dict[str, tuple[int, Union[bool, int, float,
+        # {unique_id: (name, result)}
+        self._all_events: dict[int, tuple[str, Union[bool, int, float,
                                                      str]]] = {}
+        self._events_act: dict[int, list[Callable[[], None]]] = {}
+        self._last_event_id = 0
         self.events = Events(self)
 
         # bench mode

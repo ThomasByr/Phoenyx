@@ -236,7 +236,7 @@ def primes(lim: int) -> list[int]:
     return res
 
 
-# test : should take eta 1.5s
+# test : should take eta 1.1s
 
 # if __name__ == "__main__":
 #     import time
