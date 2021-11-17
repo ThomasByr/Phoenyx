@@ -71,14 +71,16 @@ def setup() -> None:
         y = _map(yval, -1, 1, 400, 0)
         all_points.append(Vector(x, y))
 
-    epsilon_slider = renderer.create_slider(350,
-                                            350,
-                                            "epsilon",
-                                            0,
-                                            50,
-                                            10,
-                                            0,
-                                            length=200)
+    epsilon_slider = renderer.create_slider(
+        350,
+        350,
+        "epsilon",
+        0,
+        50,
+        10,
+        0,
+        length=200,
+    )
     rdp_points = rdp(all_points, 10)
 
     renderer.set_background(51)
