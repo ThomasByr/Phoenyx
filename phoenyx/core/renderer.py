@@ -2146,7 +2146,9 @@ class Renderer:
         """
         quits the sketch by closing the window
         """
+        self._is_running = False
         pygame.quit()
+        quit()
 
     def set_bench_mode(self, bench: bool) -> None:
         """

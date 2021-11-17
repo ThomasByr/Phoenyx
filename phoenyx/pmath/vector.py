@@ -42,12 +42,14 @@ class Vector(np.ndarray):
 
     Parameters
     ----------
-        x : int | float
+    ```py
+        x : Union[int, float]
             the x-component of the vector
-        y : int | float
+        y : Union[int, float]
             the y-component of the vector
-        z : int | float
+        z : Union[int, float]
             the z-component of the vector
+    ```
     """
     def __new__(cls, *args: Union[int, float]) -> "Vector":
         """
@@ -55,12 +57,16 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             args : tuple[Union[int, float]]
                 coordinates of the Vector, unnamed
+        ```
 
         Returns
         -------
+        ```py
             Vector : new vector entity
+        ```
         """
         assert not (n := len(args)) >= 4, "illegal dimension"
         (a := [e for e in args]).extend([0 for _ in range(3 - n)])
@@ -181,13 +187,17 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             get : str, (optional)
                 an ordered string of "x"s, "y"s, "z"s
                 defaults to "xyz"
+        ```
 
         Returns
         -------
+        ```py
             np.ndarray : coordinates
+        ```
         """
         l = {"x": 0, "y": 1, "z": 2, "X": 0, "Y": 1, "Z": 2}
         keys = l.keys()
@@ -203,12 +213,14 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             x : float, (optional)
                 the x-component
             y : float, (optional)
                 the y-component
             z : float, (optional)
                 the z-component
+        ```
         """
         if x is None:
             x = self.x
@@ -224,15 +236,19 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             other : Vector
                 Point to be interpolate to
             amount: float
                 Amount by which to interpolate.
+        ```
 
         Returns
         -------
+        ```py
             Vector : obtained by linearly interpolating this
                 vector to the other vector by the given amount
+        ```
         """
         x, y, z = self + amount * (other-self)
         return self.__class__(x, y, z)
@@ -243,12 +259,16 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             ndigits : int
                 number of digits to keep, may be negative
+        ```
 
         Returns
         -------
+        ```py
             Vector : new Vector
+        ```
         """
         x, y, z = self
         return self.__class__(round(x, ndigits), round(y, ndigits),
@@ -261,8 +281,10 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             ndigits : int
                 number of digits to keep, may be negative
+        ```
         """
         self.x, self.y, self.z = tuple(map(lambda x: round(x, ndigits), self))
 
@@ -273,7 +295,9 @@ class Vector(np.ndarray):
 
         Returns
         -------
+        ```py
             Vector : new Vector
+        ```
         """
         return self.__class__(*1 / self)
 
@@ -309,13 +333,17 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             other : Vector
+        ```
 
         Returns
         -------
+        ```py
             Vector : The vector perpendicular to both ``self`` and ``other``
                 i.e., the vector obtained by taking the cross product of
                 ``self`` and ``other``
+        ```
         """
         x, y, z = np.cross(self, other)
         return self.__class__(x, y, z)
@@ -335,11 +363,15 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             other : Vector
+        ```
 
         Returns
         -------
+        ```py
             float : the dot product of the two vectors
+        ```
         """
         return np.dot(self, other)
 
@@ -363,6 +395,7 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             v1 : float or int
                 the minimum value
             v2 : float or int
@@ -373,10 +406,13 @@ class Vector(np.ndarray):
             dtype : type, (optional)
                 the type of data : float or int
                 defaults to float
+        ```
 
         Returns
         -------
+        ```py
             Vector : a new Vector
+        ```
         """
         assert not ((size := abs(size)) >= 4), "please enter valid size"
         f = random.uniform if dtype is float else random.randint
@@ -416,7 +452,9 @@ class Vector(np.ndarray):
 
         Returns
         -------
+        ```py
             Vector : a copy of the current point
+        ```
         """
         x, y, z = self
         return self.__class__(x, y, z)
@@ -518,12 +556,16 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             other : Vector
                 other vector
+        ```
 
         Returns
         -------
+        ```py
             float : The distance between the current point and the given point
+        ```
         """
         return m.sqrt(sum((v := (self - other)) * v))
 
@@ -533,12 +575,16 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             other : Vector
                 other vector
+        ```
 
         Returns
         -------
+        ```py
             float : The squared distance between the current point and the given point
+        ```
         """
         return sum((v := (self - other)) * v)
 
@@ -587,8 +633,10 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             theta : float or int
                 angle in radians
+        ```
         """
         x = self.x * m.cos(theta) - self.y * m.sin(theta)
         y = self.x * m.sin(theta) + self.y * m.cos(theta)
@@ -601,12 +649,16 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             theta : float or int
                 angle in radians
+        ```
 
         Returns
         -------
+        ```py
             Vector : new vector
+        ```
         """
         x = self.x * m.cos(theta) - self.y * m.sin(theta)
         y = self.x * m.sin(theta) + self.y * m.cos(theta)
@@ -626,11 +678,15 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
+        ```py
             other : Vector
+        ```
 
         Returns
         -------
+        ```py
             float : The angle between two given vectors (in radians)
+        ```
         """
         return np.arccos(
             (np.dot(self, other)) / (self.magnitude * other.magnitude))
@@ -642,8 +698,10 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
-        angle : float
-            Angle to be used to create the vector (in radians)
+        ```py
+            angle : float
+                Angle to be used to create the vector (in radians)
+        ```
         """
         vec = cls.random2d(mag=1)
         vec.angle = angle

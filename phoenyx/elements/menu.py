@@ -815,7 +815,7 @@ class Menu:
         # renderer.no_fill()
         # renderer.stroke = self.color
         # renderer.stroke_weight = 2
-        renderer.text_size = 15
+        renderer.text_size = self.text_size
         renderer.text_color = self.text_color
 
         pygame.draw.line(renderer._window, self.color, (x, y),
